@@ -16,6 +16,7 @@ export default function JsonUploader() {
       setFile(null);
       return;
     }
+    //
 
     setFileName(selectedFile.name);
     setFileError(null);
