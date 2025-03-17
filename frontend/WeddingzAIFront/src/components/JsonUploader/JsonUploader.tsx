@@ -1,5 +1,6 @@
 import { useState } from "react";
 import styles from "./JsonUploader.module.css";
+import uploadJsonFile from "../../services/file-service";
 
 export default function JsonUploader() {
   const [fileError, setFileError] = useState<string | null>(null);
@@ -16,32 +17,25 @@ export default function JsonUploader() {
       setFile(null);
       return;
     }
-    //
 
     setFileName(selectedFile.name);
     setFileError(null);
     setFile(selectedFile);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!file) {
       setFileError("No file selected.");
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      try {
-        JSON.parse(e.target?.result as string);
-        setFileError(null);
-        alert("Valid JSON file uploaded.");
-      } catch {
-        setFileError("Invalid JSON format.");
-        setFileName(null);
-        setFile(null);
-      }
-    };
-    reader.readAsText(file);
+    try {
+      const response = await uploadJsonFile.uploadJsonFile(file);
+      alert(response.data.message);
+      setFileError(null);
+    } catch (error: any) {
+      setFileError(error.response?.data?.error || "Upload failed.");
+    }
   };
 
   return (
