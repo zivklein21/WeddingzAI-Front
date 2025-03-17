@@ -1,12 +1,14 @@
 import express, { Request, Response } from "express";
 import multer from "multer";
 import fs from "fs";
+import { log } from "console";
 
 const router = express.Router();
 const upload = multer({ dest: "uploads/" });
 
 router.post("/upload", upload.single("file"), (req: Request, res: Response) => {
     if (!req.file) {
+        console.log("No file uploaded");
         res.status(400).json({ error: "No file uploaded" });
         return
     }

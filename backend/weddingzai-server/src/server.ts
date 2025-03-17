@@ -1,4 +1,5 @@
-import express, { Application } from "express";
+import express, { Application, Request, Response } from "express";
+
 import cors from "cors";
 import uploadRoutes from "./routes/upload-routes";
 
@@ -11,6 +12,14 @@ app.use(express.json());
 const apiBase = "/api";
 
 app.use("/api", uploadRoutes);
+
+// Add GET / route for project owners
+app.get("/", (req: Request, res: Response) => {
+  res.json({
+    owners: ["Gavriel Matatov", "Gal Ternovski", "Shahar Shabtay", "Gefen Kidmi", "Ziv Klien"],
+    project: "WeddingZai Server",
+  });
+});
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
