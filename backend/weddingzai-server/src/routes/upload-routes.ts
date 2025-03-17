@@ -1,7 +1,6 @@
 import express, { Request, Response } from "express";
 import multer from "multer";
 import fs from "fs";
-import { log } from "console";
 
 const router = express.Router();
 const upload = multer({ dest: "uploads/" });
