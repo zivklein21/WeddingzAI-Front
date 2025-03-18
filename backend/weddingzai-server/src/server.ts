@@ -11,12 +11,12 @@ app.use(express.json());
 
 const apiBase = "/api";
 
-app.use("/api", uploadRoutes);
+app.use(apiBase, uploadRoutes);
 
 // Add GET / route for project owners
 app.get("/", (req: Request, res: Response) => {
   res.json({
-    owners: ["Gavriel Matatov", "Gal Ternovski", "Shahar Shabtay", "Gefen Kidmi", "Ziv Klien"],
+    owners: ["Gavriel Matatov", "Gal Ternovsky", "Shahar Shabtay", "Gefen Kidmi", "Ziv Klien"],
     project: "WeddingZai Server",
   });
 });
