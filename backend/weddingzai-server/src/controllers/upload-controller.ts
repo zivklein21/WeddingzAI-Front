@@ -59,7 +59,11 @@ const uploadJsonFile = async (req: Request, res: Response) => {
             const todoList = await generateTodoList(jsonData.preferences);
             console.log("Generated to-do list:", todoList);
             if (req.file) {
-                res.json({ message: "Valid JSON file uploaded", fileName: req.file.originalname });
+                res.json({ 
+                    message: "Valid JSON file uploaded", 
+                    fileName: req.file.originalname, 
+                    todoList 
+                });
             }
         } catch (error) {
             res.status(400).json({ error: "Invalid JSON format" });
