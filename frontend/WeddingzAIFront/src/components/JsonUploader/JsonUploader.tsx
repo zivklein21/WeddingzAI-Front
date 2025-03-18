@@ -30,7 +30,6 @@ export default function JsonUploader() {
     }
 
     try {
-      console.log("Entered");
       const response = await uploadJsonFile.uploadJsonFile(file);
       alert(response.data.message);
       setFileError(null);

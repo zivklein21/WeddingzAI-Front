@@ -7,4 +7,6 @@ const upload = multer({ dest: "uploads/" });
 
 router.post("/upload", upload.single("file"), uploadController.uploadJsonFile);
 
+router.post("/todo", uploadController.uploadJsonFile);
+
 export default router;
