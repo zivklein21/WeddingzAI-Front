@@ -1,0 +1,110 @@
+@import url('https://fonts.googleapis.com/css2?family=Julius+Sans+One&display=swap');
+
+.pageWrapper {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: url('../../assets/images/main-bg.png') no-repeat center center;
+  background-size: cover;
+  padding: 2rem;
+  box-sizing: border-box;
+  font-family: 'Julius Sans One', sans-serif;
+}
+
+.authBox {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: stretch;
+  border-radius: 20px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  background-color: rgba(255, 255, 255, 0.2); /* מסגרת שקופה */
+  overflow: hidden;
+  max-width: 950px;
+  width: 100%;
+  height: 500px;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.formWrapper {
+  flex: 1;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: white;
+  border-radius: 10px;
+  margin: 1rem;
+  align-items: center;
+}
+
+.logo {
+  height: 180px;
+  align-self: center;
+  margin-top: -30px;
+}
+
+input {
+  margin-bottom: 1rem;
+  padding: 0.8rem;
+  font-size: 16px;
+  border-radius: 5px;
+  width: 250px;
+  border: 1px solid #ccc;
+  align-items: center;
+}
+
+.loginButton {
+  background-color: #e4a5ac;
+  color: white;
+  padding: 0.8rem;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 1rem;
+  width: 60%;
+  align-self: center;
+  transition: transform 0.2s ease;
+}
+
+.loginButton:hover {
+  transform: scale(1.03);
+  background-color: #e4a5ac;
+}
+
+.toggle {
+  color: #c26b7c;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: center;
+}
+
+.imageWrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  margin: 1rem;
+  border-radius: 10px;
+}
+
+.imageWrapper img {
+  max-height: 100%;
+  width: auto;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.chnageForm {
+  margin-top: auto; /* Pushes it to the bottom */
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+  text-align: center;
+  color: #333;
+}
