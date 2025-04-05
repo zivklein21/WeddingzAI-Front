@@ -1,5 +1,9 @@
 import React, { useState } from "react";
 import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
+import "../styles/budget.css";
+import { FaTrashAlt, FaChevronDown } from "react-icons/fa";
+import {NavBar} from '../components/NavBar/NavBar';
+
 
 const categoryOptions = [
   "Venue", "Suit", "Dress", "Catering", "Photography", "Flowers", "Music", "Transportation", "Decorations"
@@ -34,7 +38,9 @@ const BudgetPage = () => {
   ];
 
   return (
-    <div className="p-6 max-w-2xl mx-auto bg-white rounded-xl shadow-md space-y-4">
+    <div className="budget-page">
+        <NavBar />
+    <div className="budget-container">
       <div>
         <h2 className="text-xl font-bold">Wedding Budget</h2>
         <div className="mb-4">
@@ -125,7 +131,8 @@ const BudgetPage = () => {
         </div>
       )}
     </div>
-  );
+    </div>
+  );  
 };
 
 export default BudgetPage;
