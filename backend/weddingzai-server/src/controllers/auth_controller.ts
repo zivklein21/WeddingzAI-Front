@@ -80,6 +80,7 @@ export const generateTokens = (_id: string): { accessToken: string, refreshToken
 // Register User
 const register = async (req: Request, res: Response) => {
     const { email, password } = req.body;
+    console.log(req.body);
 
     if (!email || !password ) {
         res.status(400).send({ message: "Email and password are required." });
