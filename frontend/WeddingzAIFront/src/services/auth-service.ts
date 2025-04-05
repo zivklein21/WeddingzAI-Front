@@ -5,7 +5,8 @@ export { CanceledError };
 
 export interface User {
     _id?: string;
-    username: string;
+    firstPartner: string;
+    secondPartner: string;
     email: string;
     password: string;
     avatar?: string;

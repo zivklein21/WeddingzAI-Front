@@ -8,7 +8,7 @@
   align-items: center;
   background: url('../../assets/images/main-bg.png') no-repeat center center;
   background-size: cover;
-  padding: 2rem;
+  padding: 32px;
   box-sizing: border-box;
   font-family: 'Julius Sans One', sans-serif;
 }
@@ -24,32 +24,47 @@
   overflow: hidden;
   max-width: 950px;
   width: 100%;
-  height: 500px;
-  padding: 1rem;
+  height: 590px;
+  padding: 16px;
   box-sizing: border-box;
 }
 
-.formWrapper {
+.loginFormWrapper {
   flex: 1;
-  padding: 2rem;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   background-color: white;
   border-radius: 10px;
-  margin: 1rem;
+  margin: 8px 0;
   align-items: center;
+  justify-content: flex-start;
+  padding: 24px 0 16px;
+  gap: 16px;
+}
+
+.registerFormWrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  border-radius: 10px;
+  margin: 8px;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 4px 16px 8px;
+  gap: 4px;
 }
 
 .logo {
-  height: 180px;
+  height: 160px;
   align-self: center;
-  margin-top: -30px;
+  margin-top: 0px;
+  margin-bottom: 6px;
 }
 
 input {
-  margin-bottom: 1rem;
-  padding: 0.8rem;
+  margin-bottom: 8px;
+  padding: 13px;
   font-size: 16px;
   border-radius: 5px;
   width: 250px;
@@ -60,13 +75,13 @@ input {
 .loginButton {
   background-color: #e4a5ac;
   color: white;
-  padding: 0.8rem;
+  padding: 13px;
   font-size: 16px;
   font-weight: bold;
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  margin-bottom: 1rem;
+  margin-bottom: 16px;
   width: 60%;
   align-self: center;
   transition: transform 0.2s ease;
@@ -103,8 +118,8 @@ input {
 
 .chnageForm {
   margin-top: auto; /* Pushes it to the bottom */
-  font-size: 0.9rem;
-  margin-bottom: 0.5rem;
+  font-size: 10px;
+  margin-bottom: 8px;
   text-align: center;
   color: #333;
 }
