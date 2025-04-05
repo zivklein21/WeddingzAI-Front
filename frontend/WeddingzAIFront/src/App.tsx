@@ -4,6 +4,7 @@ import PrefFormPage from "./pages/PrefFormPage";
 import TodoListPage from "./pages/TodoListPage";
 import HomePage from "./components/HomePage/HomePage";
 import RegisterPage from "./pages/RegisterPage";
+import LoginPage from "./pages/LoginPage";
 
 export default function App() {
   return (
@@ -13,6 +14,7 @@ export default function App() {
         <Route path="/home" element={<HomePage />} />
         <Route path="/" element={<PrefFormPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/login" element={<LoginPage />} />
         <Route path="/todolist" element={<TodoListPage />} />
       </Routes>
     </BrowserRouter>
