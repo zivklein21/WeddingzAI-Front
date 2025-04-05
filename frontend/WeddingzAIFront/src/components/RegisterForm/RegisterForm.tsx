@@ -62,7 +62,7 @@ const RegisterForm: FC = () => {
       console.log('User registered:', registerResponse.data);
 
       // Redirect to login page with success message
-      navigate('/ui/login', { state: { successMessage: 'Registered Successfully!' } });
+      navigate('/login', { state: { successMessage: 'Registered Successfully!' } });
 
     } catch (error: unknown) {
       if (error instanceof AxiosError) {
