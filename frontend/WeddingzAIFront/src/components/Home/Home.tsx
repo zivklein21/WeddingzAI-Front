@@ -1,12 +1,10 @@
 import React from 'react';
 import styles from './HomePage.module.css';
-import {NavBar} from '../NavBar/NavBar';
 import heroImage from "../../assets/images/homePage1.svg";
 
-const HomePage: React.FC = () => {
+export default function Home() {
   return (
     <div className={styles.homePage}>
-      <NavBar />
       <div className={styles.content}>
         <div className={styles.left}>
           <h1>
@@ -24,5 +22,4 @@ const HomePage: React.FC = () => {
     </div>
   );
 };
-export default HomePage;
 

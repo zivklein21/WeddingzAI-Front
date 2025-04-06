@@ -10,32 +10,33 @@ import loginImage from '../../assets/images/wedTable.svg.webp';
 import userService from '../../services/auth-service';
 import type { AxiosError } from 'axios';
 
-// Define the schema for login
-const LoginSchema = z.object({
-  email: z.string().email('Invalid email address').nonempty('Email is required'),
-  password: z.string().min(6, 'Password must be at least 6 characters long').nonempty('Password is required'),
-});
 
-const RegisterSchema = z.object({
-  firstPartner: z.string().nonempty('First partner name is required'),
-  secondPartner: z.string().nonempty('Second partner name is required'),
-  email: z.string().email('Invalid email address').nonempty('Email is required'),
-  password: z.string().min(6, 'Password must be at least 6 characters long').nonempty('Password is required'),
-  confirmPassword: z.string().nonempty('Please confirm your password'),
-}).superRefine((data, ctx) => {
-  if (data.password !== data.confirmPassword) {
-    ctx.addIssue({
-      code: "custom",
-      path: ["confirmPassword"],
-      message: "Passwords don't match",
-    });
-  }
-});
+export default function AuthForm() {
+  const LoginSchema = z.object({
+    email: z.string().email('Invalid email address').nonempty('Email is required'),
+    password: z.string().min(6, 'Password must be at least 6 characters long').nonempty('Password is required'),
+  });
+  
+  const RegisterSchema = z.object({
+    firstPartner: z.string().nonempty('First partner name is required'),
+    secondPartner: z.string().nonempty('Second partner name is required'),
+    email: z.string().email('Invalid email address').nonempty('Email is required'),
+    password: z.string().min(6, 'Password must be at least 6 characters long').nonempty('Password is required'),
+    confirmPassword: z.string().nonempty('Please confirm your password'),
+  }).superRefine((data, ctx) => {
+    if (data.password !== data.confirmPassword) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["confirmPassword"],
+        message: "Passwords don't match",
+      });
+    }
+  });
+  
+  type LoginFormData = z.infer<typeof LoginSchema>;
+  type RegisterFormData = z.infer<typeof RegisterSchema>;
+  
 
-type LoginFormData = z.infer<typeof LoginSchema>;
-type RegisterFormData = z.infer<typeof RegisterSchema>;
-
-const AuthPage: React.FC = () => {
   const [isLogin, setIsLogin] = useState(true);
 
   const {
@@ -98,14 +99,15 @@ const AuthPage: React.FC = () => {
       secondPartner: data.secondPartner,
       email: data.email,
       password: data.password,
-      avatar: "../../assets/ wai-logo.svg",
+      avatar: "../../assets/wai-logo.svg",
     };
 
     try {
       const { request: registerRequest } = userService.register(user);
       const registerResponse = await registerRequest;
       console.log('User registered:', registerResponse.data);
-      navigate('/login', { state: { successMessage: 'Registered Successfully!' } });
+      await login(data.email, data.password);
+      navigate('/home');
     } catch (error: unknown) {
       if ((error as AxiosError).response) {
         setServerRegisterError((error as AxiosError).response?.data?.message || 'An error occurred');
@@ -214,5 +216,3 @@ const AuthPage: React.FC = () => {
     </div>
   );
 };
-
-export default AuthPage;
