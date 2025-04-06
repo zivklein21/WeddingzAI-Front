@@ -52,7 +52,8 @@ const login = (credentials: { email: string; password: string }) => {
         refreshToken: string;
         accessToken: string;
         _id: string;
-        username: string;
+        firstPartner: string;
+        secondPartner: string;
         email: string;
         avatar: string;
     }>('/auth/login', credentials, { signal: abortController.signal });

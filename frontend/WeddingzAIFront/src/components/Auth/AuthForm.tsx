@@ -8,6 +8,7 @@ import styles from './AuthPage.module.css';
 import logo from '../../assets/ wai-logo.svg';
 import loginImage from '../../assets/images/wedTable.svg.webp';
 import userService from '../../services/auth-service';
+import { CredentialResponse, GoogleLogin } from '@react-oauth/google';
 import type { AxiosError } from 'axios';
 
 
@@ -16,7 +17,7 @@ export default function AuthForm() {
     email: z.string().email('Invalid email address').nonempty('Email is required'),
     password: z.string().min(6, 'Password must be at least 6 characters long').nonempty('Password is required'),
   });
-  
+
   const RegisterSchema = z.object({
     firstPartner: z.string().nonempty('First partner name is required'),
     secondPartner: z.string().nonempty('Second partner name is required'),
@@ -56,7 +57,7 @@ export default function AuthForm() {
     resolver: zodResolver(RegisterSchema),
   });
 
-  const { login } = useAuth();
+  const { login, googleSignIn } = useAuth();
   const [serverError, setServerError] = useState<string | null>(null);
   const [serverRegisterError, setServerRegisterError] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -121,6 +122,16 @@ export default function AuthForm() {
     setIsLogin(!isLogin);
   };
 
+
+  const onGoogleLoginSuccess = async (response: CredentialResponse) => {
+    await googleSignIn(response);
+    navigate('/home');
+  }
+
+  const onGoogleLoginFailure = () => {
+    console.log("Google Login Failed");
+  }
+
   return (
     <div className={styles.pageWrapper}>
       <div className={styles.authBox}>
@@ -145,6 +156,8 @@ export default function AuthForm() {
                 {serverError && <p className={styles.error}>{serverError}</p>}
 
                 <button type="submit" className={styles.loginButton}>LOGIN</button>
+                <p>Login with Google</p>
+                <GoogleLogin onSuccess={onGoogleLoginSuccess} onError={onGoogleLoginFailure} type='standard' />
 
                 <p className={styles.chnageForm}>
                   Don't have an account?{' '}

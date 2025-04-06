@@ -63,9 +63,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         try {
             const { request } = userService.login({ email, password });
             const response = await request;
-            const { accessToken, refreshToken, _id, username, avatar, email: userEmail } = response.data;
+            const { accessToken, refreshToken, _id, firstPartner, secondPartner, avatar, email: userEmail } = response.data;
 
-            const userData = { _id, username, email: userEmail, avatar, password: '' };
+            const userData = { accessToken, refreshToken, _id, firstPartner, secondPartner, avatar, email: userEmail, password: '' };
 
             // Store data in cookies (with secure attributes)
             Cookies.set('accessToken', accessToken, { path: '/', secure: true, sameSite: 'Strict' });
@@ -92,8 +92,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             const {request: googleSignInRequest } = await userService.googleSignIn(response);
             const googleSignInResponse = await googleSignInRequest;
 
-            const { accessToken, refreshToken, _id, username, avatar, email } = googleSignInResponse.data;
-            const userData = { _id, username, email, avatar, password: '' };
+            const { accessToken, refreshToken, _id, avatar, email, firstPartner, secondPartner } = googleSignInResponse.data;
+            const userData = { accessToken, refreshToken, _id, avatar, email, firstPartner, secondPartner, password: '' };
 
             Cookies.set('accessToken', accessToken, { path: '/', secure: true, sameSite: 'Strict' });
             Cookies.set('refreshToken', refreshToken, { path: '/', secure: true, sameSite: 'Strict' });

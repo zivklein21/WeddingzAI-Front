@@ -76,10 +76,7 @@ input {
 }
 
 .loginButton {
-<<<<<<< HEAD
-=======
   background-color: #e4a5ac;
->>>>>>> bb9570b (PROJ132-7 - change the auth form look)
   color: white;
   padding: 13px;
   font-size: 16px;
@@ -95,10 +92,7 @@ input {
 
 .loginButton:hover {
   transform: scale(1.03);
-<<<<<<< HEAD
-=======
   background-color: #e4a5ac;
->>>>>>> bb9570b (PROJ132-7 - change the auth form look)
 }
 
 .toggle {
