@@ -6,6 +6,7 @@ import HomePage from "./pages/HomePage";
 import AuthPage from "./pages/AuthPage";
 import BudgetPage from "./pages/BudgetPage";
 
+
 export default function App() {
   return (
     <AuthProvider>
