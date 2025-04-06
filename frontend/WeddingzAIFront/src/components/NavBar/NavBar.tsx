@@ -10,14 +10,23 @@ export const NavBar: React.FC = () => {
   return (
     <nav className={styles.navbar}>
       <div className={styles.logo}>
-        <img src={logo} alt="Logo" style={{ height: '200px' }} />
+        <a href="/home">
+          <img src={logo} alt="Logo" style={{ height: '200px' }} />
+        </a>
       </div>
 
-      <div className={styles.title}>My Weddings</div>
+      <div className={styles.title}>
+        {user ? (
+          <a href="/weddash">My Weddings</a>
+        ) : (
+          <a href="/auth?mode=login">My Weddings</a>
+        )}
+      </div>
 
       {user ? (
         <div className={styles.authWrapper}>
-          <img src={user.avatar || userIcon} alt="User Avatar" />
+          {/* <img src={user.avatar || userIcon} alt="User Avatar" /> */}
+          <img src={userIcon} alt="User Avatar" />
           <div>
             <div className={styles.authName}><strong>{user.firstPartner}</strong></div>
             <div className={styles.auth}>

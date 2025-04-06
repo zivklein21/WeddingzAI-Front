@@ -76,7 +76,6 @@ input {
 }
 
 .loginButton {
-  background-color: #e4a5ac;
   color: white;
   padding: 13px;
   font-size: 16px;
@@ -92,7 +91,6 @@ input {
 
 .loginButton:hover {
   transform: scale(1.03);
-  background-color: #e4a5ac;
 }
 
 .toggle {
