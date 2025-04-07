@@ -10,7 +10,9 @@ const categoryOptions = [
 ];
 
 
+
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#AF19FF", "#FF4560", "#FF69B4", "#32CD32", "#FFD700", "#FFFFFF"];
+
 
 
 
