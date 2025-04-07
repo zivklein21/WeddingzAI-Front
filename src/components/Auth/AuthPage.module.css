@@ -1,0 +1,137 @@
+@import url('https://fonts.googleapis.com/css2?family=Julius+Sans+One&display=swap');
+
+.pageWrapper {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: url('../../assets/images/main-bg.png') no-repeat center center;
+  background-size: cover;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Julius Sans One', sans-serif;
+}
+
+.authBox {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center; /* Added for vertical centering */
+  border-radius: 20px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  background-color: rgba(255, 255, 255, 0.2); /* מסגרת שקופה */
+  overflow: hidden;
+  max-width: 1000px; /* Increased max-width */
+  width: 100%;
+  height: 640px;
+  
+  box-sizing: border-box;
+}
+
+.loginFormWrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  border-radius: 10px;
+  padding: 24px; /* Set padding */
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 16px;
+  margin-left: 8px; /* Changed margin-left for symmetry */
+  margin: 0; /* Removed margin */
+}
+
+.registerFormWrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  border-radius: 10px;
+  padding: 24px; /* Set padding */
+  gap: 16px; /* Increased gap */
+  margin: 0; /* Removed margin */
+  height: 100%; /* Set height */
+  justify-content: center; /* Center content vertically */
+  align-items: center; /* Center content vertically */
+}
+
+.logo {
+  height: 160px;
+  align-self: center;
+  margin-top: 0px;
+  margin-bottom: 6px;
+}
+
+input {
+  margin-bottom: 8px;
+  padding: 13px;
+  font-size: 16px;
+  border-radius: 5px;
+  width: 250px;
+  border: 1px solid #ccc;
+  align-items: center;
+}
+
+.loginButton {
+  background-color: #e4a5ac;
+  color: white;
+  padding: 13px;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 16px;
+  width: 60%;
+  align-self: center;
+  transition: transform 0.2s ease;
+}
+
+.loginButton:hover {
+  transform: scale(1.03);
+  background-color: #e4a5ac;
+}
+
+.toggle {
+  color: #c26b7c;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: center;
+}
+
+.imageWrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 10px;
+  height: 100%;
+  padding: 24px; /* Set padding */
+  margin: 0; /* Removed margin */
+}
+
+.imageWrapper img {
+  height: 100%; /* Changed width to height */
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.chnageForm {
+  margin-top: auto; /* Pushes it to the bottom */
+  font-size: 10px;
+  margin-bottom: 8px;
+  text-align: center;
+  color: #333;
+}
+
+.error {
+  font-size: 10px;
+  margin-top: -20px;
+  margin-bottom: -10px;
+  color: red;
+  font-weight: bold;
+}
