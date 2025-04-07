@@ -42,74 +42,87 @@ const BudgetPage = () => {
         <NavBar />
     <div className="budget-container">
       <div>
-        <h2 className="text-xl font-bold">Wedding Budget</h2>
+        <h2 className="budget-title">Wedding Budget</h2>
+        <p className="budget-subtitle">Plan your expenses with ease</p>
         <div className="mb-4">
-          <label className="block">Total Wedding Budget:</label>
+          <label className="block font-medium">Total Wedding Budget:</label>
           <input
             type="number"
             value={totalBudget}
             onChange={(e) => setTotalBudget(e.target.value)}
             placeholder="Enter Total Budget"
-            className="border p-2 w-full rounded"
+            className="budget-input"
           />
         </div>
       </div>
-
-      <div>
-        <h3 className="text-lg font-bold">Add Categories</h3>
-        <div className="flex space-x-4">
-          <select
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-            className="border p-2 w-full rounded"
-          >
-            <option value="" disabled>Select a category</option>
-            {categoryOptions.map((category, index) => (
-              <option key={index} value={category}>{category}</option>
-            ))}
-          </select>
-          <input
-            type="number"
-            value={newAmount}
-            onChange={(e) => setNewAmount(e.target.value)}
-            placeholder="Amount"
-            className="border p-2 w-full rounded"
-          />
-          <button
-            onClick={handleAddCategory}
-            className="bg-blue-500 text-white p-2 rounded"
-          >
-            Add Category
-          </button>
-        </div>
+  
+      <div className="add-category-card">
+        <h3 className="budget-subtitle">Add Categories</h3>
+        <select
+          value={selectedCategory}
+          onChange={(e) => setSelectedCategory(e.target.value)}
+          className="budget-input"
+        >
+          <option value="" disabled>Select a category</option>
+          {categoryOptions.map((category, index) => (
+            <option key={index} value={category}>{category}</option>
+          ))}
+        </select>
+        <input
+          type="number"
+          value={newAmount}
+          onChange={(e) => setNewAmount(e.target.value)}
+          placeholder="Amount"
+          className="budget-input"
+        />
+        <button
+          onClick={handleAddCategory}
+          className="add-btn"
+        >
+          Add
+        </button>
       </div>
-
-      <div className="mt-4">
-        {categories.length > 0 && <h3 className="text-lg font-bold">Categories:</h3>}
-        <div>
+  
+      {categories.length > 0 && (
+        <div className="space-y-3">
+          <h3 className="budget-subtitle">Categories</h3>
           {categories.map((category, index) => (
-            <div key={index} className="flex justify-between items-center py-2">
-              <span>{category.name}: ${category.amount.toFixed(2)}</span>
-              <button onClick={() => handleRemoveCategory(index)} className="text-red-500">Remove</button>
+            <div key={index} className="category-card">
+              <div className="category-header">
+                <div className="category-title">
+                  <FaChevronDown />
+                  <span>{category.name}</span>
+                </div>
+                <div className="category-cost">
+                  <span className="actual-cost">Actual Cost</span>
+                  <span className="cost-amount">${category.amount.toFixed(2)}</span>
+                  <button
+                    onClick={() => handleRemoveCategory(index)}
+                    className="delete-icon"
+                  >
+                    <FaTrashAlt />
+                  </button>
+                </div>
+              </div>
             </div>
           ))}
         </div>
-      </div>
-
-      <div className="mt-4">
-        <h3 className="text-lg font-bold">Remaining Budget</h3>
-        <div>
+      )}
+  
+      <div className="category-card">
+        <h3 className="budget-subtitle">Remaining Budget</h3>
+        <div className="cost-amount">
           {totalBudget && categories.length > 0 ? (
             <p>Remaining Budget: ${remainingBudget.toFixed(2)}</p>
           ) : (
-            <p>Enter a total budget and categories to see remaining budget.</p>
+            <p className="text-gray-500">Enter a total budget and categories to see remaining budget.</p>
           )}
         </div>
       </div>
-
+  
       {categories.length > 0 && totalBudget && (
-        <div className="mt-6">
-          <h3 className="text-lg font-bold">Budget Breakdown</h3>
+        <div className="chart-section">
+          <h3 className="budget-subtitle">Budget Breakdown</h3>
           <PieChart width={400} height={400}>
             <Pie
               data={pieData}
@@ -122,7 +135,10 @@ const BudgetPage = () => {
               label={(entry) => `${((entry.amount / parseFloat(totalBudget)) * 100).toFixed(2)}%`}
             >
               {pieData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={entry.name === "Remaining Budget" ? "#FFFFFF" : COLORS[index % COLORS.length]} />
+                <Cell
+                  key={`cell-${index}`}
+                  fill={entry.name === "Remaining Budget" ? "#FFFFFF" : COLORS[index % COLORS.length]}
+                />
               ))}
             </Pie>
             <Tooltip />

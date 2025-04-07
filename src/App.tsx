@@ -12,7 +12,6 @@ export default function App() {
     <AuthProvider>
     <BrowserRouter>
       <Routes>
-        <Route path="/auth" element={<AuthPage/>}/>
         <Route path="/home" element={<HomePage />} />
         <Route path="/" element={<PrefFormPage />} />
         <Route path="/todolist" element={<TodoListPage />} />

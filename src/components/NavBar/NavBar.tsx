@@ -45,6 +45,6 @@ export const NavBar: React.FC = () => {
           </div>
         </div>
       )}
-    </nav>
+  </nav>
   );
 };
