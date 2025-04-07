@@ -4,7 +4,6 @@ import { AuthProvider } from './hooks/useAuth/AuthContext';
 import PrefFormPage from "./pages/PrefFormPage";
 import TodoListPage from "./pages/TodoListPage";
 import HomePage from "./pages/HomePage";
-import AuthPage from "./pages/AuthPage";
 import BudgetPage from "./pages/BudgetPage";
 
 
