@@ -22,7 +22,7 @@ export default function App() {
         <Route path="/" element={<PrefFormPage />} />
         <Route path="/todolist" element={<TodoListPage />} />
         <Route path="/budget" element={<BudgetPage/>} />
-        <Route path="/" element={<AuthPage />} />
+        <Route path="/auth" element={<AuthPage />} />
         <Route path="/weddash" element={<WeddingDashboardPage/>} /> 
       </Routes>
     </BrowserRouter>
