@@ -3,6 +3,7 @@ import styles from './NavBar.module.css';
 import logo from '../../assets/ wai-logo.svg';
 import userIcon from "../../assets/images/user-icon.svg";
 
+
 import { useAuth } from '../../hooks/useAuth/AuthContext';
 
 export const NavBar: React.FC = () => {
@@ -47,5 +48,6 @@ export const NavBar: React.FC = () => {
         </div>
       )}
   </nav>
+
   );
 };
