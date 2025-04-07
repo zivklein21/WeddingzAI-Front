@@ -2,9 +2,10 @@
 
 
 :root {
-    --wedding-pink: #f9e6f0;
-    --wedding-gold: #d4af37;
+    --wedding-pink: #e4a5ac;
+    --wedding-pink2: #d49098;
     --wedding-white: #ffffff;
+    --wedding-black: #000000;
     --wedding-gray: #888888;
     --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
  }
@@ -20,17 +21,18 @@
  }
   
   h1, h2, h3, h4 {
-    color: var(--wedding-gold);
+    color: var(--wedding-black);
     font-weight: 600;
     letter-spacing: 0.5px;
  }
   
   a {
     text-decoration: none;
-    color: var(--wedding-gold);
+    color: var(--wedding-pink);
  }
   
   button {
+   color: var(--wedding-pink);
     font-family: inherit;
     border: none;
     cursor: pointer;
@@ -39,6 +41,7 @@
   
   button:hover {
     opacity: 0.9;
+    background-color: var(--wedding-pink2);
  }
   
   input, select {
@@ -50,7 +53,7 @@
  }
   
   input:focus, select:focus {
-    border-color: var(--wedding-gold);
+    border-color: var(--wedding-pink2);
     outline: none;
  }
   
@@ -59,7 +62,7 @@
     padding: 0.6em 1.4em;
     border: none;
     border-radius: 30px;
-    background-color: var(--wedding-gold);
+    background-color: var(--wedding-pink);
     color: white;
     font-weight: bold;
     letter-spacing: 0.5px;
@@ -69,7 +72,7 @@
  }
   
   button:hover {
-    background-color: #c69c27; /* darker gold */
+    background-color: var(--wedding-pink2);
     transform: translateY(-2px);
  }
   
