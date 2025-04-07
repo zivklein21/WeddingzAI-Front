@@ -1,4 +1,3 @@
-
 import axios, { CanceledError } from "axios";
 import Cookies from "js-cookie";
 
@@ -11,6 +10,7 @@ const apiClient = axios.create({
     baseURL: backend_url,
     headers: { 'Content-Type': 'application/json' },
 });
+
 
 // Attach access token to every request
 apiClient.interceptors.request.use(
@@ -74,5 +74,3 @@ apiClient.interceptors.response.use(
 );
 
 export default apiClient;
-
-

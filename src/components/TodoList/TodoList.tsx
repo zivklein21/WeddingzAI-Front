@@ -41,6 +41,7 @@ export default function TodoList() {
       {todoList ? (
         <div className={styles.todoListContainer}>
           <h2 className={styles.todoTitle}>{todoList.weddingTodoListName}</h2>
+
           <p className={styles.coupleNames}>
             👰 {todoList.bride} & 🤵 {todoList.groom}
           </p>
