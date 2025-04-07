@@ -9,7 +9,7 @@ const categoryOptions = [
   "Venue", "Suit", "Dress", "Catering", "Photography", "Flowers", "Music", "Transportation", "Decorations"
 ];
 
-const COLORS = ["#FFCCEA", "#d4af37", "#888888", "#9FB3DF", "#E6B2BA", "#FDB7EA", "#A7B49E", "#FDDBBB", "#CB9DF0", "#FFFFFF"];
+const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#AF19FF", "#FF4560", "#FF69B4", "#32CD32", "#FFD700", "#FFFFFF"];
 
 const BudgetPage = () => {
   const [totalBudget, setTotalBudget] = useState("");
