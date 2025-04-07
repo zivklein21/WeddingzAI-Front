@@ -1,19 +1,15 @@
 .navbar {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 120px;
-  box-sizing: border-box;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 2rem; /* optional: reduce padding */
-  font-family: 'Poppins', sans-serif;
-  font-size: 15px;
-  color: #333;
-  z-index: 2;
-}
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0px 4rem;
+    font-family: 'Poppins', sans-serif;
+    font-size: 15px;
+    color: #333;
+    z-index: 2;
+    margin-top: -40px;
+  }
   
   .logo img {
     height: 200px;
@@ -65,4 +61,4 @@
     font-weight: bold;
     font-size: 15px;
     margin: 0;
-  }
+}
