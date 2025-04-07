@@ -1,5 +1,4 @@
 .homePage {
-
     min-height: 100vh;
     width: 100%;
     background: url('../../assets/images/main-bg.png') no-repeat center center;
@@ -58,6 +57,7 @@
   .button:hover {
     background-color: #e38aa3;
   }
+
 
 .right img {
   transform: translateX(-60px);
