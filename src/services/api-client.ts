@@ -5,24 +5,23 @@ export { CanceledError };
 
 const backend_url = import.meta.env.VITE_BACKEND_URL
 
-
-
-
-
 const apiClient = axios.create({
     baseURL: backend_url,
     headers: { 'Content-Type': 'application/json' },
 });
 
-
-
-
 // Attach access token to every request
 apiClient.interceptors.request.use(
     (config) => {
+        // Temporarily disable auth for budget endpoints
+        if (config.url?.includes('/api/budget')) {
+            return config;
+        }
+
         const accessToken = Cookies.get("accessToken");
 
         if (accessToken) {
+            config.headers = config.headers || {};
             config.headers.Authorization = `Bearer ${accessToken}`;
         }
 
@@ -31,12 +30,16 @@ apiClient.interceptors.request.use(
         return Promise.reject(error);
     });
 
-
 // Handle token expiration
 apiClient.interceptors.response.use(
     (response) => response,
     async (error) => {
         const originalRequest = error.config;
+
+        // Temporarily disable auth for budget endpoints
+        if (originalRequest.url?.includes('/api/budget')) {
+            return Promise.reject(error);
+        }
 
         // Handle Token Expiration Error
         if (error.response && error.response.status === 401 && !originalRequest._retry) {
@@ -77,6 +80,5 @@ apiClient.interceptors.response.use(
         return Promise.reject(error);
     }
 );
-
 
 export default apiClient;

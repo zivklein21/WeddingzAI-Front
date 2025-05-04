@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
 import styles from "./budget.module.css";
 import { FaTrashAlt, FaChevronDown } from "react-icons/fa";
-
-
+import budgetService from "../../services/budget-service";
+import type { Budget, BudgetCategory } from "../../services/budget-service";
 
 const Budget = () => {
   const categoryOptions = [
@@ -12,20 +12,50 @@ const Budget = () => {
   
   const COLORS = ["#FFCCEA", "#d4af37", "#888888", "#9FB3DF", "#E6B2BA", "#FDB7EA", "#A7B49E", "#FDDBBB", "#CB9DF0", "#FFFFFF"];  
   const [totalBudget, setTotalBudget] = useState("");
-  const [categories, setCategories] = useState<{ name: string; amount: number }[]>([]);
+  const [categories, setCategories] = useState<BudgetCategory[]>([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [newAmount, setNewAmount] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
-  const handleAddCategory = () => {
-    const amount = parseFloat(newAmount);
-    if (!selectedCategory || isNaN(amount) || amount <= 0) return;
-    setCategories([...categories, { name: selectedCategory, amount }]);
-    setSelectedCategory("");
-    setNewAmount("");
+  const saveBudget = async (updatedCategories: BudgetCategory[], updatedTotalBudget: string) => {
+    try {
+      const budget: Budget = {
+        totalBudget: parseFloat(updatedTotalBudget) || 0,
+        categories: updatedCategories
+      };
+      await budgetService.updateBudget(budget).request;
+      setError(null);
+    } catch {
+      setError("Failed to save budget changes. Please try again.");
+    }
   };
 
-  const handleRemoveCategory = (index: number) => {
-    setCategories(categories.filter((_, i) => i !== index));
+  const handleAddCategory = async () => {
+    const amount = parseFloat(newAmount);
+    if (!selectedCategory || isNaN(amount) || amount <= 0) return;
+    
+    const updatedCategories = [...categories, { name: selectedCategory, amount }];
+    setCategories(updatedCategories);
+    setSelectedCategory("");
+    setNewAmount("");
+    
+    await saveBudget(updatedCategories, totalBudget);
+  };
+
+  const handleRemoveCategory = async (index: number) => {
+    const updatedCategories = categories.filter((_, i) => i !== index);
+    setCategories(updatedCategories);
+    await saveBudget(updatedCategories, totalBudget);
+  };
+
+  const handleTotalBudgetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTotalBudget(e.target.value);
+  };
+
+  const handleTotalBudgetBlur = async () => {
+    if (totalBudget) {
+      await saveBudget(categories, totalBudget);
+    }
   };
 
   const totalSpent = categories.reduce((acc, curr) => acc + curr.amount, 0);
@@ -35,6 +65,13 @@ const Budget = () => {
     ...categories,
     { name: "Remaining Budget", amount: remainingBudget }
   ];
+
+  if (error) {
+    return <div className={styles.main}>
+      <div className={styles.error}>{error}</div>
+      <button onClick={() => window.location.reload()}>Retry</button>
+    </div>;
+  }
 
   return (
     <div className={styles.main}>
@@ -47,7 +84,8 @@ const Budget = () => {
             <input
               type="number"
               value={totalBudget}
-              onChange={(e) => setTotalBudget(e.target.value)}
+              onChange={handleTotalBudgetChange}
+              onBlur={handleTotalBudgetBlur}
               placeholder="Enter Total Budget"
               className={styles.budgetInput}
             />
