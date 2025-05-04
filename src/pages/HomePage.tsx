@@ -6,8 +6,8 @@ const HomePage: React.FC = () => {
 
   return (
     <div>
-        <NavBar/>
-        <Home />
+      <NavBar />
+      <Home />
     </div>
   );
 };
