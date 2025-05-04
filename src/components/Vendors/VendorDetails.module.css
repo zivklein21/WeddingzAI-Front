@@ -1,0 +1,114 @@
+/* Overlay dims the background and centers modal */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  
+  /* Modal container */
+  .modal {
+    position: relative;
+    background: white;
+    border-radius: 8px;
+    width: 90vw;
+    max-width: 800px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  }
+  
+  /* Close “X” in the corner */
+  .closeBtn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    font-size: 1.4rem;
+    width: 32px;
+    height: 32px;
+    border-radius: 16px;
+    cursor: pointer;
+  }
+  .closeBtn:hover {
+    background: rgba(255, 255, 255, 1);
+  }
+  
+  /* Header with cover image */
+  .header {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    background-size: cover;
+    background-position: center;
+  }
+  
+  /* Logo over the header */
+  .logo {
+    position: absolute;
+    bottom: -24px;
+    left: 24px;
+    width: 48px;
+    height: 48px;
+    border: 2px solid #fff;
+    border-radius: 4px;
+    background: #fff;
+    object-fit: cover;
+  }
+  
+  /* Core info block */
+  .info {
+    padding: 32px 24px 16px;
+  }
+  .title {
+    margin: 0 0 8px;
+    font-size: 1.8rem;
+  }
+  .category,
+  .address,
+  .meta {
+    margin: 4px 0;
+    color: #555;
+  }
+  .meta {
+    font-weight: 500;
+  }
+  
+  /* Reusable section style */
+  .section {
+    padding: 16px 24px;
+    border-top: 1px solid #eee;
+  }
+  .section h2 {
+    margin: 0 0 8px;
+    font-size: 1.2rem;
+    color: #b18904;
+  }
+  
+  /* Media grid (photos & videos) */
+  .mediaGrid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .mediaImage,
+  .mediaVideo {
+    flex: 0 0 calc(33% - 8px);
+    height: 120px;
+    object-fit: cover;
+    border-radius: 4px;
+  }
+  
+  /* Review card */
+  .review {
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f0f0f0;
+  }
