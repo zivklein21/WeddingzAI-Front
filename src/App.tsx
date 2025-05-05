@@ -1,6 +1,6 @@
 import { Routes, Route, BrowserRouter } from "react-router-dom";
 
-import { AuthProvider } from './hooks/useAuth/AuthContext';
+// import { AuthProvider } from './hooks/useAuth/AuthContext';
 
 import PrefFormPage from "./pages/PrefFormPage";
 import TodoListPage from "./pages/TodoListPage";
@@ -8,6 +8,7 @@ import HomePage from "./pages/HomePage";
 import BudgetPage from "./pages/BudgetPage";
 import WeddingDashboardPage from "./pages/WeddingDashoardPage";
 import AuthPage from "./pages/AuthPage";
+import VendorsSearchPage from "./pages/SearchVendorsPage";
 
 
 
@@ -15,7 +16,6 @@ import AuthPage from "./pages/AuthPage";
 
 export default function App() {
   return (
-    <AuthProvider>
     <BrowserRouter>
       <Routes>
         <Route path="/home" element={<HomePage />} />
@@ -25,8 +25,8 @@ export default function App() {
         <Route path="/budget" element={<BudgetPage/>} />
         <Route path="/auth" element={<AuthPage />} />
         <Route path="/weddash" element={<WeddingDashboardPage/>} /> 
+        <Route path="/vendor" element={<VendorsSearchPage/>} /> 
       </Routes>
     </BrowserRouter>
-    </AuthProvider>  
   );
 }
