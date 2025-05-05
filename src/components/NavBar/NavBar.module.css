@@ -1,4 +1,5 @@
-.navbar {
+
+  .navbar {
     position: absolute;
     display: flex;
     justify-content: space-between;
@@ -10,7 +11,7 @@
     z-index: 2;
     margin-top: -40px;
   }
-  
+    
   .logo img {
     height: 200px;
     margin-top: 0px;

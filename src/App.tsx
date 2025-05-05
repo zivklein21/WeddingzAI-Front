@@ -4,7 +4,7 @@ import { Routes, Route, BrowserRouter } from "react-router-dom";
 
 import PrefFormPage from "./pages/PrefFormPage";
 import TodoListPage from "./pages/TodoListPage";
-import HomePage from "./components/HomePage/HomePage";
+import HomePage from "./pages/HomePage";
 import BudgetPage from "./pages/BudgetPage";
 import WeddingDashboardPage from "./pages/WeddingDashoardPage";
 import AuthPage from "./pages/AuthPage";
@@ -19,7 +19,8 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/home" element={<HomePage />} />
-        <Route path="/" element={<PrefFormPage />} />
+        <Route path="/plan" element={<PrefFormPage />} />
+        <Route path="/" element={<HomePage />} />
         <Route path="/todolist" element={<TodoListPage />} />
         <Route path="/budget" element={<BudgetPage/>} />
         <Route path="/auth" element={<AuthPage />} />
