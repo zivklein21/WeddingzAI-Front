@@ -23,10 +23,24 @@ const Budget = () => {
         totalBudget: parseFloat(updatedTotalBudget) || 0,
         categories: updatedCategories
       };
-      await budgetService.updateBudget(budget).request;
+      console.log('Sending budget data:', budget);
+      const response = await budgetService.updateBudget(budget).request;
+      console.log('Save successful:', response.data);
       setError(null);
-    } catch {
-      setError("Failed to save budget changes. Please try again.");
+    } catch (error) {
+      console.error('Save failed:', error);
+      if (error && typeof error === 'object' && 'response' in error) {
+        const err = error as { response?: { data?: { message?: string }, status?: number } };
+        console.error('Error response:', err.response?.data);
+        console.error('Error status:', err.response?.status);
+        setError(`Failed to save: ${err.response?.data?.message || 'Server error'}`);
+      } else if (error && typeof error === 'object' && 'request' in error) {
+        console.error('No response received:', error.request);
+        setError('No response from server. Please check your connection.');
+      } else {
+        console.error('Error setting up request:', error);
+        setError('Failed to save budget changes. Please try again.');
+      }
     }
   };
 

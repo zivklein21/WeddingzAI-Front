@@ -14,19 +14,19 @@ export interface Budget {
 
 // Get user's budget
 const getBudget = () => {
-  const request = apiClient.get<Budget>('/budget');
+  const request = apiClient.get<Budget>('/api/budget');
   return { request, abort: () => {} };
 };
 
 // Create/update budget
 const updateBudget = (budget: Budget) => {
-  const request = apiClient.post<Budget>('/budget', budget);
+  const request = apiClient.post<Budget>('/api/budget', budget);
   return { request, abort: () => {} };
 };
 
 // Delete budget
 const deleteBudget = () => {
-  const request = apiClient.delete('/budget');
+  const request = apiClient.delete('/api/budget');
   return { request, abort: () => {} };
 };
 

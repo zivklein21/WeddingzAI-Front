@@ -1,9 +1,15 @@
-import axios, { CanceledError } from "axios";
+import axios from "axios";
 import Cookies from "js-cookie";
 
-export { CanceledError };
+// Export CanceledError for use in other services
+export class CanceledError extends Error {
+    constructor(message?: string) {
+        super(message);
+        this.name = 'CanceledError';
+    }
+}
 
-const backend_url = import.meta.env.VITE_BACKEND_URL
+const backend_url = import.meta.env.VITE_BACKEND_URL;
 
 const apiClient = axios.create({
     baseURL: backend_url,
@@ -48,7 +54,7 @@ apiClient.interceptors.response.use(
 
             try {
                 // Call the refresh token endpoint
-                const refreshResponse = await axios.post(backend_url + '/auth/refresh', {
+                const refreshResponse = await axios.post<{ accessToken: string; refreshToken: string }>(backend_url + '/auth/refresh', {
                     refreshToken: Cookies.get('refreshToken'),
                 });
                 const newAccessToken = refreshResponse.data.accessToken;
