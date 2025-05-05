@@ -1,16 +1,28 @@
+// src/components/VendorSearch/VendorSearch.tsx
+
 import React, { useState } from "react";
 import vendorService, { Vendor } from "../../services/vendors-service";
 import VendorDetail from "../Vendors/VendorDetail";
 import styles from "./VendorSearch.module.css";
 
+// Hard-coded default cover on your Express server:
+const DEFAULT_IMG = "http://localhost:4000/uploads/vendors/dj.png";
+
+type UIVendor = Vendor & {
+  about: string;
+  videoUrls: string[];
+  tabs: string[];
+  coverImage: string;  // ensure we always have this field
+};
+
 const VendorsSearch: React.FC = () => {
   const [vendorType, setVendorType] = useState("");
   const [city, setCity] = useState("");
   const [date, setDate] = useState("");
-  const [vendors, setVendors] = useState<Vendor[]>([]);
+  const [vendors, setVendors] = useState<UIVendor[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [selected, setSelected] = useState<Vendor | null>(null);
+  const [selected, setSelected] = useState<UIVendor | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,9 +32,28 @@ const VendorsSearch: React.FC = () => {
       return;
     }
     setLoading(true);
+
     try {
       const resp = await vendorService.fetchVendors(vendorType, city, date);
-      setVendors(resp.vendorList);
+
+      // Normalize each vendor so it has coverImage, about, videoUrls, tabs:
+      const normalized: UIVendor[] = resp.vendorList.map((v) => ({
+        ...v,
+        coverImage: (v as any).coverImage || DEFAULT_IMG,
+        about:       (v as any).about     || "No description available.",
+        videoUrls:   (v as any).videoUrls || [],
+        tabs: [
+          "About",
+          "Contacts",
+          "Photos & Videos",
+          "Reviews",
+          "Pricing",
+          "FAQs",
+          "Meet the Team",
+        ],
+      }));
+
+      setVendors(normalized);
     } catch {
       setError("Failed to load vendors.");
     } finally {
@@ -76,9 +107,10 @@ const VendorsSearch: React.FC = () => {
       </div>
 
       {selected && (
-        <VendorDetail vendor={{ ...selected, tabs: [
-          "About","Contacts","Photos & Videos","Reviews","Pricing","FAQs","Meet the Team"
-        ]}} onClose={() => setSelected(null)} />
+        <VendorDetail
+          vendor={selected}
+          onClose={() => setSelected(null)}
+        />
       )}
     </div>
   );

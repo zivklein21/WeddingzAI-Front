@@ -1,60 +1,52 @@
 .page {
-    padding: 2rem;
-    font-family: sans-serif;
+    padding: 16px;
   }
   
   .searchForm {
     display: flex;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
+    gap: 8px;
+    margin-bottom: 16px;
   }
   
   .searchForm input,
   .searchForm button {
-    padding: 0.5rem;
+    padding: 8px;
     font-size: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  
-  .searchForm button {
-    background: #d4af37;
-    color: white;
-    cursor: pointer;
-    border: none;
   }
   
   .error {
     color: red;
-    margin-bottom: 1rem;
+    margin: 8px 0;
   }
   
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
   }
   
   .card {
     position: relative;
-    height: 150px;
-    background-size: cover;
-    background-position: center;
-    border-radius: 6px;
+    height: 160px;
+    background-color: #ccc; /* fallback */
+    background-size: cover;         /* <<< ensure cover */
+    background-position: center;    /* <<< center the image */
+    border-radius: 8px;
     overflow: hidden;
     cursor: pointer;
   }
   
   .overlay {
     position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0, 0, 0, 0.3);
+    inset: 0;
+    background: rgba(0,0,0,0.3);
   }
   
   .card h3 {
     position: absolute;
-    bottom: 8px; left: 8px;
+    bottom: 8px;
+    left: 8px;
     margin: 0;
-    color: white;
-    text-shadow: 0 0 6px rgba(0,0,0,0.8);
+    color: #fff;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.7);
   }

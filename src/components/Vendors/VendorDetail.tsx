@@ -1,5 +1,9 @@
 import React from "react";
 import styles from "./VendorDetails.module.css";
+import { X } from "lucide-react";
+
+
+// src/components/Vendors/VendorDetail.tsx
 
 export interface VendorDetailProps {
   vendor: {
@@ -10,17 +14,13 @@ export interface VendorDetailProps {
     rating: number;
     price_range: string;
     about: string;
-    contact: {
-      phone: string;
-      email: string;
-      instagram: string | null;
-      facebook: string | null;
-    };
+    contact: { phone: string; email: string; instagram: string | null; facebook: string | null };
     reviews: { reviewer: string; rating: number; comment: string }[];
     coverImage: string;
     logoUrl: string;
     imageUrls: string[];
     videoUrls: string[];
+    tabs: string[];            // ← הוספת השדה פה
   };
   onClose: () => void;
 }
@@ -36,7 +36,7 @@ const VendorDetail: React.FC<VendorDetailProps> = ({ vendor, onClose }) => {
     <div className={styles.overlay} onClick={handleOverlayClick}>
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <button className={styles.closeBtn} onClick={onClose} aria-label="Close">
-          ✕
+          <X size={24} />
         </button>
 
         {/* Cover + Logo (hard-coded path) */}

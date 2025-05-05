@@ -12,9 +12,10 @@
     z-index: 1000;
   }
   
+  
   /* Modal container */
   .modal {
-    position: relative;
+    position: relative;         /* ← so children can be absolutely positioned */
     background: white;
     border-radius: 8px;
     width: 90vw;
@@ -29,16 +30,22 @@
     position: absolute;
     top: 12px;
     right: 12px;
-    background: rgba(255, 255, 255, 0.9);
+    z-index: 10;
+    background: white;
     border: none;
-    font-size: 1.4rem;
-    width: 32px;
-    height: 32px;
-    border-radius: 16px;
+    padding: 4px;
+    border-radius: 50%;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: black;
+    background: none;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
   }
   .closeBtn:hover {
-    background: rgba(255, 255, 255, 1);
+    color: white;
+    background: black;
   }
   
   /* Header with cover image */
