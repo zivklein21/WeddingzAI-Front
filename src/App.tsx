@@ -9,24 +9,24 @@ import BudgetPage from "./pages/BudgetPage";
 import WeddingDashboardPage from "./pages/WeddingDashoardPage";
 import AuthPage from "./pages/AuthPage";
 import VendorsSearchPage from "./pages/SearchVendorsPage";
-
-
-
-
+import { AuthProvider } from "./hooks/useAuth/AuthContext";
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/home" element={<HomePage />} />
-        <Route path="/plan" element={<PrefFormPage />} />
-        <Route path="/" element={<HomePage />} />
-        <Route path="/todolist" element={<TodoListPage />} />
-        <Route path="/budget" element={<BudgetPage/>} />
-        <Route path="/auth" element={<AuthPage />} />
-        <Route path="/weddash" element={<WeddingDashboardPage/>} /> 
-        <Route path="/vendor" element={<VendorsSearchPage/>} /> 
-      </Routes>
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          {/* Protected Pages */}
+          <Route path="/home" element={<HomePage />} />
+          <Route path="/plan" element={<PrefFormPage />} />
+          <Route path="/" element={<HomePage />} />
+          <Route path="/todolist" element={<TodoListPage />} />
+          <Route path="/budget" element={<BudgetPage />} />
+          <Route path="/auth" element={<AuthPage />} />
+          <Route path="/weddash" element={<WeddingDashboardPage />} />
+          <Route path="/vendor" element={<VendorsSearchPage />} />
+        </Routes>
+      </BrowserRouter >
+    </AuthProvider >
   );
 }
