@@ -63,3 +63,18 @@
     font-size: 15px;
     margin: 0;
 }
+
+
+.logoutButton {
+  background: none;
+  border: none;
+  color: black;
+  cursor: pointer;
+  font-weight: bold;
+  padding: 0;
+}
+
+.logoutButton:hover {
+  text-decoration: underline;
+  color: pink;
+}
