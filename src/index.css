@@ -1,14 +1,15 @@
 /* index.css - Global wedding-themed styles */
 
-
 :root {
    --wedding-pink: #f9e6f0;
-   --wedding-gold: #d4af37;
+   --wedding-black: #000000;
    --wedding-white: #ffffff;
+   --wedding-purple: #d2b1e5e1;
    --wedding-gray: #888888;
    --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
+ }
  
+ /* Reset & base */
  html, body {
    margin: 0;
    padding: 0;
@@ -17,63 +18,68 @@
    color: #333;
    min-height: 100vh;
    scroll-behavior: smooth;
-}
+ }
  
+ /* HEADERS: black by default, pink on hover */
  h1, h2, h3, h4 {
-   color: var(--wedding-gold);
+   color: var(--wedding-purple);  
    font-weight: 600;
    letter-spacing: 0.5px;
-}
- 
+   transition: color 0.2s ease;
+ }
+
+ /* LINKS: gold default, purple on hover */
  a {
    text-decoration: none;
-   color: var(--wedding-gold);
-}
+   color: var(--wedding-black);
+   transition: color 0.2s ease;
+ }
+ a:hover {
+   color: var(--wedding-purple);
+ }
  
- button {
-   font-family: inherit;
-   border: none;
-   cursor: pointer;
-   transition: all 0.3s ease;
-}
- 
- button:hover {
-   opacity: 0.9;
-}
- 
- input, select {
-   font-family: inherit;
-   border-radius: 6px;
-   padding: 0.5em;
-   border: 1px solid #ccc;
-   transition: border-color 0.2s;
-}
- 
- input:focus, select:focus {
-   border-color: var(--wedding-gold);
-   outline: none;
-}
- 
+ /* BUTTONS: black bg default, pink on hover */
  button {
    font-family: inherit;
    padding: 0.6em 1.4em;
    border: none;
    border-radius: 30px;
-   background-color: var(--wedding-gold);
+   background-color:var(--wedding-purple);         /* black background */
    color: white;
    font-weight: bold;
    letter-spacing: 0.5px;
    font-size: 1rem;
    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+   cursor: pointer;
    transition: background-color 0.3s ease, transform 0.2s ease;
-}
- 
+ }
  button:hover {
-   background-color: #c69c27; /* darker gold */
+   background-color: var(--wedding-pink); /* pink on hover */
    transform: translateY(-2px);
-}
- 
+ }
  button:active {
    transform: scale(0.98);
-}
+ }
  
+ /* FORMS */
+ input, select {
+   font-family: inherit;
+   border-radius: 6px;
+   padding: 0.5em;
+   border: 1px solid #ccc;
+   transition: border-color 0.2s ease;
+ }
+ input:focus, select:focus {
+   border-color: var(--wedding-black);
+   outline: none;
+ }
+ 
+ /* HORIZONTAL RULE */
+ hr {
+   border: none;
+   height: 1px;
+   background-color: #e0e0e0;
+   margin: 1rem 0;
+ }
+ 
+ /* Any other base button hover opacity rule is overridden above */
