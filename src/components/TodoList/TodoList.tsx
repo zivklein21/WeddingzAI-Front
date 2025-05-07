@@ -1,40 +1,35 @@
-import { useEffect, useState } from "react";
+// src/components/TodoList/TodoList.tsx
+
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import tdlService, { TdlData } from "../../services/tdl-service";
 import styles from "./TodoList.module.css";
 
-// Define interfaces for better TypeScript typing
-interface TodoItem {
-  task: string;
-  dueDate: string;
-  priority: string;
-}
-
-interface TodoSection {
-  sectionName: string;
-  todos: TodoItem[];
-}
-
-interface TodoListData {
-  weddingTodoListName: string;
-  bride: string;
-  groom: string;
-  weddingDate: string;
-  estimatedBudget: string;
-  sections: TodoSection[];
-}
-
 export default function TodoList() {
-  const [todoList, setTodoList] = useState<TodoListData | null>(null);
+  const [todoList, setTodoList] = useState<TdlData | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string>("");
   const navigate = useNavigate();
 
   useEffect(() => {
-    const storedList = localStorage.getItem("todoList");
-    if (storedList) {
-      setTodoList(JSON.parse(storedList));
-    } else {
-      navigate("/"); // Redirect to home if no to-do list is found
-    }
+    tdlService
+      .fetchMyTdl()
+      .then((list) => {
+        setTodoList(list);
+      })
+      .catch((err) => {
+        console.error(err);
+        setError(err.message || "Could not load your to-do list.");
+        // if you want to redirect when nothing found:
+        // navigate("/");
+      })
+      .finally(() => setLoading(false));
   }, [navigate]);
+
+  if (loading) return <p className={styles.loading}>Loading to-do list…</p>;
+  if (error) return <p className={styles.error}>{error}</p>;
+  if (!todoList)
+    return <p className={styles.noTasks}>No to-do list found. Please create one.</p>;
 
   return (
     <div className={styles.wrapper}>
