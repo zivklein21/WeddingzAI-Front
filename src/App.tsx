@@ -8,6 +8,7 @@ import HomePage from "./pages/HomePage";
 import BudgetPage from "./pages/BudgetPage";
 import WeddingDashboardPage from "./pages/WeddingDashoardPage";
 import AuthPage from "./pages/AuthPage";
+import DetailsMatterPage from "./pages/DetailsMatterPage";
 import { AuthProvider } from "./hooks/useAuth/AuthContext";
 import DJPage from "./pages/DJPage";
 import ScrapeDjPage from "./pages/scrape-dj-page";
@@ -27,6 +28,7 @@ export default function App() {
           <Route path="/auth" element={<AuthPage />} />
           <Route path="/weddash" element={<WeddingDashboardPage />} />
           <Route path="/vendor" element={<ScrapeDjPage />} />
+          <Route path="/details-matter" element={<DetailsMatterPage />} />
         </Routes>
       </BrowserRouter >
     </AuthProvider >
