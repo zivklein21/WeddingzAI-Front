@@ -18,7 +18,7 @@ const WeddingDashboardPage: React.FC = () => {
 
   return (
     <div>
-        <NavBar />
+      <NavBar />
       <WeddingDashboard />
     </div>
   );

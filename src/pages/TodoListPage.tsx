@@ -1,6 +1,7 @@
 import React from "react";
 import TodoList from "../components/TodoList/TodoList";
 import { useAuth } from "../hooks/useAuth/AuthContext";
+import { NavBar } from "../components/NavBar/NavBar";
 import { Navigate } from 'react-router-dom';
 
 const TodoListPage: React.FC = () => {
@@ -17,6 +18,7 @@ const TodoListPage: React.FC = () => {
 
   return (
     <div>
+      <NavBar />
       <TodoList />
     </div>
   );
