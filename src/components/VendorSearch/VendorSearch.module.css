@@ -1,0 +1,52 @@
+.page {
+    padding: 16px;
+  }
+  
+  .searchForm {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  
+  .searchForm input,
+  .searchForm button {
+    padding: 8px;
+    font-size: 1rem;
+  }
+  
+  .error {
+    color: red;
+    margin: 8px 0;
+  }
+  
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
+  }
+  
+  .card {
+    position: relative;
+    height: 160px;
+    background-color: #ccc; /* fallback */
+    background-size: cover;         /* <<< ensure cover */
+    background-position: center;    /* <<< center the image */
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+  }
+  
+  .overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.3);
+  }
+  
+  .card h3 {
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    margin: 0;
+    color: #fff;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.7);
+  }

@@ -2,13 +2,17 @@ import React from 'react';
 import styles from './NavBar.module.css';
 import logo from '../../assets/ wai-logo.svg';
 import userIcon from "../../assets/images/user-icon.svg";
-
-
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth/AuthContext';
 
 export const NavBar: React.FC = () => {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
 
+  const handleLogout = () => {
+    logout();              // clear auth
+    navigate('/auth');     // redirect to login
+  };
   return (
     <nav className={styles.navbar}>
       <div className={styles.logo}>
@@ -27,12 +31,11 @@ export const NavBar: React.FC = () => {
 
       {user ? (
         <div className={styles.authWrapper}>
-          {/* <img src={user.avatar || userIcon} alt="User Avatar" /> */}
           <img src={userIcon} alt="User Avatar" />
           <div>
             <div className={styles.authName}><strong>{user.firstPartner}</strong></div>
             <div className={styles.auth}>
-              <a href="/profile">Profile</a>
+              <a href="/profile">Profile</a> | <button onClick={handleLogout} className={styles.logoutButton}>Logout</button>
             </div>
           </div>
         </div>
@@ -42,12 +45,22 @@ export const NavBar: React.FC = () => {
           <div>
             <div className={styles.authName}><strong>Anonymous</strong></div>
             <div className={styles.auth}>
-              <a href="/auth?mode=login">Login</a> | <a href="/auth?mode=signup">Register</a>
-            </div>
+            {user ? (
+              <>
+                <a href="/profile">Profile</a> |{' '}
+                <a href="#" onClick={handleLogout} className={styles.logoutLink}>Logout</a>
+              </>
+            ) : (
+              <>
+                <a href="/auth?mode=login">Login</a> |{' '}
+                <a href="/auth?mode=signup">Register</a>
+              </>
+            )}
+          </div>
           </div>
         </div>
       )}
-  </nav>
+    </nav>
 
   );
 };

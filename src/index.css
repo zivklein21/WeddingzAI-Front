@@ -1,82 +1,85 @@
 /* index.css - Global wedding-themed styles */
 
-
 :root {
-    --wedding-pink: #e4a5ac;
-    --wedding-pink2: #d49098;
-    --wedding-white: #ffffff;
-    --wedding-black: #000000;
-    --wedding-gray: #888888;
-    --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+   --wedding-pink: #f9e6f0;
+   --wedding-black: #000000;
+   --wedding-white: #ffffff;
+   --wedding-purple: #d2b1e5e1;
+   --wedding-gray: #888888;
+   --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
  }
-  
-  html, body {
-    margin: 0;
-    padding: 0;
-    font-family: var(--font-main);
-    background: linear-gradient(to bottom right, var(--wedding-pink), var(--wedding-white));
-    color: #333;
-    min-height: 100vh;
-    scroll-behavior: smooth;
+ 
+ /* Reset & base */
+ html, body {
+   margin: 0;
+   padding: 0;
+   font-family: var(--font-main);
+   background: linear-gradient(to bottom right, var(--wedding-pink), var(--wedding-white));
+   color: #333;
+   min-height: 100vh;
+   scroll-behavior: smooth;
  }
-  
-  h1, h2, h3, h4 {
-    color: var(--wedding-black);
-    font-weight: 600;
-    letter-spacing: 0.5px;
+ 
+ /* HEADERS: black by default, pink on hover */
+ h1, h2, h3, h4 {
+   color: var(--wedding-purple);  
+   font-weight: 600;
+   letter-spacing: 0.5px;
+   transition: color 0.2s ease;
  }
-  
-  a {
-    text-decoration: none;
-    color: var(--wedding-pink);
+
+ /* LINKS: gold default, purple on hover */
+ a {
+   text-decoration: none;
+   color: var(--wedding-black);
+   transition: color 0.2s ease;
  }
-  
-  button {
-   color: var(--wedding-pink);
-    font-family: inherit;
-    border: none;
-    cursor: pointer;
-    transition: all 0.3s ease;
+ a:hover {
+   color: var(--wedding-purple);
  }
-  
-  button:hover {
-    opacity: 0.9;
-    background-color: var(--wedding-pink2);
+ 
+ /* BUTTONS: black bg default, pink on hover */
+ button {
+   font-family: inherit;
+   padding: 0.6em 1.4em;
+   border: none;
+   border-radius: 30px;
+   background-color:var(--wedding-purple);         /* black background */
+   color: white;
+   font-weight: bold;
+   letter-spacing: 0.5px;
+   font-size: 1rem;
+   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+   cursor: pointer;
+   transition: background-color 0.3s ease, transform 0.2s ease;
  }
-  
-  input, select {
-    font-family: inherit;
-    border-radius: 6px;
-    padding: 0.5em;
-    border: 1px solid #ccc;
-    transition: border-color 0.2s;
+ button:hover {
+   background-color: var(--wedding-pink); /* pink on hover */
+   transform: translateY(-2px);
  }
-  
-  input:focus, select:focus {
-    border-color: var(--wedding-pink2);
-    outline: none;
+ button:active {
+   transform: scale(0.98);
  }
-  
-  button {
-    font-family: inherit;
-    padding: 0.6em 1.4em;
-    border: none;
-    border-radius: 30px;
-    background-color: var(--wedding-pink);
-    color: white;
-    font-weight: bold;
-    letter-spacing: 0.5px;
-    font-size: 1rem;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-    transition: background-color 0.3s ease, transform 0.2s ease;
+ 
+ /* FORMS */
+ input, select {
+   font-family: inherit;
+   border-radius: 6px;
+   padding: 0.5em;
+   border: 1px solid #ccc;
+   transition: border-color 0.2s ease;
  }
-  
-  button:hover {
-    background-color: var(--wedding-pink2);
-    transform: translateY(-2px);
+ input:focus, select:focus {
+   border-color: var(--wedding-black);
+   outline: none;
  }
-  
-  button:active {
-    transform: scale(0.98);
+ 
+ /* HORIZONTAL RULE */
+ hr {
+   border: none;
+   height: 1px;
+   background-color: #e0e0e0;
+   margin: 1rem 0;
  }
-  
+ 
+ /* Any other base button hover opacity rule is overridden above */
