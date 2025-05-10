@@ -1,0 +1,38 @@
+/* src/components/DjsGrid/dj-grid.module.css */
+
+.grid {
+  margin-top: 120px;           /* optional spacing above grid */
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.card {
+  position: relative;
+  height: 160px;
+  background-color: #ccc;     /* fallback */
+  background-size: cover;
+  background-position: center;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.3);
+}
+
+.name {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  margin: 0;
+  color: #fff;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.7);
+}
+
+.error {
+  color: red;
+}
