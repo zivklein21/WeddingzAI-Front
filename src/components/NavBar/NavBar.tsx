@@ -45,8 +45,18 @@ export const NavBar: React.FC = () => {
           <div>
             <div className={styles.authName}><strong>Anonymous</strong></div>
             <div className={styles.auth}>
-              <a href="/auth?mode=login">Login</a> | <a href="/auth?mode=signup">Register</a>
-            </div>
+            {user ? (
+              <>
+                <a href="/profile">Profile</a> |{' '}
+                <a href="#" onClick={handleLogout} className={styles.logoutLink}>Logout</a>
+              </>
+            ) : (
+              <>
+                <a href="/auth?mode=login">Login</a> |{' '}
+                <a href="/auth?mode=signup">Register</a>
+              </>
+            )}
+          </div>
           </div>
         </div>
       )}
