@@ -48,7 +48,7 @@ export async function uploadFormJson(file: File): Promise<UploadResponse> {
   formData.append("file", file);
 
   const resp = await apiClient.post<UploadResponse>(
-    "/upload-form",
+    "/tdl/upload-form",
     formData,
     { headers: { "Content-Type": "multipart/form-data" } }
   );
@@ -61,7 +61,7 @@ export async function uploadFormJson(file: File): Promise<UploadResponse> {
  */
 export async function fetchMyTdl(): Promise<TdlData> {
   const resp = await apiClient.get<{ message: string; data: TdlDocument[] }>(
-    "/mine"
+    "/tdl/mine"
   );
   const docs = resp.data.data;
   if (!Array.isArray(docs) || docs.length === 0) {
