@@ -1,24 +1,55 @@
-import Budget from "../components/Budget/Budget";
+import { useBudget } from "../components/Budget/useBudget";
+import BudgetHeader from "../components/Budget/BudgetHeader";
+import CategoryList from "../components/Budget/CategoryList";
+import AddCategoryForm from "../components/Budget/AddCategoryForm";
 import { NavBar } from "../components/NavBar/NavBar";
-import { useAuth } from "../hooks/useAuth/AuthContext";
-import { Navigate } from 'react-router-dom';
 
 const BudgetPage: React.FC = () => {
+  const {
+    totalBudget,
+    categories,
+    loading: budgetLoading,
+    error,
+    hasBudget,
+    setTotalBudget,
+    setCategories,
+    saveBudget,
+  } = useBudget();
 
-  const { isAuthenticated, loading } = useAuth();
-
-  if (loading) {
+  if (budgetLoading) {
     return <h1>Loading...</h1>;
   }
 
-  if (!isAuthenticated) {
-    return <Navigate to="/auth" />;
+  if (error) {
+    return <p>{error}</p>;
   }
 
   return (
     <div>
       <NavBar />
-      <Budget />
+      <div>
+        <h2>Wedding Budget</h2>
+
+        <BudgetHeader
+          totalBudget={totalBudget}
+          setTotalBudget={setTotalBudget}
+          saveBudget={saveBudget}
+        />
+
+        <CategoryList
+          categories={categories}
+          setCategories={setCategories}
+          saveBudget={saveBudget}
+          totalBudget={totalBudget}
+        />
+
+        <AddCategoryForm
+          categories={categories}
+          setCategories={setCategories}
+          saveBudget={saveBudget}
+          totalBudget={totalBudget}
+        />
+      </div>
     </div>
   );
 };
