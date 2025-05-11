@@ -1,27 +1,13 @@
 import styles from "./budget.module.css";
+import { useBudget } from "./BudgetContext";
 
-interface Category {
-  name: string;
-  amount: number;
-}
+const CategoryList = () => {
+  const { categories, setCategories, saveBudget, totalBudget } = useBudget();
 
-interface CategoryListProps {
-  categories: Category[];
-  setCategories: (categories: Category[]) => void;
-  saveBudget: (categories: Category[], totalBudget: string) => Promise<void>;
-  totalBudget: string;
-}
-
-const CategoryList = ({
-  categories,
-  setCategories,
-  saveBudget,
-  totalBudget,
-}: CategoryListProps) => {
   const handleDelete = (index: number) => {
     const updated = categories.filter((_, i) => i !== index);
     setCategories(updated);
-    saveBudget(updated, totalBudget);
+    saveBudget();
   };
 
   if (categories.length === 0) {

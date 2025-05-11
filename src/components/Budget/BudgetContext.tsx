@@ -1,12 +1,43 @@
-import { useState, useEffect } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
 import {
   getBudget,
   createBudget,
   updateBudget,
 } from "../../services/budget-service";
-import { Budget, BudgetCategory } from "../../types/index";
 
-export function useBudget() {
+export interface BudgetCategory {
+  name: string;
+  amount: number;
+}
+
+export interface Budget {
+  totalBudget: number;
+  categories: BudgetCategory[];
+}
+
+interface BudgetContextType {
+  totalBudget: string;
+  categories: BudgetCategory[];
+  loading: boolean;
+  error: string | null;
+  hasBudget: boolean;
+  setTotalBudget: (value: string) => void;
+  setCategories: (categories: BudgetCategory[]) => void;
+  saveBudget: (
+    categories: BudgetCategory[],
+    totalBudget: string
+  ) => Promise<void>;
+}
+
+const BudgetContext = createContext<BudgetContextType | undefined>(undefined);
+
+export const BudgetProvider = ({ children }: { children: ReactNode }) => {
   const [totalBudget, setTotalBudget] = useState("");
   const [categories, setCategories] = useState<BudgetCategory[]>([]);
   const [loading, setLoading] = useState(true);
@@ -46,25 +77,41 @@ export function useBudget() {
         totalBudget: parseFloat(updatedTotalBudget) || 0,
         categories: updatedCategories,
       };
+
       if (hasBudget) {
-        await updateBudget(budget).request;
+        await updateBudget(budget);
       } else {
-        await createBudget(budget).request;
+        await createBudget(budget);
         setHasBudget(true);
       }
-    } catch {
+    } catch (error) {
+      console.error("Failed to save budget:", error);
       setError("Failed to save budget.");
     }
   };
 
-  return {
-    totalBudget,
-    categories,
-    loading,
-    error,
-    hasBudget,
-    setTotalBudget,
-    setCategories,
-    saveBudget,
-  };
-}
+  return (
+    <BudgetContext.Provider
+      value={{
+        totalBudget,
+        categories,
+        loading,
+        error,
+        hasBudget,
+        setTotalBudget,
+        setCategories,
+        saveBudget,
+      }}
+    >
+      {children}
+    </BudgetContext.Provider>
+  );
+};
+
+export const useBudget = () => {
+  const context = useContext(BudgetContext);
+  if (!context) {
+    throw new Error("useBudget must be used within a BudgetProvider");
+  }
+  return context;
+};

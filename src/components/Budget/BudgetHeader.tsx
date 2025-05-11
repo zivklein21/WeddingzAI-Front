@@ -1,21 +1,13 @@
 import { useState } from "react";
 import styles from "./budget.module.css";
+import { useBudget } from "./BudgetContext";
 
-interface BudgetHeaderProps {
-  totalBudget: string;
-  setTotalBudget: (value: string) => void;
-  saveBudget: (categories: any[], total: string) => Promise<void>;
-}
-
-const BudgetHeader = ({
-  totalBudget,
-  setTotalBudget,
-  saveBudget,
-}: BudgetHeaderProps) => {
+const BudgetHeader = () => {
+  const { totalBudget, setTotalBudget, saveBudget, categories } = useBudget();
   const [isEditing, setIsEditing] = useState(false);
 
   const handleSave = async () => {
-    await saveBudget([], totalBudget); // pass empty categories for now
+    await saveBudget(categories, totalBudget);
     setIsEditing(false);
   };
 

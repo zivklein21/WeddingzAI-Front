@@ -1,28 +1,14 @@
 import { useState } from "react";
 import styles from "./budget.module.css";
+import { useBudget } from "./BudgetContext";
 
-interface Category {
-  name: string;
-  amount: number;
-}
-
-interface AddCategoryFormProps {
-  categories: Category[];
-  setCategories: (categories: Category[]) => void;
-  saveBudget: (categories: Category[], totalBudget: string) => Promise<void>;
-  totalBudget: string;
-}
-
-const AddCategoryForm = ({
-  categories,
-  setCategories,
-  saveBudget,
-  totalBudget,
-}: AddCategoryFormProps) => {
+const AddCategoryForm = () => {
   const [name, setName] = useState("");
   const [amount, setAmount] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const { categories, setCategories, saveBudget, totalBudget } = useBudget();
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim() || !amount.trim()) return;
 
@@ -32,8 +18,8 @@ const AddCategoryForm = ({
     };
 
     const updated = [...categories, newCategory];
-    setCategories(updated);
-    saveBudget(updated, totalBudget);
+    await saveBudget(updated, totalBudget); // שמירה מדויקת ל-DB
+    setCategories(updated); // עדכון מקומי של state
     setName("");
     setAmount("");
   };
