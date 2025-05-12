@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import './guest-page.css'; // Make sure this file exists and is imported
+import './GuestList.module.css'; // Make sure this file exists and is imported
 
 interface Guest {
   _id: string;
