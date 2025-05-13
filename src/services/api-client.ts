@@ -1,36 +1,38 @@
-import axios, { CanceledError } from "axios";
+import axios from "axios";
 import Cookies from "js-cookie";
 
-export { CanceledError };
+// Export CanceledError for use in other services
+export class CanceledError extends Error {
+  constructor(message?: string) {
+    super(message);
+    this.name = "CanceledError";
+  }
+}
 
-const backend_url = import.meta.env.VITE_BACKEND_URL
-
-
-
-
+const backend_url = import.meta.env.VITE_BACKEND_URL;
 
 const apiClient = axios.create({
-    baseURL: backend_url,
-    headers: { 'Content-Type': 'application/json' },
+  baseURL: backend_url,
+  headers: { "Content-Type": "application/json" },
 });
-
-
-
 
 // Attach access token to every request
 apiClient.interceptors.request.use(
-    (config) => {
-        const accessToken = Cookies.get("accessToken");
+  (config) => {
 
-        if (accessToken) {
-            config.headers.Authorization = `Bearer ${accessToken}`;
-        }
+    const accessToken = Cookies.get("accessToken");
 
-        return config;
-    }, (error) => {
-        return Promise.reject(error);
-    });
+    if (accessToken) {
+      config.headers = config.headers || {};
+      config.headers.Authorization = `Bearer ${accessToken}`;
+    }
 
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
 // Handle token expiration
 apiClient.interceptors.response.use(
@@ -76,7 +78,9 @@ apiClient.interceptors.response.use(
 
         return Promise.reject(error);
     }
-);
 
+    return Promise.reject(error);
+  }
+);
 
 export default apiClient;

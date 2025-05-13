@@ -5,7 +5,7 @@ import { Routes, Route, BrowserRouter } from "react-router-dom";
 import PrefFormPage from "./pages/PrefFormPage";
 import TodoListPage from "./pages/TodoListPage";
 import HomePage from "./pages/HomePage";
-import BudgetPage from "./pages/BudgetPage";
+import BudgetPage from "./pages/BudgetPage/BudgetPage";
 import WeddingDashboardPage from "./pages/WeddingDashoardPage";
 import AuthPage from "./pages/AuthPage";
 import DetailsMatterPage from "./pages/DetailsMatterPage";
@@ -32,7 +32,7 @@ export default function App() {
           <Route path="/details-matter" element={<DetailsMatterPage />} />
           <Route path="/guests" element={<GuestPage />} />
         </Routes>
-      </BrowserRouter >
-    </AuthProvider >
+      </BrowserRouter>
+    </AuthProvider>
   );
 }

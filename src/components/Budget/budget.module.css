@@ -1,170 +1,162 @@
-/* General Layout */
-.main {
-  min-height: 100vh;
-  background: url('../../assets/images/main-bg.png') no-repeat center center;
-  background-size: cover;
-  position: relative;
-  padding-bottom: 2rem;
-}
-
-.budgetContainer {
-  max-width: 800px;
-  margin: 2rem auto;
-  padding: 2rem;
-  background: linear-gradient(to bottom, #fff5f8, #ffeef2);
-  border-radius: 20px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-  font-family: "Segoe UI", sans-serif;
-}
-
-/* Headings */
-.budgetTitle {
-  margin-top: 50px;
-  font-size: 2rem;
-  font-weight: 700;
-  color: #2e2e2e;
-  text-align: center;
-  margin-bottom: 0.5rem;
-}
-
-.budgetSubtitle {
-  font-size: 1rem;
-  text-align: center;
-  color: #666;
-  margin-bottom: 2rem;
-}
-
-/* Input Fields */
-.budgetInput {
-  width: 100%;
-  padding: 0.75rem 1rem;
-  border-radius: 10px;
-  border: 1px solid #ddd;
-  font-size: 1rem;
-  margin-top: 0.25rem;
-  transition: 0.2s ease;
-}
-
-.budgetInput:focus {
-  outline: none;
-  border-color: #ffb6c1;
-  box-shadow: 0 0 0 2px #ffe4e9;
-}
-
-/* Add Category Section */
-.addCategoryCard {
-  background-color: white;
-  border-radius: 16px;
-  padding: 1rem;
-  margin-bottom: 1.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+.budgetHeader {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1.2rem 0;
+  min-height: 48px; /* גובה מינימלי נעים */
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.headerLabel {
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.budgetInput {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 120px;
+  font-size: 1rem;
+  text-align: right;
+}
+
+.budgetAmount {
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.editBtn,
+.saveBtn {
+  background-color: #f48fb1;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1rem; /* יותר מרווח ונעים */
+  font-size: 0.9rem;
+  font-weight: 500;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* צל קל */
+  transition: background-color 0.3s ease;
+}
+
+.categoryList {
+  list-style: none;
+  padding: 0;
+  margin: 1rem auto;
+  max-width: 400px;
+}
+
+.categoryItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #e0e0e0;
   gap: 1rem;
 }
 
-/* Category Cards */
-.categoryCard {
-  background: white;
-  padding: 1rem 1.5rem;
-  border-radius: 16px;
-  border: 1px solid #ddd;
-  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.06);
+.categoryActions {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  transition: all 0.3s ease-in-out;
+  gap: 0.4rem;
 }
 
-/* Category Card Header */
-.categoryHeader,
-.category-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
-  font-weight: 600;
-  color: #444;
-  padding-bottom: 8px;
-  border-bottom: 1px solid #eee;
-  cursor: pointer;
-}
-
-/* Category Title */
-.categoryTitle {
-  display: flex;
-  align-items: center;
-  font-weight: bold;
-  color: #333;
-}
-
-.categoryTitle svg {
-  margin-right: 8px;
-  color: #666;
-}
-
-/* Category Cost */
-.categoryCost {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+.categoryName {
   font-weight: 500;
-  color: #333;
+  font-size: 1rem;
 }
 
-.actualCost {
-  font-size: 14px;
-  color: #666;
+.categoryAmount {
+  font-size: 1rem;
+  color: #555;
+  margin-left: 1rem;
 }
 
-.costAmount {
-  font-weight: bold;
-  font-size: 16px;
-  color: #333;
-}
-
-/* Delete Icon */
-.deleteIcon {
-  cursor: 'pointer';
-  color: 'red';
-  fontSize: '1.2rem';
-}
-
-/* Add Item Link */
-.newItem {
-  margin-top: 8px;
-  font-size: 14px;
-  color: #007bff;
+.confirmBtn,
+.cancelBtn,
+.categoryEditBtn,
+.deleteBtn {
+  background: transparent;
+  border: 1px solid #f48fb1;
+  color: #f48fb1;
+  font-size: 1.2rem;
   cursor: pointer;
-  transition: color 0.2s;
+  transition: all 0.3s ease;
+  padding: 0.5rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  width: 32px;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
-.newItem:hover {
-  color: #0056b3;
+.confirmBtn:hover,
+.cancelBtn:hover,
+.categoryEditBtn:hover,
+.deleteBtn:hover {
+  color: #ec407a;
 }
 
-/* Buttons */
+.emptyMessage {
+  text-align: center;
+  color: #999;
+  font-style: italic;
+  margin-top: 1rem;
+}
+
+.editBtn:hover,
+.saveBtn:hover {
+  background-color: #ec407a;
+}
+
+.addCategoryForm {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+}
+
+.categoryInput {
+  padding: 0.6rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  min-width: 160px;
+  background-color: #fff;
+}
+
 .addBtn {
-  background-color: #ffb6c1;
-  color: white;
-  font-weight: bold;
-  padding: 0.75rem 1.5rem;
+  background-color: #f48fb1;
+  color: #fff;
   border: none;
-  border-radius: 12px;
+  border-radius: 8px;
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  font-weight: 500;
   cursor: pointer;
-  transition: background 0.3s ease;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .addBtn:hover {
-  background-color: #ff8fab;
+  background-color: #ec407a;
 }
 
-/* Pie Chart Container */
-.chartSection {
-  margin-top: 2rem;
-  justify-self: center;
-  background: white;
-  border-radius: 20px;
-  padding: 2rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+.chartContainer {
+  max-width: 400px;
+  margin: 3rem auto;
+  text-align: center;
+}
+
+.totalRow {
+  text-align: center;
+  font-weight: bold;
+  margin-top: 1rem;
+  font-size: 1.1rem;
+  color: #444;
 }
