@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styles from "./ProfileForm.module.css";
 import { useAuth } from "../../hooks/useAuth/AuthContext";
 import defaultAvatar from "../../assets/images/user-icon.svg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faImage, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
+import { faImage } from "@fortawesome/free-solid-svg-icons";
+import fileService from "../../services/file-service";
 
 interface UserDetails {
   username: string;
@@ -14,7 +15,7 @@ interface UserDetails {
 }
 
 const Profile = () => {
-  const [userDetails, setUserDetails] = useState({
+  const [userDetails, setUserDetails] = useState<UserDetails>({
     username: "",
     email: "",
     firstPartner: "",
@@ -22,18 +23,10 @@ const Profile = () => {
     avatar: defaultAvatar,
   });
 
-  const fileInputRef = React.useRef<HTMLInputElement>(null);
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setUserDetails((prev) => ({ ...prev, avatar: imageUrl }));
-    }
-  };
-
+  const [newAvatarFile, setNewAvatarFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { user, updateUserSession } = useAuth();
 
-  // Get User Details
   useEffect(() => {
     if (user) {
       setUserDetails({
@@ -43,7 +36,7 @@ const Profile = () => {
         secondPartner: user.secondPartner || "",
         avatar:
           user.avatar && user.avatar.trim() !== ""
-            ? user.avatar.startsWith("/storage/")
+            ? user.avatar.startsWith("/uploads/")
               ? user.avatar
               : user.avatar
             : defaultAvatar,
@@ -51,14 +44,46 @@ const Profile = () => {
     }
   }, [user]);
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setNewAvatarFile(file); // keep reference to file
+      const previewUrl = URL.createObjectURL(file);
+      setUserDetails((prev) => ({ ...prev, avatar: previewUrl }));
+    }
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUserDetails({ ...userDetails, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault(); // prevent page reload
-    console.log("Updated details:", userDetails);
-    // future: send userDetails to backend via fetch/axios
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    let avatarUrl = userDetails.avatar;
+
+    if (newAvatarFile) {
+      try {
+        const formData = new FormData();
+        formData.append("file", newAvatarFile);
+        const response = await fileService.uploadImageFile(newAvatarFile);
+
+        // Adjust this if your backend returns `url` instead of `fileName`
+        avatarUrl = response.data.url;
+        console.log("Uploaded avatar URL:", avatarUrl);
+      } catch (err) {
+        console.error("Error uploading avatar", err);
+        return;
+      }
+    }
+
+    const updatedDetails = {
+      ...userDetails,
+      avatar: avatarUrl,
+    };
+
+    console.log("Final details to submit:", updatedDetails);
+    // In the future: send `updatedDetails` to your backend user update route
   };
 
   return (
@@ -88,6 +113,7 @@ const Profile = () => {
             />
           </div>
           <form className={styles.infoSection} onSubmit={handleSubmit}>
+            {/* Input fields */}
             <div className={styles.infoItem}>
               <label>Username:</label>
               <input
