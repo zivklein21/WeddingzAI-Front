@@ -100,7 +100,7 @@ export default function AuthForm() {
       secondPartner: data.secondPartner,
       email: data.email,
       password: data.password,
-      avatar: "../../assets/wai-logo.svg",
+      avatar: "../../assets/images/user-icon.svg",
     };
 
     try {

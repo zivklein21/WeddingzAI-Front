@@ -82,7 +82,7 @@ apiClient.interceptors.response.use(
         Cookies.remove("user");
 
         // Redirect to login if refresh fails
-        window.location.href = "/auth";
+        // window.location.href = "/auth";
         return Promise.reject(refreshError);
       }
     }

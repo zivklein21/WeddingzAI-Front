@@ -47,11 +47,22 @@
     flex-shrink: 0;
 }
 
-.avatar {
+.avatarWrapper {
     width: 100px;
     height: 100px;
     border-radius: 50%;
     border: 3px solid #ffb6c1;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.avatar {
+    width: 140%;
+    height: 140%;
+    object-fit: cover;
+    object-position: center;
 }
 
 .infoSection {
