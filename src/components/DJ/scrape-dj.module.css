@@ -1,0 +1,43 @@
+
+/* src/pages/ScrapeDjPage.module.css */
+
+.page {
+  max-width: 600px;
+  font-family: sans-serif;
+}
+
+h1 {
+  padding-top: 120px;
+  text-align: center;
+}
+
+.section {
+  margin-bottom: 2rem;
+}
+
+.form {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.form input {
+  flex: 1;
+  padding: 0.5rem;
+  font-size: 1rem;
+}
+
+.form button {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.status {
+  margin-top: 1rem;
+  color: green;
+}
+
+.error {
+  margin-top: 1rem;
+  color: red;
+}
