@@ -44,7 +44,9 @@
 }
 
 .avatarSection {
-    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .avatarWrapper {
@@ -106,4 +108,25 @@
 
 .updateBtn:hover {
     background-color: #ff8fab;
+}
+
+.uploadBtn {
+    margin-top: 10px;
+    padding: 6px 12px;
+    background-color: #ffb6c1;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s;
+}
+
+.uploadBtn:hover {
+    background-color: #ff9eb0;
+}
+
+.fa-l {
+    font-size: 1.1rem;
+    padding: 0 30px;
 }

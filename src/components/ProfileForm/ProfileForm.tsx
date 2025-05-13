@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import styles from "./ProfileForm.module.css";
 import { useAuth } from "../../hooks/useAuth/AuthContext";
 import defaultAvatar from "../../assets/images/user-icon.svg";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faImage, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 
 interface UserDetails {
   username: string;
@@ -19,7 +21,15 @@ const Profile = () => {
     secondPartner: "",
     avatar: defaultAvatar,
   });
-  
+
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setUserDetails((prev) => ({ ...prev, avatar: imageUrl }));
+    }
+  };
 
   const { user, updateUserSession } = useAuth();
 
@@ -62,6 +72,20 @@ const Profile = () => {
             <div className={styles.avatarWrapper}>
               <img src={userDetails.avatar} alt="Avatar" className={styles.avatar} />
             </div>
+            <button
+              type="button"
+              className={styles.uploadBtn}
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <FontAwesomeIcon icon={faImage} className={styles["fa-l"]} />
+            </button>
+            <input
+              type="file"
+              accept="image/*"
+              ref={fileInputRef}
+              style={{ display: "none" }}
+              onChange={handleFileChange}
+            />
           </div>
           <form className={styles.infoSection} onSubmit={handleSubmit}>
             <div className={styles.infoItem}>
