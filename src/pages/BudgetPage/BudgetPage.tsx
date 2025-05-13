@@ -21,14 +21,13 @@ const InnerBudgetPage = () => {
   const { categories, totalBudget } = useBudget();
 
   return (
-    <div>
+    <div className={styles.pageWrapper}>
       <NavBar />
       <div>
-        <h2>Wedding Budget</h2>
         <div id="budget-export">
           <BudgetHeader />
-          <CategoryList />
           <AddCategoryForm />
+          <CategoryList />
         </div>
         <button
           className={styles.exportBtn}
