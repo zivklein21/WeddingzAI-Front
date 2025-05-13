@@ -5,10 +5,25 @@ import { useBudget } from "./BudgetContext";
 const CategoryList = () => {
   const { categories, setCategories, saveBudget, totalBudget } = useBudget();
 
+  const [editIndex, setEditIndex] = useState<number | null>(null);
+  const [editedName, setEditedName] = useState("");
+  const [editedAmount, setEditedAmount] = useState("");
+
   const handleDelete = (index: number) => {
     const updated = categories.filter((_, i) => i !== index);
     setCategories(updated);
     saveBudget(updated, totalBudget);
+  };
+
+  const handleUpdate = (index: number) => {
+    const updated = categories.map((item, i) =>
+      i === index
+        ? { name: editedName, amount: parseFloat(editedAmount) || 0 }
+        : item
+    );
+    setCategories(updated);
+    saveBudget(updated, totalBudget);
+    setEditIndex(null);
   };
 
   if (categories.length === 0) {
@@ -19,22 +34,7 @@ const CategoryList = () => {
     <>
       <ul className={styles.categoryList}>
         {categories.map((cat, index) => {
-          const [isEditing, setIsEditing] = useState(false);
-          const [editedName, setEditedName] = useState(cat.name);
-          const [editedAmount, setEditedAmount] = useState(
-            cat.amount.toString()
-          );
-
-          const handleUpdate = () => {
-            const updated = categories.map((item, i) =>
-              i === index
-                ? { name: editedName, amount: parseFloat(editedAmount) || 0 }
-                : item
-            );
-            setCategories(updated);
-            saveBudget(updated, totalBudget);
-            setIsEditing(false);
-          };
+          const isEditing = editIndex === index;
 
           return (
             <li key={index} className={styles.categoryItem}>
@@ -54,14 +54,14 @@ const CategoryList = () => {
                   />
                   <button
                     className={styles.confirmBtn}
-                    onClick={handleUpdate}
+                    onClick={() => handleUpdate(index)}
                     title="Confirm"
                   >
                     ✔
                   </button>
                   <button
                     className={styles.cancelBtn}
-                    onClick={() => setIsEditing(false)}
+                    onClick={() => setEditIndex(null)}
                     title="Cancel"
                   >
                     ✕
@@ -75,9 +75,9 @@ const CategoryList = () => {
                     <button
                       className={styles.categoryEditBtn}
                       onClick={() => {
+                        setEditIndex(index);
                         setEditedName(cat.name);
                         setEditedAmount(cat.amount.toString());
-                        setIsEditing(true);
                       }}
                     >
                       ✎
@@ -100,6 +100,13 @@ const CategoryList = () => {
         {categories
           .reduce((sum, cat) => sum + (Number(cat.amount) || 0), 0)
           .toLocaleString()}
+      </p>
+      <p className={styles.totalRow}>
+        Remaining Budget: $
+        {(
+          parseFloat(totalBudget) -
+          categories.reduce((sum, cat) => sum + (Number(cat.amount) || 0), 0)
+        ).toLocaleString()}
       </p>
     </>
   );
