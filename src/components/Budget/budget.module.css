@@ -53,6 +53,12 @@
   align-items: center;
   padding: 0.5rem 0;
   border-bottom: 1px solid #e0e0e0;
+  gap: 1rem;
+}
+
+.categoryActions {
+  display: flex;
+  gap: 0.4rem;
 }
 
 .categoryName {
@@ -66,14 +72,17 @@
   margin-left: 1rem;
 }
 
+.confirmBtn,
+.cancelBtn,
+.categoryEditBtn,
 .deleteBtn {
   background: transparent;
-  border: none;
+  border: 1px solid #f48fb1;
   color: #f48fb1;
   font-size: 1.2rem;
   cursor: pointer;
-  transition: color 0.3s ease;
-  padding: 0.2rem;
+  transition: all 0.3s ease;
+  padding: 0.5rem;
   line-height: 1;
   display: flex;
   align-items: center;
@@ -81,8 +90,12 @@
   height: 32px;
   width: 32px;
   border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
+.confirmBtn:hover,
+.cancelBtn:hover,
+.categoryEditBtn:hover,
 .deleteBtn:hover {
   color: #ec407a;
 }
