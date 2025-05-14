@@ -4,7 +4,7 @@ import apiClient, { CanceledError } from "./api-client";
 export { CanceledError };
 
 export interface Dj {
-  id: string;
+  _id: string;
   name: string;
   genre?: string;
   location?: string;
