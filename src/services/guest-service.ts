@@ -22,19 +22,25 @@ export const fetchAllGuests = async (): Promise<Guest[]> => {
   return resp.data.data;
 };
 
-// 2. GET /guests/:id
+// 2. GET /guests/mine
+export const fetchMyGuests = async (): Promise<Guest[]> => {
+  const resp = await apiClient.get<BaseResponse<Guest[]>>("/guests/mine");
+  return resp.data.data;
+};
+
+// 3. GET /guests/:id
 export const fetchGuestById = async (id: string): Promise<Guest> => {
   const resp = await apiClient.get<BaseResponse<Guest>>(`/guests/${id}`);
   return resp.data.data;
 };
 
-// 3. DELETE /guests/:id
+// 4. DELETE /guests/:id
 export const deleteGuest = async (id: string): Promise<Guest> => {
   const resp = await apiClient.delete<BaseResponse<Guest>>(`/guests/${id}`);
   return resp.data.data;
 };
 
-// 4. POST /guests — create guest
+// 5. POST /guests — create guest
 export const createGuest = async (guest: {
   fullName: string;
   email: string;
@@ -47,6 +53,7 @@ export const createGuest = async (guest: {
 
 export default {
   fetchAllGuests,
+  fetchMyGuests,
   fetchGuestById,
   deleteGuest,
   createGuest,
