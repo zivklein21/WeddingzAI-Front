@@ -1,210 +1,237 @@
-// src/components/DjDetail/DjDetailAnchored.tsx
-
-import React, { useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import Modal from 'react-modal';
+import {
+  Facebook,
+  Instagram,
+  Globe,
+  X,
+} from 'lucide-react';
 import styles from './dj-details.module.css';
-import { X } from 'lucide-react';
-
-export interface Review { reviewer: string; rating: number; comment: string }
-export interface Faq    { question: string; answer: string }
-
-export interface Dj {
-  name: string;
-  rating?: number;
-  coverImage?: string;
-  profileImage?: string;
-  facebookUrl?: string;
-  instagramUrl?: string;
-  location?: string;
-  priceRange?: string;
-  about?: string;
-  eventImages?: string[];
-  reviews?: Review[];
-  faqs?: Faq[];
-}
-
-export interface DjDetailProps { dj: Dj; onClose: () => void }
-
-const SECTIONS = [
-  { id: 'about',   label: 'About',    predicate: (dj: Dj) => !!dj.about },
-  { id: 'contact', label: 'Contact',  predicate: (dj: Dj) => !!(dj.location || dj.facebookUrl || dj.instagramUrl) },
-  { id: 'details', label: 'Details',  predicate: (dj: Dj) => !!dj.location /* or other detail fields */ },
-  { id: 'photos',  label: 'Photos',   predicate: (dj: Dj) => (dj.eventImages?.length ?? 0) > 0 },
-  { id: 'pricing', label: 'Pricing',  predicate: (dj: Dj) => !!dj.priceRange },
-  { id: 'faqs',    label: 'FAQs',     predicate: (dj: Dj) => (dj.faqs?.length ?? 0) > 0 },
-  { id: 'reviews', label: 'Reviews',  predicate: (dj: Dj) => (dj.reviews?.length ?? 0) > 0 },
-];
 
 Modal.setAppElement('#root');
 
-const DjDetailAnchored: React.FC<DjDetailProps> = ({ dj, onClose }) => {
-  const [lightboxSrc, setLightboxSrc] = useState<string|null>(null);
-  const [openFaq, setOpenFaq]         = useState<number|null>(null);
+export interface BrideReview {
+  reviewer: string;
+  date:     string;
+  comment:  string;
+}
+
+export interface Faq {
+  question: string;
+  answer:   string;
+}
+
+export interface Dj {
+  _id:          string;
+  name:         string;
+  rating?:      number;
+  coverImage?:  string;
+  profileImage: string;
+  about?:       string;
+  price_range?: string;
+  services?:    string;
+  area?:        string;
+  hour_limits?: string;
+  genres?:      string;
+  eventImages?: string[];
+  faqs?:        Faq[];
+  brideReviews?:BrideReview[];
+  socialMedia?: {
+    facebook?:  string;
+    instagram?: string;
+    website?:   string;
+  };
+  sourceUrl?:   string;
+}
+
+interface Props {
+  dj:      Dj;
+  isOpen:  boolean;
+  onClose: () => void;
+}
+
+const DjDetailModal: React.FC<Props> = ({ dj, isOpen, onClose }) => {
+  const [openFaq, setOpenFaq]               = useState<number|null>(null);
   const [expandedReview, setExpandedReview] = useState<number|null>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
 
-  const BEX     = import.meta.env.VITE_BACKEND_URL || '';
-  const rawPath = dj.coverImage ?? dj.profileImage ?? '';
-  const coverUrl = rawPath.startsWith('http') ? rawPath : `${BEX}${rawPath}`;
+  // scroll to top whenever opened
+  useEffect(() => {
+    if (isOpen && contentRef.current) {
+      contentRef.current.scrollTop = 0;
+    }
+  }, [isOpen]);
 
-  // filter nav for only sections with data
-  const navSections = SECTIONS.filter(s => s.predicate(dj));
+  // Presence checks
+  const has = {
+    about:    !!dj.about?.trim(),
+    details:  dj.price_range || dj.services || dj.area || dj.hour_limits || dj.genres,
+    photos:   Array.isArray(dj.eventImages) && dj.eventImages.length > 0,
+    faqs:     Array.isArray(dj.faqs)        && dj.faqs!.length > 0,
+    reviews:  Array.isArray(dj.brideReviews)&& dj.brideReviews!.length > 0,
+    contact:  !!(dj.socialMedia?.facebook || dj.socialMedia?.instagram || dj.socialMedia?.website),
+  };
+
+  const scrollTo = (id: string) => {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
   return (
-    <>
-      <div className={styles.overlay} onClick={onClose}>
-        <div className={styles.container} onClick={e=>e.stopPropagation()}>
-          <button className={styles.close} onClick={onClose}><X size={24}/></button>
+    <Modal
+      isOpen={isOpen}
+      onRequestClose={onClose}
+      overlayClassName={styles.overlay}
+      className={styles.modal}
+    >
+      <button className={styles.closeBtn} onClick={onClose}>
+        <X size={24} />
+      </button>
 
-          {/* Cover + Name */}
-          {rawPath && (
-            <div className={styles.coverWrapper}>
-              <div
-                className={styles.cover}
-                style={{ backgroundImage: `url(${coverUrl})` }}
-              />
-              <div className={styles.nameOverlay}>
-                <h1 className={styles.djName}>{dj.name}</h1>
-              </div>
+      <header className={styles.header}>
+        {dj.profileImage && (
+          <img
+            className={styles.avatar}
+            src={dj.profileImage}
+            alt={dj.name}
+          />
+        )}
+        <h1 className={styles.title}>{dj.name}</h1>
+      </header>
+
+      <nav className={styles.nav}>
+        {has.about   && <button onClick={() => scrollTo('about')}>About</button>}
+        {has.details && <button onClick={() => scrollTo('details')}>Details</button>}
+        {has.photos  && <button onClick={() => scrollTo('photos')}>Photos</button>}
+        {has.faqs    && <button onClick={() => scrollTo('faqs')}>FAQs</button>}
+        {has.reviews && <button onClick={() => scrollTo('reviews')}>Bride’s Words</button>}
+        {has.contact && <button onClick={() => scrollTo('contact')}>Contact</button>}
+      </nav>
+
+      <div className={styles.content} ref={contentRef}>
+
+        {has.about && (
+          <section id="about" className={styles.section}>
+            <h2>About</h2>
+            <p>{dj.about}</p>
+          </section>
+        )}
+
+        {has.details && (
+          <section id="details" className={styles.section}>
+            <h2>Details</h2>
+            <ul>
+              {dj.price_range && (
+                <li><strong>price range:</strong> {dj.price_range}</li>
+              )}
+              {dj.services && (
+                <li><strong>services:</strong> {dj.services}</li>
+              )}
+              {dj.area && (
+                <li><strong>area:</strong> {dj.area}</li>
+              )}
+              {dj.hour_limits && (
+                <li><strong>hour limits:</strong> {dj.hour_limits}</li>
+              )}
+              {dj.genres && (
+                <li><strong>genres:</strong> {dj.genres}</li>
+              )}
+            </ul>
+          </section>
+        )}
+
+        {has.photos && (
+          <section id="photos" className={styles.section}>
+            <h2>Photos</h2>
+            <div className={styles.photosGrid}>
+              {dj.eventImages!.map((src, i) => (
+                <img
+                  key={i}
+                  src={src}
+                  alt={`Event photo ${i+1}`}
+                  loading="lazy"
+                />
+              ))}
             </div>
-          )}
+          </section>
+        )}
 
-          {/* Nav */}
-          <nav className={styles.nav}>
-            {navSections.map(s => (
-              <a key={s.id} href={`#${s.id}`} className={styles.navLink}>
-                {s.label}
-              </a>
+        {has.faqs && (
+          <section id="faqs" className={styles.section}>
+            <h2>FAQs</h2>
+            {dj.faqs!.map((f, i) => (
+              <div key={i} className={styles.faqItem}>
+                <button
+                  className={styles.faqQuestion}
+                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                >
+                  <span className={styles.toggle}>
+                    {openFaq === i ? '–' : '+'}
+                  </span>
+                  {f.question}
+                </button>
+                {openFaq === i && (
+                  <p className={styles.faqAnswer}>{f.answer}</p>
+                )}
+              </div>
             ))}
-          </nav>
+          </section>
+        )}
 
-          <div className={styles.sections}>
-            {/* About */}
-            {dj.about && (
-              <section id="about" className={styles.row}>
-                <div className={styles.colAbout}>
-                  <h2>About</h2>
-                  <p>{dj.about}</p>
-                </div>
-                {/* Contact rendered below if data exists */}
-                { (dj.location || dj.facebookUrl || dj.instagramUrl) && (
-                  <div className={styles.colContact}>
-                    <h2>Contact</h2>
-                    {dj.location    && <p>📍 {dj.location}</p>}
-                    {dj.facebookUrl && <p>🔗 <a href={dj.facebookUrl}>Facebook</a></p>}
-                    {dj.instagramUrl&& <p>🔗 <a href={dj.instagramUrl}>Instagram</a></p>}
-                  </div>
-                )}
-              </section>
-            )}
-
-            {/* Details & Pricing */}
-            {(dj.location || dj.priceRange) && (
-              <section id="details" className={styles.row}>
-                {dj.location && (
-                  <div className={styles.colAbout}>
-                    <h2>Details</h2>
-                    <ul>
-                      <li>Location: {dj.location}</li>
-                    </ul>
-                  </div>
-                )}
-                {dj.priceRange && (
-                  <div className={styles.colContact}>
-                    <h2>Pricing</h2>
-                    <p>{dj.priceRange}</p>
-                  </div>
-                )}
-              </section>
-            )}
-
-            {/* Photos */}
-            {dj.eventImages && dj.eventImages.length > 0 && (
-              <section id="photos">
-                <h2>Photos</h2>
-                <div className={styles.photoGrid}>
-                  {dj.eventImages.map((src,i)=> {
-                    const url = src.startsWith('http') ? src : `${BEX}${src}`;
-                    return (
-                      <img
-                        key={i}
-                        src={url}
-                        alt={`Photo ${i+1}`}
-                        onClick={()=>setLightboxSrc(url)}
-                      />
-                    );
-                  })}
-                </div>
-              </section>
-            )}
-
-            {/* FAQs */}
-            {dj.faqs && dj.faqs.length > 0 && (
-              <section id="faqs">
-                <h2>FAQs</h2>
-                <div className={styles.faqs}>
-                  {dj.faqs.map((f,i)=>(
-                    <div key={i} className={styles.faq}>
+        {has.reviews && (
+          <section id="reviews" className={styles.section}>
+            <h2>Bride’s Words</h2>
+            <div className={styles.reviewsGrid}>
+              {dj.brideReviews!.map((r, i) => {
+                const isExpanded = expandedReview === i;
+                return (
+                  <div key={i} className={styles.reviewCard}>
+                    <h3>{r.reviewer}</h3>
+                    <small className={styles.reviewDate}>{r.date}</small>
+                    <p className={`${styles.reviewText} ${isExpanded ? styles.expanded : ''}`}>
+                      {r.comment}
+                    </p>
+                    {r.comment.length > 150 && (
                       <button
-                        className={styles.faqQ}
-                        onClick={()=>setOpenFaq(openFaq===i?null:i)}
+                        className={styles.readMore}
+                        onClick={() => setExpandedReview(isExpanded ? null : i)}
                       >
-                        {f.question}
+                        {isExpanded ? 'Show less' : 'Read more'}
                       </button>
-                      {openFaq===i && <p className={styles.faqA}>{f.answer}</p>}
-                    </div>
-                  ))}
-                </div>
-              </section>
-            )}
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        )}
 
-            {/* Reviews */}
-            {dj.reviews && dj.reviews.length > 0 && (
-              <section id="reviews">
-                <h2>Reviews</h2>
-                <div className={styles.reviews}>
-                  {dj.reviews.map((r,i)=> {
-                    const isExpanded = expandedReview===i;
-                    const snippet = isExpanded
-                      ? r.comment
-                      : r.comment.slice(0,150) + (r.comment.length>150?'…':'');
-                    return (
-                      <div key={i} className={styles.reviewCard}>
-                        <p className={styles.reviewHeader}>
-                          <strong>{r.reviewer}</strong> — {r.rating}/5
-                        </p>
-                        <p className={styles.reviewBody}>{snippet}</p>
-                        {r.comment.length>150 && (
-                          <button
-                            className={styles.readMore}
-                            onClick={()=>setExpandedReview(isExpanded?null:i)}
-                          >
-                            {isExpanded?'Show less':'Read more'}
-                          </button>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              </section>
-            )}
-          </div>
-        </div>
+        {has.contact && (
+          <section id="contact" className={styles.section}>
+            <h2>Contact</h2>
+            <div className={styles.contactIcons}>
+              {dj.socialMedia?.facebook && (
+                <a href={dj.socialMedia.facebook} target="_blank" rel="noreferrer">
+                  <Facebook size={24} />
+                </a>
+              )}
+              {dj.socialMedia?.instagram && (
+                <a href={dj.socialMedia.instagram} target="_blank" rel="noreferrer">
+                  <Instagram size={24} />
+                </a>
+              )}
+              {dj.socialMedia?.website && (
+                <a href={dj.socialMedia.website} target="_blank" rel="noreferrer">
+                  <Globe size={24} />
+                </a>
+              )}
+            </div>
+          </section>
+        )}
+
       </div>
-
-      {/* Lightbox */}
-      <Modal
-        isOpen={!!lightboxSrc}
-        onRequestClose={()=>setLightboxSrc(null)}
-        className={styles.lightbox}
-        overlayClassName={styles.lightboxOverlay}
-      >
-        {lightboxSrc && <img src={lightboxSrc} alt="Enlarged" />}
-        <button className={styles.closeLightbox} onClick={()=>setLightboxSrc(null)}>
-          <X size={24}/>
-        </button>
-      </Modal>
-    </>
+    </Modal>
   );
 };
 
-export default DjDetailAnchored;
+export default DjDetailModal;
