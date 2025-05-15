@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import * as XLSX from 'xlsx';
 import styles from './GuestList.module.css';
 import { toast, ToastContainer } from 'react-toastify';
@@ -68,6 +68,14 @@ const GuestList: React.FC = () => {
   useEffect(() => {
     fetchGuests();
   }, []);
+
+  const guestStats = useMemo(() => {
+    const total = guests.length;
+    const yes = guests.filter((g) => g.rsvp === 'yes').length;
+    const no = guests.filter((g) => g.rsvp === 'no').length;
+    const maybe = guests.filter((g) => g.rsvp === 'maybe').length;
+    return { total, yes, no, maybe };
+  }, [guests]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -239,6 +247,13 @@ const GuestList: React.FC = () => {
             style={{ display: 'none' }}
           />
         </label>
+
+        {/* ✅ Guest summary stats */}
+        {guests.length > 0 && (
+          <div className={styles.guestStats}>
+            📊 Total: {guestStats.total} | ✅ Yes: {guestStats.yes} | ❌ No: {guestStats.no} | ❔ Maybe: {guestStats.maybe}
+          </div>
+        )}
 
         {loading ? (
           <div className={styles.emptyGuestList}>Loading guests...</div>
