@@ -13,7 +13,6 @@ export default function WeddingDashboard() {
     tdlService
       .fetchMyTdl()
       .then((tdl: TdlData) => {
-        // Flatten all tasks across all sections, then take first 3
         const allTasks = tdl.sections.flatMap((sec) =>
           sec.todos.map((todo) => todo.task)
         );
@@ -21,7 +20,7 @@ export default function WeddingDashboard() {
       })
       .catch((err) => {
         console.error("Could not load TDL preview:", err);
-        // If you want to redirect when no TDL exists:
+        // Optionally redirect:
         // navigate("/");
       });
   }, [navigate]);
@@ -29,31 +28,60 @@ export default function WeddingDashboard() {
   return (
     <div className={styles.main}>
       <div className={styles.grid}>
-        <div className={`${styles.card} ${styles.budget}`}>Budget Overview<hr className={styles.divider} /></div>
-        <div className={`${styles.card} ${styles.guests}`}>Guest List<hr className={styles.divider} /></div>
-        <div className={`${styles.card} ${styles.seating}`}>Seating Chart<hr className={styles.divider} /></div>
-        <div className={`${styles.card} ${styles.calendar}`}>Calendar<hr className={styles.divider} /></div>
-        <div className={`${styles.card} ${styles.menu}`}>Menu<hr className={styles.divider} /></div>
-
-        <div className={`${styles.card} ${styles.todo}`}>
-          To-Do List
+        <div className={`${styles.card} ${styles.budget}`}>
+          Budget Overview
           <hr className={styles.divider} />
-          <Link to="/todolist" className={styles.todoLink}>
-            {previewTasks.length > 0 ? (
-              <ul className={styles.todoPreview}>
-                {previewTasks.map((task, i) => (
-                  <li key={i}>{task}</li>
-                ))}
-              </ul>
-            ) : (
-              <p className={styles.todoPreviewEmpty}>Loading…</p>
-            )}
-          </Link>
         </div>
 
-        <div className={`${styles.card} ${styles.vendors}`}>Vendors<hr className={styles.divider} /></div>
-        <div className={`${styles.card} ${styles.view3d}`}>Details matter<hr className={styles.divider} /></div>
-        <div className={`${styles.card} ${styles.invitation}`}>Invitation<hr className={styles.divider} /></div>
+        <Link to="/guests" className={`${styles.card} ${styles.guests}`}>
+          Guest List
+          <hr className={styles.divider} />
+        </Link>
+
+        <div className={`${styles.card} ${styles.seating}`}>
+          Seating Chart
+          <hr className={styles.divider} />
+        </div>
+
+        <div className={`${styles.card} ${styles.calendar}`}>
+          Calendar
+          <hr className={styles.divider} />
+        </div>
+
+        <div className={`${styles.card} ${styles.menu}`}>
+          Menu
+          <hr className={styles.divider} />
+        </div>
+
+        {/* ✅ Entire To-Do List card is now clickable */}
+        <Link to="/todolist" className={`${styles.card} ${styles.todo}`}>
+          To-Do List
+          <hr className={styles.divider} />
+          {previewTasks.length > 0 ? (
+            <ul className={styles.todoPreview}>
+              {previewTasks.map((task, i) => (
+                <li key={i}>{task}</li>
+              ))}
+            </ul>
+          ) : (
+            <p className={styles.todoPreviewEmpty}>Loading…</p>
+          )}
+        </Link>
+
+        <div className={`${styles.card} ${styles.vendors}`}>
+          Vendors
+          <hr className={styles.divider} />
+        </div>
+
+        <div className={`${styles.card} ${styles.view3d}`}>
+          Details matter
+          <hr className={styles.divider} />
+        </div>
+
+        <div className={`${styles.card} ${styles.invitation}`}>
+          Invitation
+          <hr className={styles.divider} />
+        </div>
       </div>
     </div>
   );
