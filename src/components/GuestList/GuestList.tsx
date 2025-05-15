@@ -45,6 +45,7 @@ if (userCookie) {
 const GuestList: React.FC = () => {
   const [guests, setGuests] = useState<Guest[]>([]);
   const [loading, setLoading] = useState(true);
+  const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [form, setForm] = useState({
     fullName: '',
@@ -102,6 +103,8 @@ const GuestList: React.FC = () => {
       toast.error('Missing partner names. Please log in again.');
       return;
     }
+
+    setSending(true);
     try {
       await sendInvitationToAllGuests({
         partner1: firstPartner,
@@ -111,6 +114,8 @@ const GuestList: React.FC = () => {
       toast.success('Invitations sent!');
     } catch {
       toast.error('Error sending invitations.');
+    } finally {
+      setSending(false);
     }
   };
 
@@ -220,8 +225,12 @@ const GuestList: React.FC = () => {
           <button type="submit">+ Add Guest</button>
         </form>
 
-        <button onClick={handleSendEmails} className={styles.sendEmailButton}>
-          📧 Send Invitation to All Guests
+        <button
+          onClick={handleSendEmails}
+          className={styles.sendEmailButton}
+          disabled={sending}
+        >
+          {sending ? 'Sending Invitations...' : '📧 Send Invitation to All Guests'}
         </button>
 
         {/* Excel Dropdown */}
