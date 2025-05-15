@@ -139,13 +139,13 @@ const DetailsMatters: React.FC = () => {
             <h3>Guest Favors</h3>
             <ul className={styles.linkList}>
               <li>
-                <a href="https://www.aliexpress.com/..." target="_blank" rel="noopener noreferrer">
+                <a href="https://urbanbridesmag.co.il/שופינג-אונליין-מציאות-לחתונה-מאלי-אקספרס.html" target="_blank" rel="noopener noreferrer">
                   Personalized Wedding Favors <FaExternalLinkAlt />
                 </a>
               </li>
               <li>
-                <a href="https://www.aliexpress.com/..." target="_blank" rel="noopener noreferrer">
-                  Elegant Guest Gifts <FaExternalLinkAlt />
+                <a href="https://docs.google.com/spreadsheets/d/1PU9aCVYIAWQ-2wpToobJ1fqXFY9wYaFtdxV63CEs5uk/htmlview#gid=0" target="_blank" rel="noopener noreferrer">
+                  Document with all the recommendations from Aliexpress <FaExternalLinkAlt />
                 </a>
               </li>
             </ul>
@@ -155,13 +155,8 @@ const DetailsMatters: React.FC = () => {
             <h3>Decoration Ideas</h3>
             <ul className={styles.linkList}>
               <li>
-                <a href="https://www.aliexpress.com/..." target="_blank" rel="noopener noreferrer">
-                  Wedding Arch Decorations <FaExternalLinkAlt />
-                </a>
-              </li>
-              <li>
-                <a href="https://www.aliexpress.com/..." target="_blank" rel="noopener noreferrer">
-                  Table Centerpieces <FaExternalLinkAlt />
+                <a href="https://www.pinterest.com/stylemepretty/wedding-decorations-furniture/" target="_blank" rel="noopener noreferrer">
+                  Pintrest Wedding Arch Decorations <FaExternalLinkAlt />
                 </a>
               </li>
             </ul>
