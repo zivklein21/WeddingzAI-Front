@@ -3,8 +3,7 @@
   width: 100%;
   background: url('../../assets/images/main-bg.png') no-repeat center center;
   background-size: cover;
-  background-color: #fff0f5;
-  position: relative;
+  background-color: #fff8fb;
   overflow: auto;
   padding: 50px 20px;
 }
@@ -12,18 +11,19 @@
 .guestContainer {
   max-width: 1000px;
   margin: 0 auto;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  padding: 30px;
-  overflow: hidden;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  padding: 40px 50px;
 }
 
 .guestHeader {
-  font-size: 1.8rem;
-  font-weight: bold;
-  margin-bottom: 1rem;
-  color: #333;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid #ddd;
+  padding-bottom: 0.5rem;
 }
 
 .guestList {
@@ -33,96 +33,95 @@
 }
 
 .guestItem {
+  background: #fdfdfd;
+  border: 1px solid #eaeaea;
+  border-radius: 8px;
   padding: 15px 20px;
-  border-bottom: 1px solid #eee;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
-  gap: 4px;
-}
-
-.guestItem:last-child {
-  border-bottom: none;
+  gap: 6px;
 }
 
 .guestName {
   font-weight: 600;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
+  color: #34495e;
 }
 
 .guestEmail {
   font-size: 0.95rem;
-  color: #555;
+  color: #7f8c8d;
+}
+
+.guestPhone {
+  font-size: 0.9rem;
+  color: #2c3e50;
 }
 
 .guestRSVP {
   font-size: 0.9rem;
-  color: #999;
+  color: #8e44ad;
+}
+
+.guestActions {
+  margin-top: 8px;
 }
 
 .emptyGuestList {
   font-style: italic;
-  color: #666;
-  padding: 1rem;
+  color: #999;
   text-align: center;
+  padding: 1rem;
 }
-
 
 .guestForm {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 20px;
+  gap: 12px;
+  margin-bottom: 25px;
 }
 
 .guestForm input,
 .guestForm select {
-  padding: 8px;
+  padding: 10px;
   font-size: 0.95rem;
   flex: 1 1 200px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
 }
 
 .guestForm button {
-  padding: 8px 16px;
+  padding: 10px 18px;
   font-size: 1rem;
   background-color: #5c67f2;
   color: white;
   border: none;
   cursor: pointer;
-  border-radius: 5px;
+  border-radius: 6px;
+  transition: background 0.3s ease;
 }
 
 .guestForm button:hover {
   background-color: #3f4ad4;
 }
 
-.guestPhone {
-  font-size: 0.9rem;
-  color: #333;
-}
-
 .sendEmailButton {
   margin-top: 1rem;
-  padding: 0.5rem 1rem;
-  background-color: #4caf50;
+  padding: 0.6rem 1.2rem;
+  background-color: #2ecc71;
   color: white;
   border: none;
-  border-radius: 4px;
-  cursor: pointer;
+  border-radius: 6px;
+  font-size: 1rem;
   font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s ease;
 }
 
 .sendEmailButton:hover {
-  background-color: #388e3c;
-}
-
-.importButton {
-  display: inline-block;
-  margin-top: 10px;
-  padding: 8px 12px;
-  background-color: #eee;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  cursor: pointer;
+  background-color: #27ae60;
 }
 
 .excelDropdown {
@@ -132,30 +131,45 @@
 }
 
 .dropdownToggle {
-  background-color: #f0f0f0;
-  padding: 8px 14px;
+  background-color: #ecf0f1;
+  color: #2c3e50;
+  font-weight: 500;
+  padding: 10px 16px;
   border: 1px solid #ccc;
+  border-radius: 6px;
   cursor: pointer;
-  border-radius: 4px;
+  transition: background 0.3s ease;
+}
+
+.dropdownToggle:hover {
+  background-color: #d0d7de;
 }
 
 .dropdownMenu {
   position: absolute;
-  top: 105%;
+  top: 110%;
   left: 0;
   background-color: white;
   border: 1px solid #ccc;
-  width: 180px;
+  width: 200px;
   z-index: 10;
-  border-radius: 4px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .dropdownMenu div {
-  padding: 10px;
+  padding: 12px 14px;
   cursor: pointer;
+  border-bottom: 1px solid #eee;
 }
 
 .dropdownMenu div:hover {
-  background-color: #f5f5f5;
+  background-color: #f0f0f0;
+}
+
+.guestStats {
+  margin-top: 15px;
+  font-weight: 500;
+  font-size: 1rem;
+  color: #2c3e50;
 }
