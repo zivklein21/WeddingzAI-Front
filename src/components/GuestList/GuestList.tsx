@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useMemo, useState, useRef } from 'react';
 import * as XLSX from 'xlsx';
 import styles from './GuestList.module.css';
 import { toast, ToastContainer } from 'react-toastify';
@@ -44,7 +44,7 @@ if (userCookie) {
 
 const GuestList: React.FC = () => {
   const [guests, setGuests] = useState<Guest[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [form, setForm] = useState({
     fullName: '',
@@ -53,11 +53,13 @@ const GuestList: React.FC = () => {
     rsvp: 'maybe' as 'maybe' | 'yes' | 'no',
   });
   const [editingGuestId, setEditingGuestId] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const fetchGuests = async () => {
     try {
-      const guests = await fetchMyGuests();
-      setGuests(guests);
+      const data = await fetchMyGuests();
+      setGuests(data);
     } catch {
       setError('Failed to fetch guests');
     } finally {
@@ -100,31 +102,31 @@ const GuestList: React.FC = () => {
       toast.error('Missing partner names. Please log in again.');
       return;
     }
-
     try {
       await sendInvitationToAllGuests({
         partner1: firstPartner,
         partner2: secondPartner,
         weddingDate: WEDDING_DATE,
       });
-      toast.success('Invitations sent to all guests!');
+      toast.success('Invitations sent!');
     } catch {
-      toast.error('Error sending invitations');
+      toast.error('Error sending invitations.');
     }
   };
 
-  const handleExcelUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleExcelUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
     try {
       const data = await file.arrayBuffer();
       const workbook = XLSX.read(data);
       const sheet = workbook.Sheets[workbook.SheetNames[0]];
-      const rows: GuestRow[] = XLSX.utils.sheet_to_json<GuestRow>(sheet);
+      const rows: GuestRow[] = XLSX.utils.sheet_to_json(sheet);
 
-      const newGuests = rows.filter((row) => row.fullName && row.email);
-      const failedImports: { fullName: string; email: string; reason: string }[] = [];
+      const newGuests = rows.filter((r) => r.fullName && r.email);
+      const failed: { fullName: string; email: string; reason: string }[] = [];
 
       for (const guest of newGuests) {
         try {
@@ -135,27 +137,24 @@ const GuestList: React.FC = () => {
             rsvp: guest.rsvp || 'maybe',
           });
         } catch {
-          failedImports.push({
+          failed.push({
             fullName: guest.fullName,
             email: guest.email,
-            reason: 'Could not import (maybe duplicate)',
+            reason: 'Duplicate or error',
           });
         }
       }
 
       await fetchGuests();
 
-      const successCount = newGuests.length - failedImports.length;
-      if (failedImports.length > 0) {
+      if (failed.length > 0) {
         toast.error(
           <div>
-            <strong>Some guests could not be imported:</strong>
-            <br />✅ Successfully imported: {successCount}
-            <br />❌ Failed to import: {failedImports.length}
+            Some guests failed to import:
             <ul>
-              {failedImports.map((g) => (
-                <li key={g.email}>
-                  {g.fullName} ({g.email}) — {g.reason}
+              {failed.map((f) => (
+                <li key={f.email}>
+                  {f.fullName} ({f.email}) — {f.reason}
                 </li>
               ))}
             </ul>
@@ -163,18 +162,25 @@ const GuestList: React.FC = () => {
           { autoClose: false }
         );
       } else {
-        toast.success(`${successCount} guests imported successfully 🎉`);
+        toast.success('Guests imported successfully!');
       }
     } catch {
-      toast.error('Failed to import guests from file.');
+      toast.error('Failed to process Excel file.');
     }
+  };
+
+  const handleExportExcel = () => {
+    const worksheet = XLSX.utils.json_to_sheet(guests);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Guests');
+    XLSX.writeFile(workbook, 'guest-list.xlsx');
   };
 
   const handleDelete = async (id: string) => {
     try {
       await deleteGuest(id);
       await fetchGuests();
-      toast.success('Guest deleted successfully.');
+      toast.success('Guest deleted.');
     } catch {
       toast.error('Error deleting guest.');
     }
@@ -203,29 +209,9 @@ const GuestList: React.FC = () => {
         <div className={styles.guestHeader}>Guest List</div>
 
         <form onSubmit={handleAddGuest} className={styles.guestForm}>
-          <input
-            type="text"
-            name="fullName"
-            value={form.fullName}
-            placeholder="Full Name"
-            onChange={handleInputChange}
-            required
-          />
-          <input
-            type="email"
-            name="email"
-            value={form.email}
-            placeholder="Email"
-            onChange={handleInputChange}
-            required
-          />
-          <input
-            type="tel"
-            name="phone"
-            value={form.phone}
-            placeholder="Phone"
-            onChange={handleInputChange}
-          />
+          <input type="text" name="fullName" value={form.fullName} placeholder="Full Name" onChange={handleInputChange} required />
+          <input type="email" name="email" value={form.email} placeholder="Email" onChange={handleInputChange} required />
+          <input type="tel" name="phone" value={form.phone} placeholder="Phone" onChange={handleInputChange} />
           <select name="rsvp" value={form.rsvp} onChange={handleInputChange}>
             <option value="maybe">Maybe</option>
             <option value="yes">Yes</option>
@@ -238,17 +224,31 @@ const GuestList: React.FC = () => {
           📧 Send Invitation to All Guests
         </button>
 
-        <label className={styles.importButton}>
-          📅 Import Guests from Excel
+        {/* Excel Dropdown */}
+        <div className={styles.excelDropdown}>
+          <button
+            type="button"
+            className={styles.dropdownToggle}
+            onClick={() => setDropdownOpen((prev) => !prev)}
+          >
+            📁 Excel (Import/Export)
+          </button>
+          {dropdownOpen && (
+            <div className={styles.dropdownMenu}>
+              <div onClick={() => fileInputRef.current?.click()}>📥 Import from Excel</div>
+              <div onClick={handleExportExcel}>📤 Export to Excel</div>
+            </div>
+          )}
           <input
             type="file"
+            ref={fileInputRef}
             accept=".xlsx, .xls"
             onChange={handleExcelUpload}
             style={{ display: 'none' }}
           />
-        </label>
+        </div>
 
-        {/* ✅ Guest summary stats */}
+        {/* Guest Stats */}
         {guests.length > 0 && (
           <div className={styles.guestStats}>
             📊 Total: {guestStats.total} | ✅ Yes: {guestStats.yes} | ❌ No: {guestStats.no} | ❔ Maybe: {guestStats.maybe}
@@ -258,9 +258,7 @@ const GuestList: React.FC = () => {
         {loading ? (
           <div className={styles.emptyGuestList}>Loading guests...</div>
         ) : error ? (
-          <div className={styles.emptyGuestList} style={{ color: 'red' }}>
-            {error}
-          </div>
+          <div className={styles.emptyGuestList} style={{ color: 'red' }}>{error}</div>
         ) : guests.length === 0 ? (
           <div className={styles.emptyGuestList}>No guests found.</div>
         ) : (
@@ -269,56 +267,26 @@ const GuestList: React.FC = () => {
               <li key={guest._id} className={styles.guestItem}>
                 {editingGuestId === guest._id ? (
                   <>
-                    <input
-                      value={guest.fullName}
-                      onChange={(e) =>
-                        handleEditChange(guest._id, 'fullName', e.target.value)
-                      }
-                    />
-                    <input
-                      value={guest.email}
-                      onChange={(e) =>
-                        handleEditChange(guest._id, 'email', e.target.value)
-                      }
-                    />
-                    <input
-                      value={guest.phone || ''}
-                      onChange={(e) =>
-                        handleEditChange(guest._id, 'phone', e.target.value)
-                      }
-                    />
-                    <select
-                      value={guest.rsvp}
-                      onChange={(e) =>
-                        handleEditChange(guest._id, 'rsvp', e.target.value)
-                      }
-                    >
+                    <input value={guest.fullName} onChange={(e) => handleEditChange(guest._id, 'fullName', e.target.value)} />
+                    <input value={guest.email} onChange={(e) => handleEditChange(guest._id, 'email', e.target.value)} />
+                    <input value={guest.phone || ''} onChange={(e) => handleEditChange(guest._id, 'phone', e.target.value)} />
+                    <select value={guest.rsvp} onChange={(e) => handleEditChange(guest._id, 'rsvp', e.target.value)}>
                       <option value="maybe">Maybe</option>
                       <option value="yes">Yes</option>
                       <option value="no">No</option>
                     </select>
                     <button onClick={() => handleSave(guest)}>💾 Save</button>
-                    <button onClick={() => setEditingGuestId(null)}>
-                      ❌ Cancel
-                    </button>
+                    <button onClick={() => setEditingGuestId(null)}>❌ Cancel</button>
                   </>
                 ) : (
                   <>
                     <div className={styles.guestName}>{guest.fullName}</div>
                     <div className={styles.guestEmail}>{guest.email}</div>
-                    {guest.phone && (
-                      <div className={styles.guestPhone}>📞 {guest.phone}</div>
-                    )}
-                    {guest.rsvp && (
-                      <div className={styles.guestRSVP}>RSVP: {guest.rsvp}</div>
-                    )}
+                    {guest.phone && <div className={styles.guestPhone}>📞 {guest.phone}</div>}
+                    {guest.rsvp && <div className={styles.guestRSVP}>RSVP: {guest.rsvp}</div>}
                     <div className={styles.guestActions}>
-                      <button onClick={() => setEditingGuestId(guest._id)}>
-                        ✏️
-                      </button>
-                      <button onClick={() => handleDelete(guest._id)}>
-                        🗑️
-                      </button>
+                      <button onClick={() => setEditingGuestId(guest._id)}>✏️</button>
+                      <button onClick={() => handleDelete(guest._id)}>🗑️</button>
                     </div>
                   </>
                 )}

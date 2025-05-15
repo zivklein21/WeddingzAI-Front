@@ -124,3 +124,38 @@
   border-radius: 4px;
   cursor: pointer;
 }
+
+.excelDropdown {
+  position: relative;
+  display: inline-block;
+  margin: 1rem 0;
+}
+
+.dropdownToggle {
+  background-color: #f0f0f0;
+  padding: 8px 14px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.dropdownMenu {
+  position: absolute;
+  top: 105%;
+  left: 0;
+  background-color: white;
+  border: 1px solid #ccc;
+  width: 180px;
+  z-index: 10;
+  border-radius: 4px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.dropdownMenu div {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.dropdownMenu div:hover {
+  background-color: #f5f5f5;
+}
