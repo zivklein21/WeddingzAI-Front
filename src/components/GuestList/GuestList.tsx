@@ -1,6 +1,44 @@
 import React, { useEffect, useState } from 'react';
 import styles from './GuestList.module.css';
-import { fetchMyGuests, createGuest, Guest } from '../../services/guest-service';
+import {
+  fetchMyGuests,
+  createGuest,
+  sendInvitationToAllGuests,
+  Guest,
+} from '../../services/guest-service';
+
+// Hardcoded wedding date
+const WEDDING_DATE = '2025-08-10';
+
+// Utility to read a cookie value
+function getCookieValue(name: string): string | null {
+  const value = document.cookie
+    .split('; ')
+    .find((row) => row.startsWith(`${name}=`));
+  return value ? decodeURIComponent(value.split('=')[1]) : null;
+}
+
+// Extract user data from cookie
+const userCookie = getCookieValue('user');
+let firstPartner = '';
+let secondPartner = '';
+
+if (userCookie) {
+  try {
+    const parsed = JSON.parse(userCookie);
+    firstPartner = parsed.firstPartner || '';
+    secondPartner = parsed.secondPartner || '';
+  } catch (err) {
+    console.error('Invalid user cookie:', err);
+  }
+}
+
+console.log('Sending with:', {
+  partner1: firstPartner,
+  partner2: secondPartner,
+  weddingDate: WEDDING_DATE,
+});
+
 
 const GuestList: React.FC = () => {
   const [guests, setGuests] = useState<Guest[]>([]);
@@ -11,14 +49,13 @@ const GuestList: React.FC = () => {
     fullName: string;
     email: string;
     phone: string;
-    rsvp: "maybe" | "yes" | "no";
+    rsvp: 'maybe' | 'yes' | 'no';
   }>({
     fullName: '',
     email: '',
     phone: '',
     rsvp: 'maybe',
   });
-  
 
   const fetchGuests = async () => {
     try {
@@ -39,7 +76,9 @@ const GuestList: React.FC = () => {
     fetchGuests();
   }, []);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
@@ -52,6 +91,25 @@ const GuestList: React.FC = () => {
     } catch (err: unknown) {
       console.error('Failed to add guest:', err);
       alert('Error adding guest');
+    }
+  };
+
+  const handleSendEmails = async () => {
+    if (!firstPartner || !secondPartner) {
+      alert('Missing partner names. Please log in again.');
+      return;
+    }
+
+    try {
+      await sendInvitationToAllGuests({
+        partner1: firstPartner,
+        partner2: secondPartner,
+        weddingDate: WEDDING_DATE,
+      });
+      alert('Invitations sent to all guests!');
+    } catch (err: unknown) {
+      console.error('Failed to send invitations:', err);
+      alert('Error sending invitations');
     }
   };
 
@@ -93,6 +151,11 @@ const GuestList: React.FC = () => {
           <button type="submit">+ Add Guest</button>
         </form>
 
+        {/* Send Email Button */}
+        <button onClick={handleSendEmails} className={styles.sendEmailButton}>
+          📧 Send Invitation to All Guests
+        </button>
+
         {/* Guest List */}
         {loading ? (
           <div className={styles.emptyGuestList}>Loading guests...</div>
@@ -108,8 +171,12 @@ const GuestList: React.FC = () => {
               <li key={guest._id} className={styles.guestItem}>
                 <div className={styles.guestName}>{guest.fullName}</div>
                 <div className={styles.guestEmail}>{guest.email}</div>
-                {guest.phone && <div className={styles.guestPhone}>📞 {guest.phone}</div>}
-                {guest.rsvp && <div className={styles.guestRSVP}>RSVP: {guest.rsvp}</div>}
+                {guest.phone && (
+                  <div className={styles.guestPhone}>📞 {guest.phone}</div>
+                )}
+                {guest.rsvp && (
+                  <div className={styles.guestRSVP}>RSVP: {guest.rsvp}</div>
+                )}
               </li>
             ))}
           </ul>

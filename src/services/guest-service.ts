@@ -51,10 +51,25 @@ export const createGuest = async (guest: {
   return resp.data.data;
 };
 
+// 6. POST /guests/send-invitation — send invitation to all guests
+export const sendInvitationToAllGuests = async (data: {
+  partner1: string;
+  partner2: string;
+  weddingDate: string;
+}): Promise<void> => {
+  const resp = await apiClient.post<BaseResponse<null>>("/guests/send-invitation", data);
+  if (resp.status !== 200) {
+    throw new Error(resp.data.message || "Failed to send invitations");
+  }
+};
+
+
+
 export default {
   fetchAllGuests,
   fetchMyGuests,
   fetchGuestById,
   deleteGuest,
   createGuest,
+  sendInvitationToAllGuests,
 };
