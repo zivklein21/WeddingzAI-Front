@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import * as XLSX from 'xlsx';
 import styles from './GuestList.module.css';
 import {
   fetchMyGuests,
@@ -9,6 +10,14 @@ import {
 
 // Hardcoded wedding date
 const WEDDING_DATE = '2025-08-10';
+
+// Interface for imported Excel rows
+interface GuestRow {
+  fullName: string;
+  email: string;
+  phone?: string;
+  rsvp?: 'yes' | 'no' | 'maybe';
+}
 
 // Utility to read a cookie value
 function getCookieValue(name: string): string | null {
@@ -38,7 +47,6 @@ console.log('Sending with:', {
   partner2: secondPartner,
   weddingDate: WEDDING_DATE,
 });
-
 
 const GuestList: React.FC = () => {
   const [guests, setGuests] = useState<Guest[]>([]);
@@ -113,6 +121,63 @@ const GuestList: React.FC = () => {
     }
   };
 
+  const handleExcelUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const data = await file.arrayBuffer();
+      const workbook = XLSX.read(data);
+      const sheet = workbook.Sheets[workbook.SheetNames[0]];
+      const rows: GuestRow[] = XLSX.utils.sheet_to_json<GuestRow>(sheet);
+
+      const newGuests = rows.filter((row) => row.fullName && row.email);
+
+      const failedImports: { fullName: string; email: string; reason: string }[] = [];
+
+      for (const guest of newGuests) {
+        try {
+          await createGuest({
+            fullName: guest.fullName,
+            email: guest.email,
+            phone: guest.phone || '',
+            rsvp: guest.rsvp || 'maybe',
+          });
+        } catch (err: unknown) {
+          console.warn('Could not import guest:', guest.email, err);
+
+          let reason = 'Unknown error';
+          if (err instanceof Error) {
+            reason = err.message;
+          }
+
+          failedImports.push({
+            fullName: guest.fullName,
+            email: guest.email,
+            reason,
+          });
+        }
+      }
+
+      await fetchGuests();
+
+      const successCount = newGuests.length - failedImports.length;
+
+      if (failedImports.length > 0) {
+        const failedList = failedImports
+          .map((g) => `• ${g.fullName} (${g.email}) – ${g.reason}`)
+          .join('\n');
+
+        alert(`${successCount} guests imported successfully.\n\nThe following failed:\n${failedList}`);
+      } else {
+        alert(`${successCount} guests imported successfully.`);
+      }
+    } catch (err) {
+      console.error('Failed to parse Excel file:', err);
+      alert('Failed to import guests from file.');
+    }
+  };
+
   return (
     <div className={styles.guestPage}>
       <div className={styles.guestContainer}>
@@ -155,6 +220,17 @@ const GuestList: React.FC = () => {
         <button onClick={handleSendEmails} className={styles.sendEmailButton}>
           📧 Send Invitation to All Guests
         </button>
+
+        {/* Import Excel Button */}
+        <label className={styles.importButton}>
+          📥 Import Guests from Excel
+          <input
+            type="file"
+            accept=".xlsx, .xls"
+            onChange={handleExcelUpload}
+            style={{ display: 'none' }}
+          />
+        </label>
 
         {/* Guest List */}
         {loading ? (

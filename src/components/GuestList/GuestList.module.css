@@ -114,3 +114,13 @@
 .sendEmailButton:hover {
   background-color: #388e3c;
 }
+
+.importButton {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 8px 12px;
+  background-color: #eee;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+}
