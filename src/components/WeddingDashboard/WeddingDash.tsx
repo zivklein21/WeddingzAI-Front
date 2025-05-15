@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import tdlService, { TdlData } from "../../services/tdl-service";
 import styles from "./WeddingDashboard.module.css";
+import BudgetChart from "../Budget/BudgetChart";
 
 export default function WeddingDashboard() {
   const [previewTasks, setPreviewTasks] = useState<string[]>([]);
@@ -21,22 +22,39 @@ export default function WeddingDashboard() {
       })
       .catch((err) => {
         console.error("Could not load TDL preview:", err);
-        // If you want to redirect when no TDL exists:
-        // navigate("/");
       });
   }, [navigate]);
 
   return (
     <div className={styles.main}>
       <div className={styles.grid}>
-        <div className={`${styles.card} ${styles.budget}`}>Budget Overview<hr className={styles.divider} /></div>
-        <div className={`${styles.card} ${styles.guests}`}>Guest List<hr className={styles.divider} /></div>
-        <div className={`${styles.card} ${styles.seating}`}>Seating Chart<hr className={styles.divider} /></div>
-        <div className={`${styles.card} ${styles.calendar}`}>Calendar<hr className={styles.divider} /></div>
-        <div className={`${styles.card} ${styles.menu}`}>Menu<hr className={styles.divider} /></div>
+        <div className={`${styles.card} ${styles.budget}`}>
+          <h3 className={styles.cardTitle}>Budget Overview</h3>
+          <hr className={styles.divider} />
+          <BudgetChart
+             size={140}
+             strokeWidth={16}
+           />
+        </div>
+        <div className={`${styles.card} ${styles.guests}`}>
+          <h3 className={styles.cardTitle}>Guest List</h3>
+          <hr className={styles.divider} />
+        </div>
+        <div className={`${styles.card} ${styles.seating}`}>
+          <h3 className={styles.cardTitle}>Seating Chart</h3>
+          <hr className={styles.divider} />
+        </div>
+        <div className={`${styles.card} ${styles.calendar}`}>
+          <h3 className={styles.cardTitle}>Calendar</h3>
+          <hr className={styles.divider} />
+        </div>
+        <div className={`${styles.card} ${styles.menu}`}>
+          <h3 className={styles.cardTitle}>Menu</h3>
+          <hr className={styles.divider} />
+        </div>
 
         <div className={`${styles.card} ${styles.todo}`}>
-          To-Do List
+          <h3 className={styles.cardTitle}>To Do List</h3>
           <hr className={styles.divider} />
           <Link to="/todolist" className={styles.todoLink}>
             {previewTasks.length > 0 ? (
@@ -51,9 +69,18 @@ export default function WeddingDashboard() {
           </Link>
         </div>
 
-        <div className={`${styles.card} ${styles.vendors}`}>Vendors<hr className={styles.divider} /></div>
-        <div className={`${styles.card} ${styles.view3d}`}>Details matter<hr className={styles.divider} /></div>
-        <div className={`${styles.card} ${styles.invitation}`}>Invitation<hr className={styles.divider} /></div>
+        <div className={`${styles.card} ${styles.vendors}`}>
+          <h3 className={styles.cardTitle}>Vendors</h3>
+          <hr className={styles.divider} />
+        </div>
+        <div className={`${styles.card} ${styles.view3d}`}>
+          <h3 className={styles.cardTitle}>Details matter</h3>
+          <hr className={styles.divider} />
+        </div>
+        <div className={`${styles.card} ${styles.invitation}`}>
+          <h3 className={styles.cardTitle}>Invitation</h3>
+          <hr className={styles.divider} />
+        </div>
       </div>
     </div>
   );
