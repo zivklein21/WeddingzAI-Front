@@ -6,6 +6,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import {
   fetchMyGuests,
   createGuest,
+  updateGuest,
+  deleteGuest,
   sendInvitationToAllGuests,
   Guest,
 } from '../../services/guest-service';
@@ -35,8 +37,8 @@ if (userCookie) {
     const parsed = JSON.parse(userCookie);
     firstPartner = parsed.firstPartner || '';
     secondPartner = parsed.secondPartner || '';
-  } catch (err) {
-    console.error('Invalid user cookie:', err);
+  } catch {
+    // intentionally ignored
   }
 }
 
@@ -50,13 +52,14 @@ const GuestList: React.FC = () => {
     phone: '',
     rsvp: 'maybe' as 'maybe' | 'yes' | 'no',
   });
+  const [editingGuestId, setEditingGuestId] = useState<string | null>(null);
 
   const fetchGuests = async () => {
     try {
       const guests = await fetchMyGuests();
       setGuests(guests);
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch guests');
+    } catch {
+      setError('Failed to fetch guests');
     } finally {
       setLoading(false);
     }
@@ -79,8 +82,7 @@ const GuestList: React.FC = () => {
       setForm({ fullName: '', email: '', phone: '', rsvp: 'maybe' });
       await fetchGuests();
       toast.success('Guest added successfully!');
-    } catch (err) {
-      console.error('Failed to add guest:', err);
+    } catch {
       toast.error('Error adding guest.');
     }
   };
@@ -98,8 +100,7 @@ const GuestList: React.FC = () => {
         weddingDate: WEDDING_DATE,
       });
       toast.success('Invitations sent to all guests!');
-    } catch (err) {
-      console.error('Failed to send invitations:', err);
+    } catch {
       toast.error('Error sending invitations');
     }
   };
@@ -125,12 +126,12 @@ const GuestList: React.FC = () => {
             phone: guest.phone || '',
             rsvp: guest.rsvp || 'maybe',
           });
-        } catch (err: unknown) {
-          let reason = 'Unknown error';
-          if (err instanceof Error) {
-            reason = err.message.includes('409') ? 'Guest already exists' : err.message;
-          }
-          failedImports.push({ fullName: guest.fullName, email: guest.email, reason });
+        } catch {
+          failedImports.push({
+            fullName: guest.fullName,
+            email: guest.email,
+            reason: 'Could not import (maybe duplicate)',
+          });
         }
       }
 
@@ -145,7 +146,9 @@ const GuestList: React.FC = () => {
             <br />❌ Failed to import: {failedImports.length}
             <ul>
               {failedImports.map((g) => (
-                <li key={g.email}>{g.fullName} ({g.email}) — {g.reason}</li>
+                <li key={g.email}>
+                  {g.fullName} ({g.email}) — {g.reason}
+                </li>
               ))}
             </ul>
           </div>,
@@ -154,9 +157,35 @@ const GuestList: React.FC = () => {
       } else {
         toast.success(`${successCount} guests imported successfully 🎉`);
       }
-    } catch (err) {
-      console.error('Failed to parse Excel file:', err);
+    } catch {
       toast.error('Failed to import guests from file.');
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteGuest(id);
+      await fetchGuests();
+      toast.success('Guest deleted successfully.');
+    } catch {
+      toast.error('Error deleting guest.');
+    }
+  };
+
+  const handleEditChange = (id: string, field: keyof Guest, value: string) => {
+    setGuests((prev) =>
+      prev.map((g) => (g._id === id ? { ...g, [field]: value } : g))
+    );
+  };
+
+  const handleSave = async (guest: Guest) => {
+    try {
+      await updateGuest(guest._id, guest);
+      setEditingGuestId(null);
+      await fetchGuests();
+      toast.success('Guest updated.');
+    } catch {
+      toast.error('Error updating guest.');
     }
   };
 
@@ -166,9 +195,29 @@ const GuestList: React.FC = () => {
         <div className={styles.guestHeader}>Guest List</div>
 
         <form onSubmit={handleAddGuest} className={styles.guestForm}>
-          <input type="text" name="fullName" value={form.fullName} placeholder="Full Name" onChange={handleInputChange} required />
-          <input type="email" name="email" value={form.email} placeholder="Email" onChange={handleInputChange} required />
-          <input type="tel" name="phone" value={form.phone} placeholder="Phone" onChange={handleInputChange} />
+          <input
+            type="text"
+            name="fullName"
+            value={form.fullName}
+            placeholder="Full Name"
+            onChange={handleInputChange}
+            required
+          />
+          <input
+            type="email"
+            name="email"
+            value={form.email}
+            placeholder="Email"
+            onChange={handleInputChange}
+            required
+          />
+          <input
+            type="tel"
+            name="phone"
+            value={form.phone}
+            placeholder="Phone"
+            onChange={handleInputChange}
+          />
           <select name="rsvp" value={form.rsvp} onChange={handleInputChange}>
             <option value="maybe">Maybe</option>
             <option value="yes">Yes</option>
@@ -183,23 +232,81 @@ const GuestList: React.FC = () => {
 
         <label className={styles.importButton}>
           📅 Import Guests from Excel
-          <input type="file" accept=".xlsx, .xls" onChange={handleExcelUpload} style={{ display: 'none' }} />
+          <input
+            type="file"
+            accept=".xlsx, .xls"
+            onChange={handleExcelUpload}
+            style={{ display: 'none' }}
+          />
         </label>
 
         {loading ? (
           <div className={styles.emptyGuestList}>Loading guests...</div>
         ) : error ? (
-          <div className={styles.emptyGuestList} style={{ color: 'red' }}>{error}</div>
+          <div className={styles.emptyGuestList} style={{ color: 'red' }}>
+            {error}
+          </div>
         ) : guests.length === 0 ? (
           <div className={styles.emptyGuestList}>No guests found.</div>
         ) : (
           <ul className={styles.guestList}>
             {guests.map((guest) => (
               <li key={guest._id} className={styles.guestItem}>
-                <div className={styles.guestName}>{guest.fullName}</div>
-                <div className={styles.guestEmail}>{guest.email}</div>
-                {guest.phone && <div className={styles.guestPhone}>📞 {guest.phone}</div>}
-                {guest.rsvp && <div className={styles.guestRSVP}>RSVP: {guest.rsvp}</div>}
+                {editingGuestId === guest._id ? (
+                  <>
+                    <input
+                      value={guest.fullName}
+                      onChange={(e) =>
+                        handleEditChange(guest._id, 'fullName', e.target.value)
+                      }
+                    />
+                    <input
+                      value={guest.email}
+                      onChange={(e) =>
+                        handleEditChange(guest._id, 'email', e.target.value)
+                      }
+                    />
+                    <input
+                      value={guest.phone || ''}
+                      onChange={(e) =>
+                        handleEditChange(guest._id, 'phone', e.target.value)
+                      }
+                    />
+                    <select
+                      value={guest.rsvp}
+                      onChange={(e) =>
+                        handleEditChange(guest._id, 'rsvp', e.target.value)
+                      }
+                    >
+                      <option value="maybe">Maybe</option>
+                      <option value="yes">Yes</option>
+                      <option value="no">No</option>
+                    </select>
+                    <button onClick={() => handleSave(guest)}>💾 Save</button>
+                    <button onClick={() => setEditingGuestId(null)}>
+                      ❌ Cancel
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <div className={styles.guestName}>{guest.fullName}</div>
+                    <div className={styles.guestEmail}>{guest.email}</div>
+                    {guest.phone && (
+                      <div className={styles.guestPhone}>📞 {guest.phone}</div>
+                    )}
+                    {guest.rsvp && (
+                      <div className={styles.guestRSVP}>RSVP: {guest.rsvp}</div>
+                    )}
+                    <div className={styles.guestActions}>
+                      <button onClick={() => setEditingGuestId(guest._id)}>
+                        ✏️
+                      </button>
+                      <button onClick={() => handleDelete(guest._id)}>
+                        🗑️
+                      </button>
+                    </div>
+                  </>
+                )}
               </li>
             ))}
           </ul>
