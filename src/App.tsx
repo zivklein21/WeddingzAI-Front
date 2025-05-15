@@ -13,6 +13,7 @@ import { AuthProvider } from "./hooks/useAuth/AuthContext";
 import DJPage from "./pages/DJPage";
 import ScrapeDjPage from "./pages/scrape-dj-page";
 import GuestPage from "./pages/GuestListPage";
+import SeatingPage from "./pages/SeatingPage/SeatingPage";
 
 export default function App() {
   return (
@@ -31,6 +32,7 @@ export default function App() {
           <Route path="/vendor" element={<ScrapeDjPage />} />
           <Route path="/details-matter" element={<DetailsMatterPage />} />
           <Route path="/guests" element={<GuestPage />} />
+          <Route path="/seating" element={<SeatingPage />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
