@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import tdlService, { TdlData } from "../../services/tdl-service";
 import guestService, { Guest } from "../../services/guest-service";
 import styles from "./WeddingDashboard.module.css";
+
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
 
 const COLORS = ['#4caf50', '#f44336', '#cfd8dc'];
@@ -28,6 +29,7 @@ export default function WeddingDashboard() {
       })
       .catch((err) => {
         console.error("Could not load TDL preview:", err);
+
       });
 
     guestService.fetchMyGuests()
@@ -42,6 +44,7 @@ export default function WeddingDashboard() {
       })
       .catch((err) => {
         console.error("Could not load guests:", err);
+
       });
   }, [navigate]);
 
@@ -130,6 +133,7 @@ export default function WeddingDashboard() {
           Details matter
           <hr className={styles.divider} />
         </div>
+
 
         <div className={`${styles.card} ${styles.invitation}`}>
           Invitation
