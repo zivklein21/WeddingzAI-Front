@@ -105,12 +105,25 @@ const GuestList: React.FC = () => {
       return;
     }
 
+    const validGuests = guests
+      .filter((g) => g.email && g.fullName)
+      .map((g) => ({
+        email: g.email,
+        fullName: g.fullName,
+      }));
+
+    if (validGuests.length === 0) {
+      toast.error('No valid guests to send invitations.');
+      return;
+    }
+
     setSending(true);
     try {
       await sendInvitationToAllGuests({
         partner1: firstPartner,
         partner2: secondPartner,
         weddingDate: WEDDING_DATE,
+        guests: validGuests,
       });
       toast.success('Invitations sent!');
     } catch {
@@ -176,7 +189,13 @@ const GuestList: React.FC = () => {
   };
 
   const handleExportExcel = () => {
-    const worksheet = XLSX.utils.json_to_sheet(guests);
+    const excludedKeys = new Set(['_id', 'userId', '__v']);
+    const exportGuests = guests.map((g) =>
+      Object.fromEntries(
+        Object.entries(g).filter(([key]) => !excludedKeys.has(key))
+      )
+    );
+    const worksheet = XLSX.utils.json_to_sheet(exportGuests);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Guests');
     XLSX.writeFile(workbook, 'guest-list.xlsx');
@@ -205,6 +224,25 @@ const GuestList: React.FC = () => {
 
   const handleSave = async (guest: Guest) => {
     const updatedGuest = editingGuests[guest._id];
+
+    if (!updatedGuest.fullName.trim()) {
+      toast.error('Full name is required.');
+      return;
+    }
+
+    if (!updatedGuest.email.trim()) {
+      toast.error('Email is required.');
+      return;
+    }
+
+    const phone = updatedGuest.phone?.trim() || '';
+    const phoneRegex = /^\+?[0-9]{7,15}$/;
+
+    if (phone && !phoneRegex.test(phone)) {
+      toast.error('Phone number is invalid. It must contain only digits and optionally start with +');
+      return;
+    }
+
     try {
       await updateGuest(guest._id, updatedGuest);
       setEditingGuestId(null);
@@ -219,7 +257,6 @@ const GuestList: React.FC = () => {
       toast.error('Error updating guest.');
     }
   };
-  
 
   return (
     <div className={styles.guestPage}>
@@ -287,10 +324,10 @@ const GuestList: React.FC = () => {
               <li key={guest._id} className={styles.guestItem}>
                 {editingGuestId === guest._id ? (
                   <>
-                    <input value={editingGuests[guest._id]?.fullName || guest.fullName} onChange={(e) => handleEditChange(guest._id, 'fullName', e.target.value)} />
-                    <input value={editingGuests[guest._id]?.email || guest.email} onChange={(e) => handleEditChange(guest._id, 'email', e.target.value)} />
-                    <input value={editingGuests[guest._id]?.phone || guest.phone || ''} onChange={(e) => handleEditChange(guest._id, 'phone', e.target.value)} />
-                    <select value={editingGuests[guest._id]?.rsvp || guest.rsvp} onChange={(e) => handleEditChange(guest._id, 'rsvp', e.target.value)}>
+                    <input value={editingGuests[guest._id]?.fullName ?? guest.fullName} onChange={(e) => handleEditChange(guest._id, 'fullName', e.target.value)} />
+                    <input value={editingGuests[guest._id]?.email ?? guest.email} onChange={(e) => handleEditChange(guest._id, 'email', e.target.value)} />
+                    <input value={editingGuests[guest._id]?.phone ?? guest.phone ?? ''} onChange={(e) => handleEditChange(guest._id, 'phone', e.target.value)} />
+                    <select value={editingGuests[guest._id]?.rsvp ?? guest.rsvp} onChange={(e) => handleEditChange(guest._id, 'rsvp', e.target.value)}>
                       <option value="maybe">Maybe</option>
                       <option value="yes">Yes</option>
                       <option value="no">No</option>
