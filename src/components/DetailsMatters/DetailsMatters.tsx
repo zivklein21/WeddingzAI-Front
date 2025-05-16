@@ -1,38 +1,76 @@
-import React, { useState } from 'react';
-import styles from './detailsMatters.module.css';
+// DetailsMatters.tsx
+import React, { useState, useEffect } from 'react';
+import styles from './DetailsMatters.module.css';
 import { FaMusic, FaGift, FaExternalLinkAlt } from 'react-icons/fa';
+import detailsMatterService, { CanceledError, SongSuggestion } from '../../services/details-matter-service';
 
-interface SongSuggestion {
-  title: string;
-  artist: string;
-  description: string;
-  link?: string;
-}
-
-const DetailsMatters = () => {
+const DetailsMatters: React.FC = () => {
   const [songPrompt, setSongPrompt] = useState('');
   const [songSuggestions, setSongSuggestions] = useState<SongSuggestion[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [currentRequest, setCurrentRequest] = useState<{ abort: () => void } | null>(null);
+
+  useEffect(() => {
+    return () => {
+      // Cleanup any pending requests when component unmounts
+      if (currentRequest) {
+        currentRequest.abort();
+      }
+    };
+  }, [currentRequest]);
 
   const handleSongPrompt = async () => {
-    if (!songPrompt) return;
+    if (!songPrompt.trim()) {
+      setError('Please enter a prompt');
+      return;
+    }
     
     setIsLoading(true);
+    setError(null);
     try {
-      // TODO: Implement API call to get song suggestions
-      // For now, using mock data
-      setSongSuggestions([
-        {
-          title: "Can't Help Falling in Love",
-          artist: "Elvis Presley",
-          description: "A timeless classic perfect for the first dance",
-          link: "https://www.youtube.com/watch?v=vGJTaP6anOU"
-        }
-      ]);
+      const request = detailsMatterService.getSongSuggestions(songPrompt);
+      setCurrentRequest(request);
+      const response = await request.request;
+      
+      if (response.data && Array.isArray(response.data)) {
+        setSongSuggestions(response.data);
+      } else {
+        setError('Invalid response format from server');
+      }
     } catch (error) {
+      if (error instanceof CanceledError) {
+        console.log('Request was canceled');
+        return;
+      }
+      
       console.error('Failed to get song suggestions:', error);
+      
+      if (error && typeof error === 'object' && 'response' in error) {
+        const axiosError = error as { response?: { status: number; data?: { message?: string } } };
+        if (axiosError.response) {
+          switch (axiosError.response.status) {
+            case 400:
+              setError('Invalid request. Please check your input.');
+              break;
+            case 401:
+              setError('Please log in again to continue.');
+              break;
+            case 500:
+              setError('Server error. Please try again later.');
+              break;
+            default:
+              setError(`Error: ${axiosError.response.data?.message || 'Unknown error'}`);
+          }
+        } else {
+          setError('No response from server. Please check your connection.');
+        }
+      } else {
+        setError('An unexpected error occurred. Please try again.');
+      }
     } finally {
       setIsLoading(false);
+      setCurrentRequest(null);
     }
   };
 
@@ -60,6 +98,12 @@ const DetailsMatters = () => {
             {isLoading ? 'Getting Suggestions...' : 'Get Song Suggestions'}
           </button>
         </div>
+        
+        {error && (
+          <div className={styles.error}>
+            {error}
+          </div>
+        )}
         
         {songSuggestions.length > 0 && (
           <div className={styles.suggestions}>
@@ -95,13 +139,13 @@ const DetailsMatters = () => {
             <h3>Guest Favors</h3>
             <ul className={styles.linkList}>
               <li>
-                <a href="https://www.aliexpress.com/..." target="_blank" rel="noopener noreferrer">
+                <a href="https://urbanbridesmag.co.il/שופינג-אונליין-מציאות-לחתונה-מאלי-אקספרס.html" target="_blank" rel="noopener noreferrer">
                   Personalized Wedding Favors <FaExternalLinkAlt />
                 </a>
               </li>
               <li>
-                <a href="https://www.aliexpress.com/..." target="_blank" rel="noopener noreferrer">
-                  Elegant Guest Gifts <FaExternalLinkAlt />
+                <a href="https://docs.google.com/spreadsheets/d/1PU9aCVYIAWQ-2wpToobJ1fqXFY9wYaFtdxV63CEs5uk/htmlview#gid=0" target="_blank" rel="noopener noreferrer">
+                  Document with all the recommendations from Aliexpress <FaExternalLinkAlt />
                 </a>
               </li>
             </ul>
@@ -111,13 +155,8 @@ const DetailsMatters = () => {
             <h3>Decoration Ideas</h3>
             <ul className={styles.linkList}>
               <li>
-                <a href="https://www.aliexpress.com/..." target="_blank" rel="noopener noreferrer">
-                  Wedding Arch Decorations <FaExternalLinkAlt />
-                </a>
-              </li>
-              <li>
-                <a href="https://www.aliexpress.com/..." target="_blank" rel="noopener noreferrer">
-                  Table Centerpieces <FaExternalLinkAlt />
+                <a href="https://www.pinterest.com/stylemepretty/wedding-decorations-furniture/" target="_blank" rel="noopener noreferrer">
+                  Pintrest Wedding Arch Decorations <FaExternalLinkAlt />
                 </a>
               </li>
             </ul>
