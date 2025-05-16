@@ -73,7 +73,9 @@ const login = (credentials: { email: string; password: string }) => {
 const updateUser = (updatedUser: UpdatedUser) => {
     const abortController = new AbortController();
     const request = apiClient.put<{
-        username: string;
+        email: string;
+        firstPartner: string;
+        secondPartner: string;
         avatar: string;
     }>("/auth/user", updatedUser, {
         signal: abortController.signal,

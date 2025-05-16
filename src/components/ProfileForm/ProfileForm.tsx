@@ -5,9 +5,9 @@ import defaultAvatar from "../../assets/images/user-icon.svg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faImage } from "@fortawesome/free-solid-svg-icons";
 import fileService from "../../services/file-service";
+import authService from "../../services/auth-service";
 
 interface UserDetails {
-  username: string;
   email: string;
   firstPartner: string;
   secondPartner: string;
@@ -16,7 +16,6 @@ interface UserDetails {
 
 const Profile = () => {
   const [userDetails, setUserDetails] = useState<UserDetails>({
-    username: "",
     email: "",
     firstPartner: "",
     secondPartner: "",
@@ -26,11 +25,12 @@ const Profile = () => {
   const [newAvatarFile, setNewAvatarFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { user, updateUserSession } = useAuth();
+  const [serverError, setServerError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   useEffect(() => {
     if (user) {
       setUserDetails({
-        username: "test",
         email: user.email || "",
         firstPartner: user.firstPartner || "",
         secondPartner: user.secondPartner || "",
@@ -58,6 +58,8 @@ const Profile = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
+    setServerError(null);
+    setSuccessMessage(null);
     e.preventDefault();
 
     let avatarUrl = userDetails.avatar;
@@ -67,12 +69,10 @@ const Profile = () => {
         const formData = new FormData();
         formData.append("file", newAvatarFile);
         const response = await fileService.uploadImageFile(newAvatarFile);
-
-        // Adjust this if your backend returns `url` instead of `fileName`
         avatarUrl = response.data.url;
-        console.log("Uploaded avatar URL:", avatarUrl);
+
       } catch (err) {
-        console.error("Error uploading avatar", err);
+        setServerError("Failed to upload avatar.");
         return;
       }
     }
@@ -82,8 +82,33 @@ const Profile = () => {
       avatar: avatarUrl,
     };
 
-    console.log("Final details to submit:", updatedDetails);
-    // In the future: send `updatedDetails` to your backend user update route
+    try {
+      // Update user details
+      const { request: updateUserRequest } = await authService.updateUser(updatedDetails);
+      const updateResponse = await updateUserRequest;
+
+      if (updateResponse.status === 200) {
+        setSuccessMessage("Profile updated successfully!");
+
+        // Update user session
+        const updatedUser = {
+          ...user,
+          ...updatedDetails,
+        };
+
+        updateUserSession(updatedUser);
+        setUserDetails(updatedUser);
+        setNewAvatarFile(null);
+        setSuccessMessage("Profile updated successfully!");
+        
+      } else {
+        setServerError("Failed to update profile.");
+      }
+
+    } catch (error: any) {
+      setServerError(error.response?.data?.message || "An error occurred while updating the profile.");
+    }
+
   };
 
   return (
@@ -115,16 +140,6 @@ const Profile = () => {
           <form className={styles.infoSection} onSubmit={handleSubmit}>
             {/* Input fields */}
             <div className={styles.infoItem}>
-              <label>Username:</label>
-              <input
-                type="text"
-                name="username"
-                value={userDetails.username}
-                onChange={handleChange}
-                className={styles.input}
-              />
-            </div>
-            <div className={styles.infoItem}>
               <label>Email:</label>
               <input
                 type="email"
@@ -154,6 +169,10 @@ const Profile = () => {
                 className={styles.input}
               />
             </div>
+
+            {serverError && <div className={`${styles["alert-profile"]} ${styles["alert-danger-profile"]}`}>{serverError}</div>}
+            {successMessage && <div className={`${styles["alert-profile"]} ${styles["alert-success-profile"]}`}>{successMessage}</div>}
+
             <button type="submit" className={styles.updateBtn}>
               Update Details
             </button>
