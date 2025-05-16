@@ -44,6 +44,7 @@ if (userCookie) {
 
 const GuestList: React.FC = () => {
   const [guests, setGuests] = useState<Guest[]>([]);
+  const [editingGuests, setEditingGuests] = useState<Record<string, Guest>>({});
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -192,21 +193,33 @@ const GuestList: React.FC = () => {
   };
 
   const handleEditChange = (id: string, field: keyof Guest, value: string) => {
-    setGuests((prev) =>
-      prev.map((g) => (g._id === id ? { ...g, [field]: value } : g))
-    );
+    setEditingGuests((prev) => ({
+      ...prev,
+      [id]: {
+        ...guests.find((g) => g._id === id)!,
+        ...(prev[id] || {}),
+        [field]: value,
+      },
+    }));
   };
 
   const handleSave = async (guest: Guest) => {
+    const updatedGuest = editingGuests[guest._id];
     try {
-      await updateGuest(guest._id, guest);
+      await updateGuest(guest._id, updatedGuest);
       setEditingGuestId(null);
+      setEditingGuests((prev) =>
+        Object.fromEntries(
+          Object.entries(prev).filter(([key]) => key !== guest._id)
+        )
+      );
       await fetchGuests();
       toast.success('Guest updated.');
     } catch {
       toast.error('Error updating guest.');
     }
   };
+  
 
   return (
     <div className={styles.guestPage}>
@@ -233,7 +246,6 @@ const GuestList: React.FC = () => {
           {sending ? 'Sending Invitations...' : '📧 Send Invitation to All Guests'}
         </button>
 
-        {/* Excel Dropdown */}
         <div className={styles.excelDropdown}>
           <button
             type="button"
@@ -257,7 +269,6 @@ const GuestList: React.FC = () => {
           />
         </div>
 
-        {/* Guest Stats */}
         {guests.length > 0 && (
           <div className={styles.guestStats}>
             📊 Total: {guestStats.total} | ✅ Yes: {guestStats.yes} | ❌ No: {guestStats.no} | ❔ Maybe: {guestStats.maybe}
@@ -276,10 +287,10 @@ const GuestList: React.FC = () => {
               <li key={guest._id} className={styles.guestItem}>
                 {editingGuestId === guest._id ? (
                   <>
-                    <input value={guest.fullName} onChange={(e) => handleEditChange(guest._id, 'fullName', e.target.value)} />
-                    <input value={guest.email} onChange={(e) => handleEditChange(guest._id, 'email', e.target.value)} />
-                    <input value={guest.phone || ''} onChange={(e) => handleEditChange(guest._id, 'phone', e.target.value)} />
-                    <select value={guest.rsvp} onChange={(e) => handleEditChange(guest._id, 'rsvp', e.target.value)}>
+                    <input value={editingGuests[guest._id]?.fullName || guest.fullName} onChange={(e) => handleEditChange(guest._id, 'fullName', e.target.value)} />
+                    <input value={editingGuests[guest._id]?.email || guest.email} onChange={(e) => handleEditChange(guest._id, 'email', e.target.value)} />
+                    <input value={editingGuests[guest._id]?.phone || guest.phone || ''} onChange={(e) => handleEditChange(guest._id, 'phone', e.target.value)} />
+                    <select value={editingGuests[guest._id]?.rsvp || guest.rsvp} onChange={(e) => handleEditChange(guest._id, 'rsvp', e.target.value)}>
                       <option value="maybe">Maybe</option>
                       <option value="yes">Yes</option>
                       <option value="no">No</option>
