@@ -1,4 +1,6 @@
 /* index.css - Global wedding-themed styles */
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700&display=swap');
+@import url('https://fonts.cdnfonts.com/css/relation-3'); 
 
 :root {
    --wedding-pink: #f9e6f0;
@@ -7,13 +9,19 @@
    --wedding-purple: #d2b1e5e1;
    --wedding-gray: #888888;
    --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+   --font-rubik: 'Rubik', sans-serif;
+   --font-relation: 'Relation', sans-serif;
+ }
+
+ p {
+  font-family: var(--font-rubik);
  }
  
  /* Reset & base */
  html, body {
    margin: 0;
    padding: 0;
-   font-family: var(--font-main);
+   font-family: var(--font-rubik);
    background: linear-gradient(to bottom right, var(--wedding-pink), var(--wedding-white));
    color: #333;
    min-height: 100vh;
@@ -26,24 +34,27 @@
    font-weight: 600;
    letter-spacing: 0.5px;
    transition: color 0.2s ease;
+   font-family: var(--font-rubik);
  }
 
- /* LINKS: gold default, purple on hover */
  a {
    text-decoration: none;
    color: var(--wedding-black);
    transition: color 0.2s ease;
+   font-family: var(--font-rubik);
  }
+
  a:hover {
    color: var(--wedding-purple);
  }
  
- /* BUTTONS: black bg default, pink on hover */
+ /* BUTTONS: purple bg default, pink on hover */
  button {
-   font-family: inherit;
+   font-family: var(--font-rubik);
+   font-weight: 700;
    padding: 0.6em 1.4em;
    border: none;
-   border-radius: 30px;
+   border-radius: 10px;
    background-color:var(--wedding-purple);         /* black background */
    color: white;
    font-weight: bold;
@@ -53,22 +64,25 @@
    cursor: pointer;
    transition: background-color 0.3s ease, transform 0.2s ease;
  }
+
  button:hover {
    background-color: var(--wedding-pink); /* pink on hover */
    transform: translateY(-2px);
+   color: black;
  }
+
  button:active {
    transform: scale(0.98);
  }
  
  /* FORMS */
  input, select {
-   font-family: inherit;
    border-radius: 6px;
    padding: 0.5em;
    border: 1px solid #ccc;
    transition: border-color 0.2s ease;
  }
+ 
  input:focus, select:focus {
    border-color: var(--wedding-black);
    outline: none;

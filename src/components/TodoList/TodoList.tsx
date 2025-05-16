@@ -19,15 +19,11 @@ export default function TodoList() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  // src/components/TodoList/TodoList.tsx - עדכון פונקצית handleAIButtonClick
 
-// במקום לפתוח את המודל, נריץ ישירות את הפעולה ברקע
 const handleAIButtonClick = async (task: string) => {
   try {
-    // כאן אנחנו מתחילים את המחקר ישירות ללא פתיחת מודל
     await vendorService.startAIResearchBackground(task);
     
-    // נציג הודעה קטנה למשתמש (אופציונלי)
     alert(`המחקר על "${task}" החל לרוץ ברקע! התוצאות יופיעו בדף הספקים.`);
   } catch (err) {
     console.error("Error starting AI research:", err);
@@ -40,7 +36,6 @@ const handleAIButtonClick = async (task: string) => {
       .fetchMyTdl()
       .then((list) => {
         setTodoList(list);
-        // פותחים כברירת מחדל את כל הקטיגוריות
         const init: Record<number, boolean> = {};
         list.sections.forEach((_, idx) => (init[idx] = true));
         setOpenSections(init);
@@ -72,7 +67,7 @@ const handleAIButtonClick = async (task: string) => {
           {todoList.weddingTodoListName}
         </h2>
         <p className={styles.coupleNames}>
-          👰 {todoList.bride} & 🤵 {todoList.groom}
+           💍 {todoList.firstPartner} &  {todoList.secondPartner}
         </p>
         <p className={styles.weddingDate}>
           📅 Wedding Date: <strong>{todoList.weddingDate}</strong>
@@ -97,9 +92,7 @@ const handleAIButtonClick = async (task: string) => {
                 {section.todos.map((todo, i) => (
                   <li key={i} className={styles.todoItem}>
                     <div className={styles.taskRow}>
-                      {/* task text */}
                       <span className={styles.taskTitle}>{todo.task}</span>
-                      {/* פעולה: מידע, AI, מחיקה */}
                       <div className={styles.actions}>  
                         <button type="button" className={styles.infoBtn} aria-label="Info">
                           <Info size={16} />
@@ -116,12 +109,10 @@ const handleAIButtonClick = async (task: string) => {
                           <Trash2 size={16} />
                         </button>
                     </div>
-                      {/* סימון סטטוס בסוף השורה */}
                       <input
                         type="checkbox"
                         className={styles.statusCheckbox}
                         onChange={() => {
-                          /* הוספת לוגיקה לשינוי סטטוס */
                         }}
                       />
                     </div>
