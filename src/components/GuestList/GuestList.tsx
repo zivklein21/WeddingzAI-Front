@@ -105,12 +105,25 @@ const GuestList: React.FC = () => {
       return;
     }
 
+    const validGuests = guests
+      .filter((g) => g.email && g.fullName)
+      .map((g) => ({
+        email: g.email,
+        fullName: g.fullName,
+      }));
+
+    if (validGuests.length === 0) {
+      toast.error('No valid guests to send invitations.');
+      return;
+    }
+
     setSending(true);
     try {
       await sendInvitationToAllGuests({
         partner1: firstPartner,
         partner2: secondPartner,
         weddingDate: WEDDING_DATE,
+        guests: validGuests,
       });
       toast.success('Invitations sent!');
     } catch {
@@ -219,7 +232,6 @@ const GuestList: React.FC = () => {
       toast.error('Error updating guest.');
     }
   };
-  
 
   return (
     <div className={styles.guestPage}>

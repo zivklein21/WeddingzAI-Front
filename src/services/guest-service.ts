@@ -16,6 +16,12 @@ interface BaseResponse<T> {
   data: T;
 }
 
+// Guest contact info for email sending
+export interface GuestContact {
+  fullName: string;
+  email: string;
+}
+
 // 1. GET all guests
 export const fetchAllGuests = async (): Promise<Guest[]> => {
   const resp = await apiClient.get<BaseResponse<Guest[]>>("/guests");
@@ -34,7 +40,7 @@ export const fetchGuestById = async (id: string): Promise<Guest> => {
   return resp.data.data;
 };
 
-// 4. DELETE guest (new: using custom remove)
+// 4. DELETE guest
 export const deleteGuest = async (id: string): Promise<Guest> => {
   const resp = await apiClient.delete<BaseResponse<Guest>>(`/guests/${id}`);
   return resp.data.data;
@@ -62,11 +68,12 @@ export const updateGuest = async (id: string, guest: {
   return resp.data.data;
 };
 
-// 7. POST invitations
+// 7. POST invitations with guest names
 export const sendInvitationToAllGuests = async (data: {
   partner1: string;
   partner2: string;
   weddingDate: string;
+  guests: GuestContact[];
 }): Promise<void> => {
   const resp = await apiClient.post<BaseResponse<null>>("/guests/send-invitation", data);
   if (resp.status !== 200) {
