@@ -100,7 +100,7 @@ export default function AuthForm() {
       secondPartner: data.secondPartner,
       email: data.email,
       password: data.password,
-      avatar: "../../assets/images/user-icon.svg",
+      avatar: "",
     };
 
     try {
@@ -141,6 +141,7 @@ export default function AuthForm() {
     console.log("Google Login Failed");
   }
 
+  
   return (
     <div className={styles.pageWrapper}>
       <div className={styles.authBox}>

@@ -33,6 +33,7 @@ export const NavBar: React.FC<NavBarProps> = ({title}) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  
   return (
     <nav className={styles.navbar}>
       <div className={styles.logo}>
@@ -51,7 +52,10 @@ export const NavBar: React.FC<NavBarProps> = ({title}) => {
 
       {user ? (
         <div className={styles.authWrapper}>
-          <img src={user.avatar} alt="User Avatar" />
+          <img
+            src={user.avatar?.trim() ? user.avatar : userIcon}
+            alt="User Avatar"
+          />
           <div className={styles.authInfo}>
             <div className={styles.authName}><strong>{user.firstPartner}</strong></div>
             <div className={styles.auth}>
