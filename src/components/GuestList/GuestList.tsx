@@ -189,12 +189,20 @@ const GuestList: React.FC = () => {
   };
 
   const handleExportExcel = () => {
-    const worksheet = XLSX.utils.json_to_sheet(guests);
+    const excludedKeys = new Set(['_id', 'userId', '__v']);
+    const exportGuests = guests.map((g) =>
+      Object.fromEntries(
+        Object.entries(g).filter(([key]) => !excludedKeys.has(key))
+      )
+    );
+  
+    const worksheet = XLSX.utils.json_to_sheet(exportGuests);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Guests');
     XLSX.writeFile(workbook, 'guest-list.xlsx');
   };
-
+  
+  
   const handleDelete = async (id: string) => {
     try {
       await deleteGuest(id);
