@@ -5,6 +5,8 @@ import tdlService from "../../services/tdl-service";
 import styles from "./PrefForm.module.css";
 
 const formSchema = z.object({
+  firstPartner: z.string(),
+  secondPartner: z.string(),
   hasDateAndVenue: z.string(),
   weddingDate: z.string(),
   venue: z.string(),
@@ -23,6 +25,8 @@ type FormData = z.infer<typeof formSchema>;
 
 export default function PrefForm() {
   const [formData, setFormData] = useState<FormData>({
+    firstPartner: "",
+    secondPartner: "",
     hasDateAndVenue: "",
     weddingDate: "",
     venue: "",
@@ -51,7 +55,7 @@ export default function PrefForm() {
     }));
   };
 
-  const handleNextStep = () => setCurrentStep(s => Math.min(2, s + 1));
+  const handleNextStep = () => setCurrentStep(s => Math.min(3, s + 1));
   const handlePreviousStep = () => setCurrentStep(s => Math.max(1, s - 1));
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -96,6 +100,37 @@ export default function PrefForm() {
 
         <form onSubmit={handleSubmit}>
           {currentStep === 1 && (
+            <>
+              <div className={styles.formGroup}>
+                  <div className={styles.partnersRow}>
+                    <div className={styles.partnerField}>
+                      <label className={styles.partnersLabel}>First Partner</label>
+                      <input type="text" className={styles.partnersInput} onChange={e => setFormData(prev => ({ ...prev, firstPartner: e.target.value }))}></input>
+                    </div>
+                    <div className={styles.partnerField}>
+                      <label className={styles.partnersLabel}>Second Partner</label>
+                      <input type="text" className={styles.partnersInput} onChange={e => setFormData(prev => ({ ...prev, secondPartner: e.target.value }))}></input>
+                    </div>
+                  </div>                
+                  {formErrors.firstPartner && <p className={styles.error}>{formErrors.firstPartner}</p>}
+                  {formErrors.secondPartner && <p className={styles.error}>{formErrors.secondPartner}</p>}
+              </div>
+
+
+              <div className={styles.buttonRow}>
+                {currentStep > 1 && (
+                  <button type="button" onClick={handlePreviousStep}>
+                    Back
+                  </button>
+                )}
+                <button type="button" onClick={handleNextStep}>
+                  Next
+                </button>
+              </div>
+            </>
+          )}
+
+          {currentStep === 2 && (
             <>
               <div className={styles.formGroup}>
                 <label>Do you already have a wedding date and venue?</label>
@@ -163,7 +198,7 @@ export default function PrefForm() {
             </>
           )}
 
-          {currentStep === 2 && (
+          {currentStep === 3 && (
             <>
               <div className={styles.formGroup}>
                 <label>How many guests are you expecting?</label>
