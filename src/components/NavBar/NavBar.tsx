@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import styles from './NavBar.module.css';
 import logo from '../../assets/ wai-logo.svg';
 import userIcon from "../../assets/images/user-icon.svg";
@@ -8,11 +8,27 @@ import { useAuth } from '../../hooks/useAuth/AuthContext';
 export const NavBar: React.FC = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const [showConfirm, setShowConfirm] = useState(false);
+  const confirmRef = useRef<HTMLDivElement>(null);
 
-  const handleLogout = () => {
-    logout();              // clear auth
-    navigate('/auth');     // redirect to login
+  const handleLogoutClick = () => setShowConfirm(true);
+  const cancelLogout = () => setShowConfirm(false);
+  const confirmLogout = () => {
+    logout();
+    navigate('/auth');
   };
+
+  // Close on outside click
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (confirmRef.current && !confirmRef.current.contains(e.target as Node)) {
+        setShowConfirm(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   return (
     <nav className={styles.navbar}>
       <div className={styles.logo}>
@@ -35,7 +51,24 @@ export const NavBar: React.FC = () => {
           <div>
             <div className={styles.authName}><strong>{user.firstPartner}</strong></div>
             <div className={styles.auth}>
-              <a href="/profile">Profile</a> | <button onClick={handleLogout} className={styles.logoutButton}>Logout</button>
+              <a href="/profile">Profile</a> |{" "}
+              <div className={styles.logoutContainer}>
+                <button onClick={handleLogoutClick} className={styles.logoutButton}>Logout</button>
+
+                {showConfirm && (
+                  <div className={styles.logoutConfirm} ref={confirmRef}>
+                    <span>Are you sure?</span>
+                    <div className={styles.logoutActions}>
+                      <button onClick={cancelLogout} className={styles.logoutButton} style={
+                        { fontSize: '0.8rem', padding: '0.5rem 1rem' }
+                      }>Cancel</button>
+                      <button onClick={confirmLogout} className={styles.logoutButton} style={
+                        { fontSize: '0.8rem', padding: '0.5rem 1rem' }
+                      }>Yes</button>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -45,22 +78,12 @@ export const NavBar: React.FC = () => {
           <div>
             <div className={styles.authName}><strong>Anonymous</strong></div>
             <div className={styles.auth}>
-            {user ? (
-              <>
-                <a href="/profile">Profile</a> |{' '}
-                <a href="#" onClick={handleLogout} className={styles.logoutLink}>Logout</a>
-              </>
-            ) : (
-              <>
-                <a href="/auth?mode=login">Login</a> |{' '}
-                <a href="/auth?mode=signup">Register</a>
-              </>
-            )}
-          </div>
+              <a href="/auth?mode=login">Login</a> |{" "}
+              <a href="/auth?mode=signup">Register</a>
+            </div>
           </div>
         </div>
       )}
     </nav>
-
   );
 };

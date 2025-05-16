@@ -74,12 +74,14 @@ apiClient.interceptors.response.use(
 
         return apiClient(originalRequest);
       } catch (refreshError) {
+        console.log("Error refreshing token:", refreshError);
         console.error("Token refresh failed:", refreshError);
 
         // Clear Cookies Data
         Cookies.remove("refreshToken");
         Cookies.remove("accessToken");
         Cookies.remove("user");
+
 
         // Redirect to login if refresh fails
         // window.location.href = "/auth";
