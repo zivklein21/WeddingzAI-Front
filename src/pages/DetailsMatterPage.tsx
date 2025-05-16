@@ -1,26 +1,58 @@
-import React from "react";
-import DetailsMatters from "../components/DetailsMatters/DetailsMatters";
+// DetailsMatterPage.tsx
+import React from 'react';
 import { NavBar } from "../components/NavBar/NavBar";
-import { useAuth } from "../hooks/useAuth/AuthContext";
-import { Navigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import DetailsMatters from '../components/DetailsMatters/DetailsMatters';
 
-const DetailsMatterPage: React.FC = () => {
-  const { isAuthenticated, loading } = useAuth();
-
-  if (loading) {
-    return <h1>Loading...</h1>;
+class ErrorBoundary extends React.Component<
+  { children: React.ReactNode },
+  { hasError: boolean }
+> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
   }
 
-  if (!isAuthenticated) {
-    return <Navigate to="/auth" />;
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error('Error in DetailsMatters:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <div>Something went wrong. Please try refreshing the page.</div>;
+    }
+
+    return this.props.children;
+  }
+}
+
+const DetailsMatterPage: React.FC = () => {
+  const { isAuthenticated, loading: authLoading } = useAuth();
+  const navigate = useNavigate();
+
+  React.useEffect(() => {
+    if (!authLoading && !isAuthenticated) {
+      navigate('/auth');
+    }
+  }, [isAuthenticated, authLoading, navigate]);
+
+  if (authLoading) {
+    return <div>Loading...</div>;
   }
 
   return (
-    <div>
+    <>
       <NavBar />
-      <DetailsMatters />
-    </div>
+      <ErrorBoundary>
+        <DetailsMatters />
+      </ErrorBoundary>
+    </>
   );
 };
 
-export default DetailsMatterPage; 
+export default DetailsMatterPage;

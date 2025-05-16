@@ -9,6 +9,7 @@ import BudgetPage from "./pages/BudgetPage/BudgetPage";
 import WeddingDashboardPage from "./pages/WeddingDashoardPage";
 import AuthPage from "./pages/AuthPage";
 import DetailsMatterPage from "./pages/DetailsMatterPage";
+import ProfilePage from "./pages/ProfilePage";
 import { AuthProvider } from "./hooks/useAuth/AuthContext";
 import DJPage from "./pages/DJPage";
 import ScrapeDjPage from "./pages/scrape-dj-page";
@@ -33,6 +34,7 @@ export default function App() {
           <Route path="/details-matter" element={<DetailsMatterPage />} />
           <Route path="/guests" element={<GuestPage />} />
           <Route path="/seating" element={<SeatingPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
