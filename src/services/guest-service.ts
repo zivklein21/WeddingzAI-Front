@@ -16,7 +16,6 @@ interface BaseResponse<T> {
   data: T;
 }
 
-// 👇 updated to match what backend expects
 export interface GuestContact {
   fullName: string;
   email: string;
