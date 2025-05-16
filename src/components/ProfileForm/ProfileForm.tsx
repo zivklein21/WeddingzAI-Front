@@ -25,8 +25,14 @@ const Profile = () => {
   const [newAvatarFile, setNewAvatarFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { user, updateUserSession } = useAuth();
+
   const [serverError, setServerError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  const [passServerError, setPassServerError] = useState<string | null>(null);
+  const [passSuccessMessage, setPassSuccessMessage] = useState<string | null>(null);
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   useEffect(() => {
     if (user) {
@@ -100,7 +106,7 @@ const Profile = () => {
         setUserDetails(updatedUser);
         setNewAvatarFile(null);
         setSuccessMessage("Profile updated successfully!");
-        
+
       } else {
         setServerError("Failed to update profile.");
       }
@@ -108,8 +114,37 @@ const Profile = () => {
     } catch (error: any) {
       setServerError(error.response?.data?.message || "An error occurred while updating the profile.");
     }
-
   };
+
+  const handelPasswordReset = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (password !== confirmPassword) {
+      setPassServerError("Passwords do not match.");
+      return;
+    }
+
+    if (password.length < 6) {
+      setPassServerError("Password must be at least 6 characters long.");
+      return;
+    }
+
+    try {
+      const { request: resetPasswordRequest } = await authService.resetPassword(password);
+      const resetResponse = await resetPasswordRequest;
+      if (resetResponse.status === 200) {
+        setSuccessMessage("Password reset successfully!");
+        return;
+      }
+      setPassServerError("Failed to reset password.");
+
+    } catch (error: any) {
+      setPassServerError(error.response?.data?.message || "An error occurred while updating password.");
+      return;
+    }
+
+    setPassServerError(null);
+    setPassSuccessMessage(`Password reset successfully!`);
+  }
 
   return (
     <div className={styles.main}>
@@ -118,7 +153,10 @@ const Profile = () => {
         <p className={styles.profileSubtitle}>Edit your personal info</p>
 
         <div className={styles.card}>
-          <div className={styles.avatarSection}>
+          <div className={styles.avatarSection}
+            style={{
+              marginLeft: "0.8rem",
+            }}>
             <div className={styles.avatarWrapper}>
               <img src={userDetails.avatar} alt="Avatar" className={styles.avatar} />
             </div>
@@ -175,6 +213,56 @@ const Profile = () => {
 
             <button type="submit" className={styles.updateBtn}>
               Update Details
+            </button>
+          </form>
+        </div>
+        <br />
+        <br />
+
+        {/* Password Reset Section */}
+        <div className={styles.card}
+          style={{
+            justifyContent: "center",
+          }}>
+          <form
+            className={styles.infoSection}
+            onSubmit={handelPasswordReset}
+          >
+            <h3 style={{ marginBottom: "1rem", color: "#2e2e2e", textAlign: "left" }}>Reset Password</h3>
+
+            <div className={styles.infoItem}
+              style={{
+                width: "95%",
+              }}>
+              <label>New Password:</label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className={styles.input}
+                required
+              />
+            </div>
+
+            <div className={styles.infoItem}
+              style={{
+                width: "95%",
+              }}>
+              <label>Confirm Password:</label>
+              <input
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className={styles.input}
+                required
+              />
+            </div>
+
+            {passServerError && <div className={`${styles["alert-profile"]} ${styles["alert-danger-profile"]}`}>{passServerError}</div>}
+            {passSuccessMessage && <div className={`${styles["alert-profile"]} ${styles["alert-success-profile"]}`}>{passSuccessMessage}</div>}
+
+            <button type="submit" className={styles.updateBtn} style={{ width: "105%" }}>
+              Reset Password
             </button>
           </form>
         </div>

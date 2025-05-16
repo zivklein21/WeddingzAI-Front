@@ -92,8 +92,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             const {request: googleSignInRequest } = await userService.googleSignIn(response);
             const googleSignInResponse = await googleSignInRequest;
 
-            console.log('Google Sign-In Response:', googleSignInResponse.data);
-
             const { accessToken, refreshToken, _id, firstPartner, secondPartner, avatar, email } = googleSignInResponse.data;
             const userData = { accessToken, refreshToken, _id, avatar, email, firstPartner, secondPartner, password: '' };
 
