@@ -16,10 +16,12 @@ interface BaseResponse<T> {
   data: T;
 }
 
-// Guest contact info for email sending
+// 👇 updated to match what backend expects
 export interface GuestContact {
   fullName: string;
   email: string;
+  guestId: string;
+  rsvpToken: string;
 }
 
 // 1. GET all guests
@@ -58,17 +60,20 @@ export const createGuest = async (guest: {
 };
 
 // 6. PUT guest (update)
-export const updateGuest = async (id: string, guest: {
-  fullName: string;
-  email: string;
-  phone?: string;
-  rsvp?: "yes" | "no" | "maybe";
-}): Promise<Guest> => {
+export const updateGuest = async (
+  id: string,
+  guest: {
+    fullName: string;
+    email: string;
+    phone?: string;
+    rsvp?: "yes" | "no" | "maybe";
+  }
+): Promise<Guest> => {
   const resp = await apiClient.put<BaseResponse<Guest>>(`/guests/${id}`, guest);
   return resp.data.data;
 };
 
-// 7. POST invitations with guest names
+// 7. POST invitations with full guest data
 export const sendInvitationToAllGuests = async (data: {
   partner1: string;
   partner2: string;

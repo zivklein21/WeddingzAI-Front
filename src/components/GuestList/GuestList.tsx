@@ -191,9 +191,7 @@ const GuestList: React.FC = () => {
   const handleExportExcel = () => {
     const excludedKeys = new Set(['_id', 'userId', '__v']);
     const exportGuests = guests.map((g) =>
-      Object.fromEntries(
-        Object.entries(g).filter(([key]) => !excludedKeys.has(key))
-      )
+      Object.fromEntries(Object.entries(g).filter(([key]) => !excludedKeys.has(key)))
     );
     const worksheet = XLSX.utils.json_to_sheet(exportGuests);
     const workbook = XLSX.utils.book_new();
