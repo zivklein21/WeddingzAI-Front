@@ -1,11 +1,42 @@
+
+/* =======================
+   Guest Table Styles
+   ======================= */
+
+.guestTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1.5rem;
+  table-layout: fixed; /* evenly distribute columns across full width */
+}
+
+/* Ensure the table spans the entire white card */
+.guestContainer .guestTable {
+  width: 100%;
+  display: table;
+}
+
+.guestTable th{
+   padding: 0.75rem 1rem;
+  white-space: normal;
+  text-align: center;
+  border-bottom: 2px solid #e0e0e0;
+}
+.guestTable td {
+  padding: 0.75rem 1rem;
+  white-space: normal;
+  text-align: center;  /* ensure headers and data align on the left */
+}
+
+
 .guestPage {
   height: 100vh;
   width: 100%;
   background: url('../../assets/images/main-bg.png') no-repeat center center;
   background-size: cover;
-  background-color: #fff8fb;
   overflow: auto;
   padding: 50px 20px;
+  margin-top: 80px;
 }
 
 .guestContainer {
@@ -85,6 +116,7 @@
 
 .guestForm input,
 .guestForm select {
+  max-width: none;
   padding: 10px;
   font-size: 0.95rem;
   flex: 1 1 200px;
@@ -94,18 +126,13 @@
 
 .guestForm button {
   padding: 10px 18px;
-  font-size: 1rem;
-  background-color: #5c67f2;
-  color: white;
-  border: none;
-  cursor: pointer;
-  border-radius: 6px;
-  transition: background 0.3s ease;
+  width: 140px;
+  height: 40px;
+  flex: 0 0 auto;
+  padding: 10px 18px;
 }
 
-.guestForm button:hover {
-  background-color: #3f4ad4;
-}
+
 
 .sendEmailButton {
   margin-top: 1rem;
@@ -168,8 +195,172 @@
 }
 
 .guestStats {
-  margin-top: 15px;
   font-weight: 500;
   font-size: 1rem;
   color: #2c3e50;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+
+
+/* Wraps all three actions side by side */
+.actionsContainer {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+/* Each icon+label pair */
+.iconAction {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  color: var(--wedding-purple);
+  transition: color 0.2s, opacity 0.2s;
+}
+
+.iconAction:hover {
+  color: var(--wedding-pink);
+}
+.iconAction.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+
+/* The icon itself */
+.actionIcon {
+    cursor: pointer;
+  font-size: 1.5rem;
+  color: var(--wedding-purple, #d291ff);
+  margin-right: 0.5rem;
+  transition: color 0.2s;
+  vertical-align: middle;
+}
+
+/* The little label under each icon */
+.iconLabel {
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+  color: var(--wedding-gray);
+}
+
+.actionIcon:last-child {
+  margin-right: 0;
+}
+.actionIcon:hover {
+  color: var(--wedding-pink, #b074e8);
+}
+
+
+/* Distribute columns evenly */
+.guestTable th:nth-child(1),
+.guestTable td:nth-child(1) { width: 20%; }
+.guestTable th:nth-child(2),
+.guestTable td:nth-child(2) { width: 30%; }
+.guestTable th:nth-child(3),
+.guestTable td:nth-child(3) { width: 20%; }
+.guestTable th:nth-child(4),
+.guestTable td:nth-child(4) { width: 15%; }
+.guestTable th:nth-child(5),
+.guestTable td:nth-child(5) { width: 15%; }
+.tableInput,
+.tableSelect {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  font-size: 1rem;
+  line-height: 1.2;
+  height: 2.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  background-color: #fff;
+}
+
+.tableSelect {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg width='10' height='5' viewBox='0 0 10 5' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0l5 5 5-5z' fill='%23666'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 10px 5px;
+  padding-right: 2rem;
+}
+
+.guestTable td,
+.guestTable th {
+  vertical-align: middle;
+}
+/* 
+.status_yes   { color: green;  font-weight: 600; }
+.status_no    { color: red;    font-weight: 600; }
+.status_maybe { color: orange; font-weight: 600; } */
+
+/* Empty / loading */
+.emptyGuestList {
+  text-align: center;
+  color: #999;
+  font-style: italic;
+  padding: 1rem 0;
+}
+
+/* Container holding the stats (reuse actionsContainer or define your own) */
+.statsRow {
+  display: flex;
+  gap: 2rem;
+  align-items: center;      /* vertically center icons & text */
+  justify-content: flex-end; /* push to right */
+  margin-top: 1rem;
+}
+
+/* Each icon+label block */
+.statsBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: var(--wedding-gray, #888);
+}
+
+/* The SVG icon */
+.statsBlock .actionIcon {
+  font-size: 2.2rem;               /* larger icon */
+  color: var(--wedding-purple, #b291ff);
+  margin-bottom: 0.25rem;          /* space below icon */
+  transition: color 0.2s;
+}
+
+/* On hover, if you like */
+.statsBlock:hover .actionIcon {
+  color: var(--wedding-pink, #d291ff);
+}
+
+/* The label underneath */
+.statsBlock .iconLabel {
+  font-size: 0.9rem;               /* slightly larger text */
+  font-weight: 500;
+  color: var(--wedding-dark, #2c3e50);
+}
+
+/* Make stats sit in the same line as your import/export icons */
+.toolbar .actionsContainer + .actionsContainer {
+  margin-left: auto;  /* push stats row to the right */
+}
+
+/* Enlarge the stats icons */
+.statsBlock .actionIcon {
+  font-size: 2.4rem;      /* bump up from 2.2rem */
+  margin-bottom: 0.25rem; /* keep a bit of breathing room */
+}
+
+/* (Optional) tighten the gap between stats blocks */
+.statsRow, 
+.toolbar .actionsContainer + .actionsContainer {
+  gap: 1.5rem;  /* slightly less than icon row if desired */
 }
