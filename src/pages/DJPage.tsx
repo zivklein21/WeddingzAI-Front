@@ -17,7 +17,7 @@ const DJPage: React.FC = () => {
 
   return (
     <div>
-      <NavBar />
+      <NavBar title=""/>
       <DjsGrid />
     </div>
   );

@@ -16,7 +16,7 @@ const ScrapeDjPage: React.FC = () => {
 
   return (
     <div>
-      <NavBar />
+      <NavBar title=""/>
     </div>
   );
 };
