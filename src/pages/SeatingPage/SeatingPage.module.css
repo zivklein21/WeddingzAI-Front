@@ -5,6 +5,7 @@
   background-color: #f7f7f7;
   border: 2px dashed #ccc;
   overflow: hidden;
+  padding-top: 70px; /* הוסף מרווח מעל */
 }
 
 .table {

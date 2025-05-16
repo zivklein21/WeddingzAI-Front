@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { createTable } from "../../services/seating-service";
+import styles from "./AddTableForm.module.css";
 
 type Props = {
   onTableCreated: (table: any) => void;
@@ -30,37 +31,77 @@ export default function AddTableForm({ onTableCreated }: Props) {
   };
 
   return (
-    <div style={{ margin: "1rem 0" }}>
-      <button onClick={() => setShowForm(!showForm)}>
-        {showForm ? "ביטול" : "הוסף שולחן חדש"}
+    <div>
+      <button className={styles.openButton} onClick={() => setShowForm(true)}>
+        <span className={styles.openIcon}>＋</span> Add New Table
       </button>
 
       {showForm && (
-        <form onSubmit={handleSubmit} style={{ marginTop: "1rem" }}>
-          <input
-            type="text"
-            placeholder="שם השולחן"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
-          <select
-            value={shape}
-            onChange={(e) => setShape(e.target.value as any)}
-          >
-            <option value="round">עגול</option>
-            <option value="rectangle">מלבני</option>
-          </select>
-          <input
-            type="number"
-            placeholder="מספר מקומות"
-            value={capacity}
-            onChange={(e) => setCapacity(Number(e.target.value))}
-            min={1}
-            required
-          />
-          <button type="submit">צור שולחן</button>
-        </form>
+        <div className={styles.modalOverlay}>
+          <div className={styles.modalContent}>
+            <div className={styles.header}>
+              <h3 className={styles.formTitle}>Create New Table</h3>
+              <button
+                className={styles.closeButton}
+                onClick={() => setShowForm(false)}
+              >
+                ✕
+              </button>
+            </div>
+            <form onSubmit={handleSubmit} className={styles.form}>
+              <div className={styles.formGroup}>
+                <label htmlFor="tableName" className={styles.label}>
+                  Table Name
+                </label>
+                <input
+                  id="tableName"
+                  type="text"
+                  placeholder="Enter table name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                  className={styles.input}
+                />
+              </div>
+
+              <div className={styles.row}>
+                <div className={styles.formGroup}>
+                  <label htmlFor="shape" className={styles.label}>
+                    Shape
+                  </label>
+                  <select
+                    id="shape"
+                    value={shape}
+                    onChange={(e) => setShape(e.target.value as any)}
+                    className={styles.select}
+                  >
+                    <option value="round">Round</option>
+                    <option value="rectangle">Rectangle</option>
+                  </select>
+                </div>
+                <div className={styles.formGroup}>
+                  <label htmlFor="capacity" className={styles.label}>
+                    Seats
+                  </label>
+                  <input
+                    id="capacity"
+                    type="number"
+                    placeholder="Number of seats"
+                    value={capacity}
+                    onChange={(e) => setCapacity(Number(e.target.value))}
+                    min={1}
+                    required
+                    className={styles.number}
+                  />
+                </div>
+              </div>
+
+              <button type="submit" className={styles.button}>
+                Create Table
+              </button>
+            </form>
+          </div>
+        </div>
       )}
     </div>
   );

@@ -1,9 +1,13 @@
+import React from "react";
 import { useDraggable } from "@dnd-kit/core";
+import TableShape, { TableProps } from "./Table";
 import styles from "../../pages/SeatingPage/SeatingPage.module.css";
 
-type DraggableTableProps = {
+export type DraggableTableProps = {
   id: string;
   name: string;
+  shape: "round" | "rectangle" | "square";
+  capacity: number;
   x: number;
   y: number;
 };
@@ -11,21 +15,27 @@ type DraggableTableProps = {
 export default function DraggableTable({
   id,
   name,
+  shape,
+  capacity,
   x,
   y,
 }: DraggableTableProps) {
-  const { attributes, listeners, setNodeRef, transform } = useDraggable({ id });
+  const { attributes, listeners, setNodeRef, transform } = useDraggable({
+    id,
+  });
 
-  const finalX = transform ? x + transform.x : x;
-  const finalY = transform ? y + transform.y : y;
+  // חישוב מיקום סופי (initial + drag delta)
+  const translateX = transform ? x + transform.x : x;
+  const translateY = transform ? y + transform.y : y;
 
-  const style = {
-    transform: `translate(${finalX}px, ${finalY}px)`,
+  const style: React.CSSProperties = {
+    transform: `translate(${translateX}px, ${translateY}px)`,
+    position: "absolute",
   };
 
   return (
     <div ref={setNodeRef} style={style} {...listeners} {...attributes}>
-      <div className={styles.table}>{name}</div>
+      <TableShape name={name} shape={shape} capacity={capacity} />
     </div>
   );
 }
