@@ -5,7 +5,11 @@ import userIcon from "../../assets/images/user-icon.svg";
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth/AuthContext';
 
-export const NavBar: React.FC = () => {
+interface NavBarProps {
+  title: string;
+}
+
+export const NavBar: React.FC<NavBarProps> = ({title}) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [showConfirm, setShowConfirm] = useState(false);
@@ -39,32 +43,29 @@ export const NavBar: React.FC = () => {
 
       <div className={styles.title}>
         {user ? (
-          <a href="/weddash">My Weddings</a>
+          <a href="/weddash">{title}</a>
         ) : (
-          <a href="/auth?mode=login">My Weddings</a>
+          <a href="/auth?mode=login">{title}</a>
         )}
       </div>
 
       {user ? (
         <div className={styles.authWrapper}>
-          <img src={userIcon} alt="User Avatar" />
-          <div>
+          <img src={user.avatar} alt="User Avatar" />
+          <div className={styles.authInfo}>
             <div className={styles.authName}><strong>{user.firstPartner}</strong></div>
             <div className={styles.auth}>
               <a href="/profile">Profile</a> |{" "}
               <div className={styles.logoutContainer}>
-                <button onClick={handleLogoutClick} className={styles.logoutButton}>Logout</button>
+                <a onClick={handleLogoutClick} className={styles.logoutButton}>Logout</a>
+                {/* <button onClick={handleLogoutClick} className={styles.logoutButton}>Logout</button> */}
 
                 {showConfirm && (
                   <div className={styles.logoutConfirm} ref={confirmRef}>
                     <span>Are you sure?</span>
                     <div className={styles.logoutActions}>
-                      <button onClick={cancelLogout} className={styles.logoutButton} style={
-                        { fontSize: '0.8rem', padding: '0.5rem 1rem' }
-                      }>Cancel</button>
-                      <button onClick={confirmLogout} className={styles.logoutButton} style={
-                        { fontSize: '0.8rem', padding: '0.5rem 1rem' }
-                      }>Yes</button>
+                      <a onClick={cancelLogout} className={styles.logoutOption}>Cancel</a>
+                      <a onClick={confirmLogout} className={styles.logoutOption}>Yes</a>
                     </div>
                   </div>
                 )}
@@ -75,7 +76,7 @@ export const NavBar: React.FC = () => {
       ) : (
         <div className={styles.authWrapper}>
           <img src={userIcon} alt="Guest Icon" />
-          <div>
+          <div className={styles.authInfo}>
             <div className={styles.authName}><strong>Anonymous</strong></div>
             <div className={styles.auth}>
               <a href="/auth?mode=login">Login</a> |{" "}

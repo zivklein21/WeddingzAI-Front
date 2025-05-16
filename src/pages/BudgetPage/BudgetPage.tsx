@@ -22,7 +22,7 @@ const InnerBudgetPage = () => {
 
   return (
     <div className={styles.pageWrapper}>
-      <NavBar />
+      <NavBar title=""/>
       <div>
         <div id="budget-export">
           <BudgetHeader />

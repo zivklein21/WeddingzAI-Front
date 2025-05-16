@@ -17,7 +17,7 @@ const ProfilePage: React.FC = () => {
 
   return (
     <div>
-      <NavBar />
+      <NavBar title=""/>
       <Profile />
     </div>
   );

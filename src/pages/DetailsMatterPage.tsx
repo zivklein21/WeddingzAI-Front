@@ -47,7 +47,7 @@ const DetailsMatterPage: React.FC = () => {
 
   return (
     <>
-      <NavBar />
+      <NavBar title=""/>
       <ErrorBoundary>
         <DetailsMatters />
       </ErrorBoundary>
