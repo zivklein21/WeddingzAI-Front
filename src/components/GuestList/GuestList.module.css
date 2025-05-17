@@ -272,7 +272,10 @@ html, body {
   color: var(--wedding-pink, #b074e8);
 }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 8541be2 (fix dashboard)
 .guestTable th:nth-child(1),
 .guestTable td:nth-child(1) { width: 20%; }
 .guestTable th:nth-child(2),
@@ -390,7 +393,10 @@ html, body {
   border-bottom: none;  
 }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 8541be2 (fix dashboard)
 .guestTable tbody {
   display: block;
   max-height: 60vh;
