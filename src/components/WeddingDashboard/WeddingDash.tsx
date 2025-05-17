@@ -1,20 +1,24 @@
-// src/components/WeddingDashboard/WeddingDashboard.tsx
-
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import tdlService, { TdlData } from "../../services/tdl-service";
+import guestService, { Guest } from "../../services/guest-service";
 import styles from "./WeddingDashboard.module.css";
 
 
 export default function WeddingDashboard() {
   const [previewTasks, setPreviewTasks] = useState<string[]>([]);
+  const [guestSummary, setGuestSummary] = useState({
+    total: 0,
+    yes: 0,
+    no: 0,
+    maybe: 0,
+  });
   const navigate = useNavigate();
 
   useEffect(() => {
     tdlService
       .fetchMyTdl()
       .then((tdl: TdlData) => {
-        // Flatten all tasks across all sections, then take first 3
         const allTasks = tdl.sections.flatMap((sec) =>
           sec.todos.map((todo) => todo.task)
         );
@@ -22,10 +26,25 @@ export default function WeddingDashboard() {
       })
       .catch((err) => {
         console.error("Could not load TDL preview:", err);
-        // If you want to redirect when no TDL exists:
-        // navigate("/");
+
+      });
+
+    guestService.fetchMyGuests()
+      .then((guests: Guest[]) => {
+        const summary = {
+          total: guests.length,
+          yes: guests.filter(g => g.rsvp === "yes").length,
+          no: guests.filter(g => g.rsvp === "no").length,
+          maybe: guests.filter(g => g.rsvp === "maybe").length,
+        };
+        setGuestSummary(summary);
+      })
+      .catch((err) => {
+        console.error("Could not load guests:", err);
+
       });
   }, [navigate]);
+
 
   return (
     <div className={styles.main}>

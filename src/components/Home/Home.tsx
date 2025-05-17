@@ -1,22 +1,35 @@
-import React from 'react';
 import styles from './HomePage.module.css';
 import heroImage from "../../assets/images/homePage1.svg";
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from "../../hooks/useAuth/AuthContext";
+import tdlService from '../../services/tdl-service';
 
 export default function Home() {
   const navigate = useNavigate();
 
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, loading, user } = useAuth();
 
-  const handleButtonClick = () => {
-    if (loading) return; // optionally block clicks while loading
+  const handleButtonClick = async () => {
+    if (loading) return; 
 
-    if (isAuthenticated) {
-      navigate('/plan');
-    } else {
+    if (!isAuthenticated) {
       navigate('/auth');
+      return;
     }
+    try {
+      const userId = (user as any)._id;
+      const docs = await tdlService.getByUserId(userId);
+      if (Array.isArray(docs) && docs.length > 0) {
+        navigate('/weddash');
+      } else {
+        navigate('/plan');
+      }
+    }
+     catch (err) {
+      console.error(err);
+      navigate('/plan');
+    }
+    
   };
 
   return (

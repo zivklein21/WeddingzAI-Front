@@ -73,7 +73,9 @@ const login = (credentials: { email: string; password: string }) => {
 const updateUser = (updatedUser: UpdatedUser) => {
     const abortController = new AbortController();
     const request = apiClient.put<{
-        username: string;
+        email: string;
+        firstPartner: string;
+        secondPartner: string;
         avatar: string;
     }>("/auth/user", updatedUser, {
         signal: abortController.signal,
@@ -81,4 +83,16 @@ const updateUser = (updatedUser: UpdatedUser) => {
     return { request, abort: () => abortController.abort() };
 };
 
-export default { register, login, googleSignIn, updateUser, logout };
+
+// Rest Password Service
+const resetPassword = (newPassword: string) => {
+    const abortController = new AbortController();
+    const request = apiClient.put<{
+        message: string;
+    }>("/auth/resetpass", { newPassword }, {
+        signal: abortController.signal,
+    });
+    return { request, abort: () => abortController.abort() };
+};
+
+export default { register, login, googleSignIn, updateUser, logout, resetPassword };

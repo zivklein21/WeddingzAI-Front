@@ -1,10 +1,9 @@
-import React from "react";
-import WeddingDashboard from "../components/WeddingDashboard/WeddingDash";
+import DjsGrid from "../components/DJ/dj-grid";
 import { NavBar } from "../components/NavBar/NavBar";
 import { useAuth } from "../hooks/useAuth/AuthContext";
 import { Navigate } from 'react-router-dom';
 
-const WeddingDashboardPage: React.FC = () => {
+const DJPage: React.FC = () => {
 
   const { isAuthenticated, loading } = useAuth();
 
@@ -18,10 +17,10 @@ const WeddingDashboardPage: React.FC = () => {
 
   return (
     <div>
-      <NavBar title="My Wedding"/>
-      <WeddingDashboard />
+      <NavBar title=""/>
+      <DjsGrid />
     </div>
   );
 };
 
-export default WeddingDashboardPage;
+export default DJPage;

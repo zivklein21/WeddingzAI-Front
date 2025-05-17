@@ -1,9 +1,9 @@
-import Budget from "../components/Budget/Budget";
 import { NavBar } from "../components/NavBar/NavBar";
 import { useAuth } from "../hooks/useAuth/AuthContext";
 import { Navigate } from 'react-router-dom';
+import Profile from "../components/ProfileForm/ProfileForm";
 
-const BudgetPage: React.FC = () => {
+const ProfilePage: React.FC = () => {
 
   const { isAuthenticated, loading } = useAuth();
 
@@ -17,10 +17,10 @@ const BudgetPage: React.FC = () => {
 
   return (
     <div>
-      <NavBar />
-      <Budget />
+      <NavBar title=""/>
+      <Profile />
     </div>
   );
 };
 
-export default BudgetPage;
+export default ProfilePage;

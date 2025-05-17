@@ -1,9 +1,9 @@
+/* src/components/TodoList/TodoList.module.css */
 .wrapper {
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   padding: 2rem;
-  min-height: 100vh;
   background-color: #fff0f5;
   background: url("../../assets/images/main-bg.png") no-repeat center center;
   background-size: cover;
@@ -11,6 +11,7 @@
 }
 
 .todoListContainer {
+  margin: 2rem auto;
   background-color: #ffffff;
   padding: 2rem;
   border-radius: 12px;
@@ -23,7 +24,7 @@
   text-align: center;
   font-size: 2rem;
   margin-bottom: 0.5rem;
-  color: #000000;
+  color: #000;
   font-weight: 700;
 }
 
@@ -36,69 +37,110 @@
 }
 
 .todoSection {
-  margin-top: 2rem;
+  margin-top: 1.5rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.sectionHeader {
+  background: #fafafa;
+  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.sectionHeader svg {
+  margin-right: 0.5rem;
 }
 
 .sectionTitle {
-  font-size: 1.3rem;
-  margin-bottom: 0.5rem;
-  color: #000000;
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0;
 }
 
 .todoList {
   list-style: none;
-  padding: 0;
+  padding: 0.5rem 0;
   margin: 0;
 }
 
 .todoItem {
-  margin-bottom: 1rem;
+  padding: 0.5rem 1rem;
 }
 
 .taskRow {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto auto;
   align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
+  gap: 0.75rem;
   background: #fff7fa;
-  padding: 0.75rem;
-  border-radius: 8px;
-}
-
-.taskInfo {
-  flex-grow: 1;
+  padding: 0.5rem;
+  border-radius: 6px;
 }
 
 .taskTitle {
-  font-weight: 600;
+  font-weight: 500;
 }
 
-.priority {
-  font-size: 0.9rem;
-  padding: 0.25rem 0.5rem;
+/* src/components/TodoList/TodoList.module.css */
+
+/* …existing styles… */
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.actions button {
+  background: none;
+  border: none;
+  padding: 4px;
   border-radius: 4px;
-  margin-left: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
 }
 
-.priorityHigh {
-  background-color: #ffcccc;
-  color: #a70000;
+/* specific color for AI button */
+.aiBtn {
+  color: #0066cc;
 }
 
-.priorityMedium {
-  background-color: #fff4cc;
-  color: #8a6d00;
+.aiBtn:hover {
+  background-color: rgba(0, 102, 204, 0.1);
 }
 
-.priorityLow {
-  background-color: #d0f0c0;
+/* you can also tweak the info & delete buttons similarly */
+.infoBtn:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.deleteBtn:hover {
+  background-color: rgba(220, 0, 0, 0.1);
+}
+
+.statusCheckbox {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.newTaskBtn {
+  width: 100%;
+  padding: 0.5rem;
+  background: none;
+  border: none;
+  border-top: 1px solid #e0e0e0;
   color: #007a00;
+  font-size: 1rem;
+  cursor: pointer;
+  text-align: left;
 }
 
-.dueDate {
-  font-size: 0.9rem;
-  white-space: nowrap;
-  color: #444;
+.newTaskBtn:hover {
+  background-color: #f0fff0;
 }
 
 .loading,
@@ -106,4 +148,39 @@
   text-align: center;
   font-size: 1.2rem;
   color: #888;
+}
+
+.statusCheckbox {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  border: 1px solid #000;      /* גבול שחור דק */
+  border-radius: 50%;          /* עיגול */
+  background-color: #fff;      /* לבן כשהוא לא מסומן */
+  cursor: pointer;
+  position: relative;
+  transition: background-color 0.2s;
+}
+
+.statusCheckbox:checked {
+  background-color: #000;      /* שחור כשהוא מסומן */
+}
+
+/* ה־checkmark הלבן באמצע */
+.statusCheckbox::after {
+  content: "✔";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 8px;              /* גודל קטן יותר */
+  color: #fff;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.statusCheckbox:checked::after {
+  opacity: 1;
 }

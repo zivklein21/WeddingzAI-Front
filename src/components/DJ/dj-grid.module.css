@@ -1,0 +1,46 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1rem;
+  padding: 2rem 1rem;    /* רווח מלמעלה ומתחת */
+}
+
+.card {
+  position: relative;
+  height: 160px;
+  background-color: #ccc;
+  background-size: cover;
+  background-position: center;
+  border-radius: 8px;
+  cursor: pointer;
+  overflow: hidden;
+  transition: transform .2s;
+}
+
+.card:hover {
+  transform: scale(1.02);
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.3);
+}
+
+.name {
+  position: absolute;
+  bottom: 0.5rem;
+  left: 0.5rem;
+  margin: 0;
+  padding: 0.25rem 0.5rem;
+  background: rgba(0,0,0,0.6);
+  color: white;
+  font-size: 1rem;
+  border-radius: 4px;
+}
+
+.error {
+  color: red;
+  text-align: center;
+  margin-top: 2rem;
+}

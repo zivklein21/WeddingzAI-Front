@@ -100,7 +100,7 @@ export default function AuthForm() {
       secondPartner: data.secondPartner,
       email: data.email,
       password: data.password,
-      avatar: "../../assets/wai-logo.svg",
+      avatar: "",
     };
 
     try {
@@ -124,14 +124,24 @@ export default function AuthForm() {
 
 
   const onGoogleLoginSuccess = async (response: CredentialResponse) => {
-    await googleSignIn(response);
-    navigate('/home');
-  }
+    try {
+      await googleSignIn(response);
+      navigate('/home');
+      setServerError(null);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setServerError(error.message || 'Google login failed. Please try again.');
+      } else {
+        setServerError('Google login failed. Please try again.');
+      }
+    }
+  };
 
   const onGoogleLoginFailure = () => {
     console.log("Google Login Failed");
   }
 
+  
   return (
     <div className={styles.pageWrapper}>
       <div className={styles.authBox}>

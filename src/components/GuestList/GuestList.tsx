@@ -214,6 +214,7 @@ const GuestList: React.FC = () => {
     onClick={() => navigate(-1)}
     title="Go Back"
   />
+
         <h2 className={styles.guestHeader}>Guest List</h2>
 
         {/* Add Guest */}

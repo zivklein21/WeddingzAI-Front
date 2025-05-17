@@ -272,6 +272,7 @@ html, body {
   color: var(--wedding-pink, #b074e8);
 }
 
+
 .guestTable th:nth-child(1),
 .guestTable td:nth-child(1) { width: 20%; }
 .guestTable th:nth-child(2),
@@ -388,6 +389,7 @@ html, body {
   z-index: 2;
   border-bottom: none;  
 }
+
 
 .guestTable tbody {
   display: block;

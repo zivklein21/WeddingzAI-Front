@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;700&display=swap');
+
 .wrapper {
   display: flex;
   justify-content: center;
@@ -55,7 +57,6 @@
 
 .formGroup label {
   display: block;
-  font-weight: 600;
   margin-bottom: 0.5rem;
   color: #333;
 }
@@ -79,7 +80,6 @@
   color: #cc3366;
   font-size: 0.875rem;
   margin-top: 0.25rem;
-  font-weight: 500;
   padding-left: 0.25rem;
   display: flex;
   align-items: center;
@@ -88,9 +88,15 @@
 
 .buttonRow {
   display: flex;
+  width: 100%;
   justify-content: space-between;
   align-items: center;
   margin-top: 1rem;
+}
+
+/* When only one button is present, push it to the right */
+.buttonRow > button:only-child {
+  margin-left: auto;
 }
 
 .buttonRight {
@@ -128,4 +134,29 @@
 .formGroup textarea:focus {
   border-color: #888;
   outline: none;
+}
+
+.partnersRow {
+  display: inline-flex;
+  gap: 2rem;          
+}
+
+.partnerField {
+  max-width: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.partnersInput {
+  width: 100%; 
+  min-width: 300px; 
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.partnersLabel {
+  font-weight: 300;
+  font-family: 'Rubik', sans-serif;
 }
