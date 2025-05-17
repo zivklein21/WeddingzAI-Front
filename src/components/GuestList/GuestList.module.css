@@ -43,7 +43,7 @@ html, body {
 
 
 .guestPage {
-  padding-top: 90px;        /* your navbar offset */
+  padding-top: 90px;       
   width: 100%;
   height: 100vh;
   background: url('../../assets/images/main-bg.png') no-repeat center center;
@@ -51,11 +51,11 @@ html, body {
   background-color: #fff0f5;
   position: relative;
   overflow: hidden;
-  /* overflow-y: auto; */
 }
 
 .guestContainer {
   display: flex;
+  position: relative; 
   flex-direction: column;
   max-width: 1000px;
   overflow: hidden; 
@@ -224,10 +224,8 @@ html, body {
   justify-content: space-between;
   align-items: center;
   margin-top: 1rem;
-  flex: 0 0 auto;     /* toolbar never shrinks/grows */
+  flex: 0 0 auto;
 }
-
-
 
 .actionsContainer {
   display: flex;
@@ -252,8 +250,6 @@ html, body {
   pointer-events: none;
 }
 
-
-/* The icon itself */
 .actionIcon {
     cursor: pointer;
   font-size: 1.5rem;
@@ -413,4 +409,18 @@ html, body {
 .guestTable td {
   padding: 0.75rem 1rem;
   text-align: center;
+}
+
+.backIcon {
+  position: absolute;
+  top: 20px;        
+  right: 20px;      
+  font-size: 1.5rem;
+  color: var(--wedding-gray, #888);
+  cursor: pointer;
+  transition: color 0.2s;
+  z-index: 10;     
+}
+.backIcon:hover {
+  color: var(--wedding-purple, #b291ff);
 }

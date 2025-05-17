@@ -4,9 +4,6 @@ import tdlService, { TdlData } from "../../services/tdl-service";
 import guestService, { Guest } from "../../services/guest-service";
 import styles from "./WeddingDashboard.module.css";
 
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
-
-const COLORS = ['#4caf50', '#f44336', '#cfd8dc'];
 
 export default function WeddingDashboard() {
   const [previewTasks, setPreviewTasks] = useState<string[]>([]);
@@ -48,11 +45,6 @@ export default function WeddingDashboard() {
       });
   }, [navigate]);
 
-  const pieData = [
-    { name: 'Yes', value: guestSummary.yes },
-    { name: 'No', value: guestSummary.no },
-    { name: 'Maybe', value: guestSummary.maybe },
-  ];
 
   return (
     <div className={styles.main}>
@@ -60,57 +52,83 @@ export default function WeddingDashboard() {
         <div className={`${styles.card} ${styles.budget}`}>
           Budget Overview
           <hr className={styles.divider} />
+          <Link to="/budget">
+            <div className={styles.manageLink}>Manage Budget</div>
+          </Link>
         </div>
 
-        <Link to="/guests" className={`${styles.card} ${styles.guests}`}>
-          Guest List
+        <div className={`${styles.card} ${styles.guests}`}>
+          Guests List
           <hr className={styles.divider} />
-          <div className={styles.guestSummary} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div>
-              <p>Total: {guestSummary.total}</p>
-              <p><span style={{ color: '#4caf50' }}>✅</span> Yes: {guestSummary.yes}</p>
-              <p>❌ No: {guestSummary.no}</p>
-              <p>❔ Maybe: {guestSummary.maybe}</p>
+
+          <div className={styles.summaryContainer}>
+            <div className={styles.summaryRow}>
+              <span className={styles.summaryLabel}>Total Invited:</span>
+              <span className={styles.summaryValue}>{guestSummary.total}</span>
             </div>
-            <div style={{ width: '50%', height: 150 }}>
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={pieData}
-                    dataKey="value"
-                    nameKey="name"
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={45}
-                    label
-                  >
-                    {pieData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
+            <div className={styles.summaryRow}>
+              <span className={styles.summaryLabel}>Confirmed:</span>
+              <span className={styles.summaryValue}>
+                {guestSummary.yes}{" "}
+                <small className={styles.summaryPercent}>
+                  (
+                  {guestSummary.total
+                    ? Math.round((guestSummary.yes / guestSummary.total) * 100)
+                    : 0}
+                  %)
+                </small>
+              </span>
+            </div>
+            <div className={styles.summaryRow}>
+              <span className={styles.summaryLabel}>Pending:</span>
+              <span className={styles.summaryValue}>
+                {guestSummary.total - guestSummary.yes}
+              </span>
             </div>
           </div>
-        </Link>
+
+          <div className={styles.progressBar}>
+            <div
+              className={styles.progressFill}
+              style={{
+                width: `${
+                  guestSummary.total
+                    ? (guestSummary.yes / guestSummary.total) * 100
+                    : 0
+                }%`,
+              }}
+            />
+          </div>
+          <Link to="/guests">
+            <div className={styles.manageLink}>Manage Guests</div>
+          </Link>
+        </div>
 
         <div className={`${styles.card} ${styles.seating}`}>
           Seating Chart
           <hr className={styles.divider} />
+          <Link to="/guests">
+            <div className={styles.manageLink}>Manage Seats</div>
+          </Link>
         </div>
 
         <div className={`${styles.card} ${styles.calendar}`}>
           Calendar
           <hr className={styles.divider} />
+          <Link to="/guests">
+            <div className={styles.manageLink}>Manage Calendar</div>
+          </Link>
         </div>
 
         <div className={`${styles.card} ${styles.menu}`}>
           Menu
           <hr className={styles.divider} />
+          <Link to="/guests">
+            <div className={styles.manageLink}>Manage Menu</div>
+          </Link>
         </div>
 
-        <Link to="/todolist" className={`${styles.card} ${styles.todo}`}>
+        <div className={`${styles.card} ${styles.todo}`}>
           To-Do List
           <hr className={styles.divider} />
           {previewTasks.length > 0 ? (
@@ -122,22 +140,34 @@ export default function WeddingDashboard() {
           ) : (
             <p className={styles.todoPreviewEmpty}>Loading…</p>
           )}
-        </Link>
+          <Link to="/todolist">
+            <div className={styles.manageLink}>Manage TDL</div>
+          </Link>
+        </div>
 
         <div className={`${styles.card} ${styles.vendors}`}>
           Vendors
           <hr className={styles.divider} />
+          <Link to="/guests">
+            <div className={styles.manageLink}>Manage Vendors</div>
+          </Link>
         </div>
 
         <div className={`${styles.card} ${styles.view3d}`}>
           Details matter
           <hr className={styles.divider} />
+          <Link to="/guests">
+            <div className={styles.manageLink}>Manage Details</div>
+          </Link>
         </div>
 
 
         <div className={`${styles.card} ${styles.invitation}`}>
           Invitation
           <hr className={styles.divider} />
+          <Link to="/guests">
+            <div className={styles.manageLink}>Manage Vendors</div>
+          </Link>
         </div>
       </div>
     </div>
