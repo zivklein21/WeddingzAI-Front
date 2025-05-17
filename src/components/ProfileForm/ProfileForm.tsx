@@ -116,7 +116,7 @@ const Profile = () => {
     }
   };
 
-  const handelPasswordReset = async (e: React.FormEvent) => {
+  const handlePasswordReset = async (e: React.FormEvent) => {
     e.preventDefault();
     if (password !== confirmPassword) {
       setPassServerError("Passwords do not match.");
@@ -132,7 +132,7 @@ const Profile = () => {
       const { request: resetPasswordRequest } = await authService.resetPassword(password);
       const resetResponse = await resetPasswordRequest;
       if (resetResponse.status === 200) {
-        setSuccessMessage("Password reset successfully!");
+        setPassSuccessMessage("Password reset successfully!");
         return;
       }
       setPassServerError("Failed to reset password.");
@@ -226,7 +226,7 @@ const Profile = () => {
           }}>
           <form
             className={styles.infoSection}
-            onSubmit={handelPasswordReset}
+            onSubmit={handlePasswordReset}
           >
             <h3 style={{ marginBottom: "1rem", color: "#2e2e2e", textAlign: "left" }}>Reset Password</h3>
 
