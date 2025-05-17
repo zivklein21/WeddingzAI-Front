@@ -63,14 +63,49 @@ apiClient.interceptors.response.use(
     ) {
       originalRequest._retry = true;
 
+      // V1
+      // if (isRefreshing) {
+      //   return new Promise((resolve, reject) => {
+      //     failedQueue.push({
+      //       resolve: (token: string) => {
+      //         originalRequest.headers.Authorization = "Bearer " + token;
+      //         resolve(apiClient(originalRequest));
+      //       },
+      //       reject: (err: any) => reject(err),
+      //     });
+      //   });
+      // }
+
+      // V2
+      // if (isRefreshing) {
+      //   return new Promise((resolve, reject) => {
+      //     failedQueue.push({
+      //       resolve: (token: string) => {
+      //         originalRequest.headers.Authorization = `Bearer ${token}`;
+      //         resolve(apiClient(originalRequest));
+      //       },
+      //       reject: reject,
+      //     });
+      //   });
+      // }
+
+      // V3
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({
-            resolve: (token: string) => {
-              originalRequest.headers.Authorization = "Bearer " + token;
-              resolve(apiClient(originalRequest));
+            resolve: () => {
+              const latestAccessToken = Cookies.get("accessToken");
+              resolve(
+                apiClient({
+                  ...originalRequest,
+                  headers: {
+                    ...originalRequest.headers,
+                    Authorization: `Bearer ${latestAccessToken}`,
+                  },
+                })
+              );
             },
-            reject: (err: any) => reject(err),
+            reject: reject,
           });
         });
       }
@@ -83,8 +118,8 @@ apiClient.interceptors.response.use(
           { refreshToken: Cookies.get("refreshToken") }
         );
 
-        const newAccessToken = refreshResponse.data.accessToken;
-        const newRefreshToken = refreshResponse.data.refreshToken;
+        const newAccessToken = refreshResponse?.data?.accessToken;
+        const newRefreshToken = refreshResponse?.data?.refreshToken;
 
         Cookies.set("accessToken", newAccessToken, {
           secure: true,
