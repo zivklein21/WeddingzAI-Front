@@ -81,7 +81,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             setRefreshToken(refreshToken);
             setUser(userData);
             setIsAuthenticated(true);
-        } catch (error: unknown) {
+        } catch (error: any) {
             if (error instanceof AxiosError) {
                 const errorMessage = error.response?.data?.message;
                 throw new Error(errorMessage || 'An unexpected error occurred');
@@ -98,7 +98,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
             const { accessToken, refreshToken, _id, firstPartner, secondPartner, avatar, email } = googleSignInResponse.data;
             const userData = { accessToken, refreshToken, _id, avatar, email, firstPartner, secondPartner, password: '' };
-            console.log('Google Login successful', userData);
 
             Cookies.set('accessToken', accessToken, { path: '/', secure: true, sameSite: 'Strict' });
             Cookies.set('refreshToken', refreshToken, { path: '/', secure: true, sameSite: 'Strict' });
@@ -114,7 +113,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             setUser(userData);
             setIsAuthenticated(true);
 
-        } catch (error) {
+        } catch (error: any) {
             if (error instanceof AxiosError) {
                 const errorMessage = error.response?.data?.message;
                 throw new Error(errorMessage || 'An unexpected error occurred');
