@@ -50,6 +50,8 @@ apiClient.interceptors.response.use(
 
       try {
         // Call the refresh token endpoint
+        console.log(`Refreshing token with refresh token ${Cookies.get('refreshToken')}`);
+
         const refreshResponse = await axios.post(
           backend_url + "/auth/refresh",
           {
