@@ -17,10 +17,10 @@ const WeddingDashboardPage: React.FC = () => {
   }
 
   return (
-    <div>
+    <>
       <NavBar title="My Wedding"/>
       <WeddingDashboard />
-    </div>
+    </>
   );
 };
 

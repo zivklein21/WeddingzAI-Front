@@ -64,7 +64,6 @@ const GuestList: React.FC = () => {
   const [editingGuestId, setEditingGuestId] = useState<string|null>(null);
   const [editingGuests, setEditingGuests] = useState<Record<string,Guest>>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
-
   const navigate = useNavigate();
 
   // Fetch
@@ -210,10 +209,10 @@ const GuestList: React.FC = () => {
     <div className={styles.guestPage}>
       <div className={styles.guestContainer}>
         <FiArrowLeft
-    className={styles.backIcon}
-    onClick={() => navigate(-1)}
-    title="Go Back"
-  />
+          className={styles.backIcon}
+          onClick={() => navigate(-1)}
+          title="Go Back"
+        />
 
         <h2 className={styles.guestHeader}>Guest List</h2>
 

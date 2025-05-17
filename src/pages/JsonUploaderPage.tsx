@@ -5,9 +5,9 @@ import JsonUploader from "../components/JsonUploader/JsonUploader";
 const JsonUploadPage: React.FC = () => {
 
   return (
-    <div>
+    <>
         <JsonUploader />
-    </div>
+    </>
   );
 };
 

@@ -1,18 +1,15 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import tdlService, { TdlData } from "../../services/tdl-service";
-import guestService, { Guest } from "../../services/guest-service";
 import styles from "./WeddingDashboard.module.css";
+
+// Components
+import BudgetOverview from "../Overviews/Budget/BudgetOverview";
+import GuestListOverview from "../Overviews/GuestList/GuestListOverview";
 
 
 export default function WeddingDashboard() {
   const [previewTasks, setPreviewTasks] = useState<string[]>([]);
-  const [guestSummary, setGuestSummary] = useState({
-    total: 0,
-    yes: 0,
-    no: 0,
-    maybe: 0,
-  });
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -29,20 +26,7 @@ export default function WeddingDashboard() {
 
       });
 
-    guestService.fetchMyGuests()
-      .then((guests: Guest[]) => {
-        const summary = {
-          total: guests.length,
-          yes: guests.filter(g => g.rsvp === "yes").length,
-          no: guests.filter(g => g.rsvp === "no").length,
-          maybe: guests.filter(g => g.rsvp === "maybe").length,
-        };
-        setGuestSummary(summary);
-      })
-      .catch((err) => {
-        console.error("Could not load guests:", err);
-
-      });
+ 
   }, [navigate]);
 
 
@@ -52,6 +36,7 @@ export default function WeddingDashboard() {
         <div className={`${styles.card} ${styles.budget}`}>
           Budget Overview
           <hr className={styles.divider} />
+          <BudgetOverview/>
           <Link to="/budget">
             <div className={styles.manageLink}>Manage Budget</div>
           </Link>
@@ -60,45 +45,7 @@ export default function WeddingDashboard() {
         <div className={`${styles.card} ${styles.guests}`}>
           Guests List
           <hr className={styles.divider} />
-
-          <div className={styles.summaryContainer}>
-            <div className={styles.summaryRow}>
-              <span className={styles.summaryLabel}>Total Invited:</span>
-              <span className={styles.summaryValue}>{guestSummary.total}</span>
-            </div>
-            <div className={styles.summaryRow}>
-              <span className={styles.summaryLabel}>Confirmed:</span>
-              <span className={styles.summaryValue}>
-                {guestSummary.yes}{" "}
-                <small className={styles.summaryPercent}>
-                  (
-                  {guestSummary.total
-                    ? Math.round((guestSummary.yes / guestSummary.total) * 100)
-                    : 0}
-                  %)
-                </small>
-              </span>
-            </div>
-            <div className={styles.summaryRow}>
-              <span className={styles.summaryLabel}>Pending:</span>
-              <span className={styles.summaryValue}>
-                {guestSummary.total - guestSummary.yes}
-              </span>
-            </div>
-          </div>
-
-          <div className={styles.progressBar}>
-            <div
-              className={styles.progressFill}
-              style={{
-                width: `${
-                  guestSummary.total
-                    ? (guestSummary.yes / guestSummary.total) * 100
-                    : 0
-                }%`,
-              }}
-            />
-          </div>
+          <GuestListOverview/>
           <Link to="/guests">
             <div className={styles.manageLink}>Manage Guests</div>
           </Link>
