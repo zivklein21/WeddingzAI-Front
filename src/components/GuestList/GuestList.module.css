@@ -1,23 +1,36 @@
-
-/* =======================
-   Guest Table Styles
-   ======================= */
-
+html, body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
 .guestTable {
   width: 100%;
   border-collapse: collapse;
   margin-top: 1.5rem;
-  table-layout: fixed; /* evenly distribute columns across full width */
+  table-layout: fixed;
 }
 
-/* Ensure the table spans the entire white card */
+.guestContainer {
+  height: calc(100vh - 90px);
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+  box-sizing: border-box; 
+}
+
 .guestContainer .guestTable {
   width: 100%;
   display: table;
 }
 
+.guestTable{
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
 .guestTable th{
-   padding: 0.75rem 1rem;
+  padding: 0.75rem 1rem;
   white-space: normal;
   text-align: center;
   border-bottom: 2px solid #e0e0e0;
@@ -25,23 +38,29 @@
 .guestTable td {
   padding: 0.75rem 1rem;
   white-space: normal;
-  text-align: center;  /* ensure headers and data align on the left */
+  text-align: center;
 }
 
 
 .guestPage {
-  height: 100vh;
+  padding-top: 90px;        /* your navbar offset */
   width: 100%;
+  height: 100vh;
   background: url('../../assets/images/main-bg.png') no-repeat center center;
   background-size: cover;
-  overflow: auto;
-  padding: 50px 20px;
-  margin-top: 80px;
+  background-color: #fff0f5;
+  position: relative;
+  overflow: hidden;
+  /* overflow-y: auto; */
 }
 
 .guestContainer {
+  display: flex;
+  flex-direction: column;
   max-width: 1000px;
+  overflow: hidden; 
   margin: 0 auto;
+  height: calc(100vh - 100px); 
   background: #fff;
   border-radius: 16px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
@@ -205,18 +224,17 @@
   justify-content: space-between;
   align-items: center;
   margin-top: 1rem;
+  flex: 0 0 auto;     /* toolbar never shrinks/grows */
 }
 
 
 
-/* Wraps all three actions side by side */
 .actionsContainer {
   display: flex;
   gap: 1.5rem;
   align-items: center;
 }
 
-/* Each icon+label pair */
 .iconAction {
   display: flex;
   flex-direction: column;
@@ -245,7 +263,6 @@
   vertical-align: middle;
 }
 
-/* The little label under each icon */
 .iconLabel {
   font-size: 0.75rem;
   margin-top: 0.25rem;
@@ -260,7 +277,6 @@
 }
 
 
-/* Distribute columns evenly */
 .guestTable th:nth-child(1),
 .guestTable td:nth-child(1) { width: 20%; }
 .guestTable th:nth-child(2),
@@ -298,12 +314,6 @@
 .guestTable th {
   vertical-align: middle;
 }
-/* 
-.status_yes   { color: green;  font-weight: 600; }
-.status_no    { color: red;    font-weight: 600; }
-.status_maybe { color: orange; font-weight: 600; } */
-
-/* Empty / loading */
 .emptyGuestList {
   text-align: center;
   color: #999;
@@ -311,16 +321,14 @@
   padding: 1rem 0;
 }
 
-/* Container holding the stats (reuse actionsContainer or define your own) */
 .statsRow {
   display: flex;
   gap: 2rem;
-  align-items: center;      /* vertically center icons & text */
-  justify-content: flex-end; /* push to right */
+  align-items: center;  
+  justify-content: flex-end; 
   margin-top: 1rem;
 }
 
-/* Each icon+label block */
 .statsBlock {
   display: flex;
   flex-direction: column;
@@ -328,39 +336,81 @@
   color: var(--wedding-gray, #888);
 }
 
-/* The SVG icon */
 .statsBlock .actionIcon {
-  font-size: 2.2rem;               /* larger icon */
+  font-size: 2.2rem;
   color: var(--wedding-purple, #b291ff);
-  margin-bottom: 0.25rem;          /* space below icon */
+  margin-bottom: 0.25rem; 
   transition: color 0.2s;
 }
 
-/* On hover, if you like */
 .statsBlock:hover .actionIcon {
   color: var(--wedding-pink, #d291ff);
 }
 
-/* The label underneath */
 .statsBlock .iconLabel {
-  font-size: 0.9rem;               /* slightly larger text */
+  font-size: 0.9rem;        
   font-weight: 500;
   color: var(--wedding-dark, #2c3e50);
 }
 
-/* Make stats sit in the same line as your import/export icons */
 .toolbar .actionsContainer + .actionsContainer {
-  margin-left: auto;  /* push stats row to the right */
+  margin-left: auto;  
 }
 
-/* Enlarge the stats icons */
 .statsBlock .actionIcon {
-  font-size: 2.4rem;      /* bump up from 2.2rem */
-  margin-bottom: 0.25rem; /* keep a bit of breathing room */
+  font-size: 2.4rem;     
+  margin-bottom: 0.25rem;
 }
 
-/* (Optional) tighten the gap between stats blocks */
 .statsRow, 
 .toolbar .actionsContainer + .actionsContainer {
-  gap: 1.5rem;  /* slightly less than icon row if desired */
+  gap: 1.5rem; 
+}
+
+.activeFilter .actionIcon {
+  color: var(--wedding-black);
+}
+.activeFilter .iconLabel {
+  color: var(--wedding-black);
+}
+
+.tableWrapper {
+  flex: 1;
+  margin-top: 1.5rem;
+}
+
+.guestTable thead {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.guestTable thead th {
+  position: sticky;
+  top: 0;             
+  background: #fff;
+  z-index: 2;
+  border-bottom: none;  
+}
+
+
+.guestTable tbody {
+  display: block;
+  max-height: 60vh;
+  overflow-y: auto;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.guestTable tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.guestTable th,
+.guestTable td {
+  padding: 0.75rem 1rem;
+  text-align: center;
 }

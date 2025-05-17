@@ -1,3 +1,338 @@
+// import React, { useEffect, useMemo, useState, useRef } from 'react';
+// import * as XLSX from 'xlsx';
+// import styles from './GuestList.module.css';
+// import { toast, ToastContainer } from 'react-toastify';
+// import 'react-toastify/dist/ReactToastify.css';
+// import {
+//   fetchMyGuests,
+//   createGuest,
+//   updateGuest,
+//   deleteGuest,
+//   sendInvitationToAllGuests,
+//   Guest,
+// } from '../../services/guest-service';
+
+// import {
+//   FiSend,
+//   FiDownload,
+//   FiUpload,
+//   FiBarChart2,
+//   FiCheckCircle,
+//   FiXCircle,
+//   FiHelpCircle,
+//   FiEdit2,
+//   FiTrash2,
+//   FiSave,
+//   FiX,
+// } from 'react-icons/fi';
+
+// const WEDDING_DATE = '2025-08-10';
+
+// interface GuestRow {
+//   fullName: string;
+//   email: string;
+//   phone?: string;
+//   rsvp?: 'yes' | 'no' | 'maybe';
+// }
+
+// // helper to pull partner names from cookie
+// function getCookieValue(name: string): string | null {
+//   const v = document.cookie
+//     .split('; ')
+//     .find(r => r.startsWith(name + '='));
+//   return v ? decodeURIComponent(v.split('=')[1]) : null;
+// }
+
+// const userCookie = getCookieValue('user');
+// let firstPartner = '', secondPartner = '';
+// if (userCookie) {
+//   try {
+//     const p = JSON.parse(userCookie);
+//     firstPartner = p.firstPartner || '';
+//     secondPartner = p.secondPartner || '';
+//   } catch {}
+// }
+
+// const GuestList: React.FC = () => {
+//   const [guests, setGuests] = useState<Guest[]>([]);
+//   const [filter, setFilter] = useState<'all'|'yes'|'no'|'maybe'>('all');
+//   const [loading, setLoading] = useState(true);
+//   const [sending, setSending] = useState(false);
+//   const [error, setError] = useState<string|null>(null);
+//   const [form, setForm] = useState({ fullName:'', email:'', phone:'', rsvp:'maybe' as 'maybe'|'yes'|'no' });
+//   const [editingGuestId, setEditingGuestId] = useState<string|null>(null);
+//   const [editingGuests, setEditingGuests] = useState<Record<string,Guest>>({});
+//   const fileInputRef = useRef<HTMLInputElement>(null);
+
+//   // fetch
+//   const fetchGuests = async () => {
+//     try {
+//       const data = await fetchMyGuests();
+//       setGuests(data);
+//     } catch {
+//       setError('Failed to fetch guests');
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+//   useEffect(() => { fetchGuests(); }, []);
+
+//   // stats
+//   const guestStats = useMemo(() => {
+//     const total = guests.length;
+//     const yes = guests.filter(g=>g.rsvp==='yes').length;
+//     const no = guests.filter(g=>g.rsvp==='no').length;
+//     const maybe = guests.filter(g=>g.rsvp==='maybe').length;
+//     return { total, yes, no, maybe };
+//   }, [guests]);
+
+//   // filtered list
+//   const displayed = useMemo(() => {
+//     if (filter==='all') return guests;
+//     return guests.filter(g=>g.rsvp===filter);
+//   }, [guests,filter]);
+
+//   // form handlers
+//   const handleInputChange = (e:React.ChangeEvent<HTMLInputElement|HTMLSelectElement>) => {
+//     setForm({ ...form, [e.target.name]: e.target.value });
+//   };
+//   const handleAddGuest = async (e:React.FormEvent) => {
+//     e.preventDefault();
+//     try {
+//       await createGuest(form);
+//       setForm({ fullName:'', email:'', phone:'', rsvp:'maybe' });
+//       await fetchGuests();
+//       toast.success('Guest added!');
+//     } catch {
+//       toast.error('Error adding guest');
+//     }
+//   };
+
+//   // invitations
+//   const handleSendEmails = async () => {
+//     if (!firstPartner||!secondPartner) {
+//       toast.error('Missing partner info');
+//       return;
+//     }
+//     const valid = guests.filter(g=>g.fullName&&g.email).map(g=>({ fullName:g.fullName,email:g.email }));
+//     if (!valid.length) {
+//       toast.error('No guests to invite');
+//       return;
+//     }
+//     setSending(true);
+//     try {
+//       await sendInvitationToAllGuests({
+//         partner1:firstPartner,
+//         partner2:secondPartner,
+//         weddingDate:WEDDING_DATE,
+//         guests:valid
+//       });
+//       toast.success('Invitations sent!');
+//     } catch {
+//       toast.error('Error sending');
+//     } finally {
+//       setSending(false);
+//     }
+//   };
+
+//   // import/export
+//   const handleExcelUpload = async (e:React.ChangeEvent<HTMLInputElement>) => {
+//     const file = e.target.files?.[0]; if(!file) return;
+//     try {
+//       const buf = await file.arrayBuffer();
+//       const wb = XLSX.read(buf);
+//       const rows:GuestRow[] = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+//       const failed:any[] = [];
+//       for (const r of rows.filter(r=>r.fullName&&r.email)) {
+//         try {
+//           await createGuest({ fullName:r.fullName,email:r.email,phone:r.phone||'',rsvp:r.rsvp||'maybe' });
+//         } catch {
+//           failed.push(r);
+//         }
+//       }
+//       await fetchGuests();
+//       if (failed.length) toast.error(`${failed.length} failed to import`);
+//       else toast.success('Imported!');
+//     } catch {
+//       toast.error('Import error');
+//     }
+//   };
+//   const handleExportExcel = () => {
+//     const exclude = new Set(['_id','userId','__v']);
+//     const data = guests.map(g=>Object.fromEntries(Object.entries(g).filter(([k])=>!exclude.has(k))));
+//     const ws = XLSX.utils.json_to_sheet(data);
+//     const wb = XLSX.utils.book_new();
+//     XLSX.utils.book_append_sheet(wb,ws,'Guests');
+//     XLSX.writeFile(wb,'guests.xlsx');
+//   };
+
+//   // delete/edit/save
+//   const handleDelete = async (id:string) => {
+//     try { await deleteGuest(id); await fetchGuests(); toast.success('Deleted'); }
+//     catch { toast.error('Delete error');}
+//   };
+//   const handleEditChange = (id:string,field:keyof Guest,value:string) => {
+//     setEditingGuests(prev=>({
+//       ...prev,
+//       [id]:{ ...(prev[id]||{}), ...(guests.find(g=>g._id===id) as any), [field]:value }
+//     }));
+//   };
+//   const handleSave = async (guest:Guest) => {
+//     const upd = editingGuests[guest._id];
+//     if (!upd.fullName||!upd.email) { toast.error('Name & email required'); return; }
+//     try {
+//       await updateGuest(guest._id,upd);
+//       setEditingGuestId(null);
+//       setEditingGuests(prev=>{ const c={...prev}; delete c[guest._id]; return c; });
+//       await fetchGuests();
+//       toast.success('Saved');
+//     } catch { toast.error('Save error'); }
+//   };
+
+//   return (
+//     <div className={styles.guestPage}>
+//       <div className={styles.guestContainer}>
+//         <h2 className={styles.guestHeader}>Guest List</h2>
+
+//         <form onSubmit={handleAddGuest} className={styles.guestForm}>
+//           <input name="fullName" value={form.fullName} onChange={handleInputChange} placeholder="Full Name" required />
+//           <input name="email" type="email" value={form.email} onChange={handleInputChange} placeholder="Email" required />
+//           <input name="phone" value={form.phone} onChange={handleInputChange} placeholder="Phone" />
+//           <button type="submit">+ Add Guest</button>
+//         </form>
+
+//         <div className={styles.toolbar}>
+//           <div className={styles.actionsContainer}>
+//             {/* Send */}
+//             <div
+//               className={styles.iconAction}
+//               onClick={()=>!sending&&handleSendEmails()}
+//               style={{ opacity:sending?0.5:1 }}
+//             >
+//               <FiSend className={styles.actionIcon}/>
+//               <span className={styles.iconLabel}>Send Invites</span>
+//             </div>
+//             {/* Import */}
+//             <div className={styles.iconAction} onClick={()=>fileInputRef.current?.click()}>
+//               <FiDownload className={styles.actionIcon}/>
+//               <span className={styles.iconLabel}>Import Excel</span>
+//             </div>
+//             {/* Export */}
+//             <div className={styles.iconAction} onClick={handleExportExcel}>
+//               <FiUpload className={styles.actionIcon}/>
+//               <span className={styles.iconLabel}>Export Excel</span>
+//             </div>
+//             <input type="file" ref={fileInputRef} accept=".xlsx,.xls"
+//                    onChange={handleExcelUpload} style={{display:'none'}}/>
+//           </div>
+
+//           <div className={styles.actionsContainer}>
+//             {/* Total */}
+//             <div
+//               className={`${styles.iconAction} ${filter==='all'?styles.activeFilter:''}`}
+//               onClick={()=>setFilter('all')}
+//             >
+//               <FiBarChart2 className={styles.actionIcon}/>
+//               <span className={styles.iconLabel}>Total: {guestStats.total}</span>
+//             </div>
+//             {/* Yes */}
+//             <div
+//               className={`${styles.iconAction} ${filter==='yes'?styles.activeFilter:''}`}
+//               onClick={()=>setFilter('yes')}
+//             >
+//               <FiCheckCircle className={styles.actionIcon}/>
+//               <span className={styles.iconLabel}>Yes: {guestStats.yes}</span>
+//             </div>
+//             {/* No */}
+//             <div
+//               className={`${styles.iconAction} ${filter==='no'?styles.activeFilter:''}`}
+//               onClick={()=>setFilter('no')}
+//             >
+//               <FiXCircle className={styles.actionIcon}/>
+//               <span className={styles.iconLabel}>No: {guestStats.no}</span>
+//             </div>
+//             {/* Maybe */}
+//             <div
+//               className={`${styles.iconAction} ${filter==='maybe'?styles.activeFilter:''}`}
+//               onClick={()=>setFilter('maybe')}
+//             >
+//               <FiHelpCircle className={styles.actionIcon}/>
+//               <span className={styles.iconLabel}>Maybe: {guestStats.maybe}</span>
+//             </div>
+//           </div>
+//         </div>
+
+//         {loading ? (
+//           <div className={styles.emptyGuestList}>Loading…</div>
+//         ) : displayed.length===0 ? (
+//           <div className={styles.emptyGuestList}>
+//             {filter==='all'?'No guests':'No '+filter+' responses'}
+//           </div>
+//         ) : (
+//           <div className={styles.tableWrapper}>
+//             <table className={styles.guestTable}>
+//               <thead>
+//                 <tr>
+//                   <th>Full Name</th><th>Email</th><th>Phone</th><th>RSVP</th><th>Actions</th>
+//                 </tr>
+//               </thead>
+//               <tbody>
+//                 {displayed.map(guest=>(
+//                   editingGuestId===guest._id
+//                   ? <tr key={guest._id}>
+//                       <td><input
+//                         className={styles.tableInput}
+//                         value={editingGuests[guest._id]?.fullName||guest.fullName}
+//                         onChange={e=>handleEditChange(guest._id,'fullName',e.target.value)}
+//                       /></td>
+//                       <td><input
+//                         className={styles.tableInput}
+//                         value={editingGuests[guest._id]?.email||guest.email}
+//                         onChange={e=>handleEditChange(guest._id,'email',e.target.value)}
+//                       /></td>
+//                       <td><input
+//                         className={styles.tableInput}
+//                         value={editingGuests[guest._id]?.phone||guest.phone||''}
+//                         onChange={e=>handleEditChange(guest._id,'phone',e.target.value)}
+//                       /></td>
+//                       <td><select
+//                         className={styles.tableSelect}
+//                         value={editingGuests[guest._id]?.rsvp||guest.rsvp}
+//                         onChange={e=>handleEditChange(guest._id,'rsvp',e.target.value)}
+//                       >
+//                         <option value="yes">Yes</option>
+//                         <option value="no">No</option>
+//                         <option value="maybe">Maybe</option>
+//                       </select></td>
+//                       <td>
+//                         <FiSave className={styles.actionIcon} onClick={()=>handleSave(guest)}/>
+//                         <FiX    className={styles.actionIcon} onClick={()=>setEditingGuestId(null)}/>
+//                       </td>
+//                     </tr>
+//                   : <tr key={guest._id}>
+//                       <td>{guest.fullName}</td>
+//                       <td>{guest.email}</td>
+//                       <td>{guest.phone||'—'}</td>
+//                       <td className={styles[`status_${guest.rsvp}`]}>{guest.rsvp}</td>
+//                       <td>
+//                         <FiEdit2  className={styles.actionIcon} onClick={()=>setEditingGuestId(guest._id)}/>
+//                         <FiTrash2 className={styles.actionIcon} onClick={()=>handleDelete(guest._id)}/>
+//                       </td>
+//                     </tr>
+//                 ))}
+//               </tbody>
+//             </table>
+//           </div>
+//         )}
+//       </div>
+//       <ToastContainer position="bottom-right" />
+//     </div>
+//   );
+// };
+
+// export default GuestList;
+
+
 import React, { useEffect, useMemo, useState, useRef } from 'react';
 import * as XLSX from 'xlsx';
 import styles from './GuestList.module.css';
@@ -12,386 +347,325 @@ import {
   Guest,
 } from '../../services/guest-service';
 
-import { FiSend, FiDownload, FiUpload } from 'react-icons/fi';
-import { FiEdit2, FiTrash2, FiSave, FiX } from 'react-icons/fi';
-import { FiBarChart2, FiCheckCircle, FiXCircle, FiHelpCircle } from 'react-icons/fi';
-
+import {
+  FiSend,
+  FiDownload,
+  FiUpload,
+  FiBarChart2,
+  FiCheckCircle,
+  FiXCircle,
+  FiHelpCircle,
+  FiEdit2,
+  FiTrash2,
+  FiSave,
+  FiX,
+} from 'react-icons/fi';
 
 const WEDDING_DATE = '2025-08-10';
 
-interface GuestRow {
-  fullName: string;
-  email: string;
-  phone?: string;
-  rsvp?: 'yes' | 'no' | 'maybe';
-}
-
+// Utility to read partners from cookie
 function getCookieValue(name: string): string | null {
-  const value = document.cookie
+  const match = document.cookie
     .split('; ')
-    .find((row) => row.startsWith(`${name}=`));
-  return value ? decodeURIComponent(value.split('=')[1]) : null;
+    .find((row) => row.startsWith(name + '='));
+  return match ? decodeURIComponent(match.split('=')[1]) : null;
 }
 
 const userCookie = getCookieValue('user');
-let firstPartner = '';
-let secondPartner = '';
-
+let firstPartner = '', secondPartner = '';
 if (userCookie) {
   try {
-    const parsed = JSON.parse(userCookie);
-    firstPartner = parsed.firstPartner || '';
-    secondPartner = parsed.secondPartner || '';
-  } catch {
-    // intentionally ignored
-  }
+    const p = JSON.parse(userCookie);
+    firstPartner = p.firstPartner || '';
+    secondPartner = p.secondPartner || '';
+  } catch {}
 }
 
 const GuestList: React.FC = () => {
+  // State
   const [guests, setGuests] = useState<Guest[]>([]);
-  const [editingGuests, setEditingGuests] = useState<Record<string, Guest>>({});
+  const [filter, setFilter] = useState<'all'|'yes'|'no'|'maybe'>('all');
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [form, setForm] = useState({
     fullName: '',
     email: '',
     phone: '',
-    rsvp: 'maybe' as 'maybe' | 'yes' | 'no',
+    rsvp: 'maybe' as 'maybe'|'yes'|'no'
   });
-  const [editingGuestId, setEditingGuestId] = useState<string | null>(null);
+  const [editingGuestId, setEditingGuestId] = useState<string|null>(null);
+  const [editingGuests, setEditingGuests] = useState<Record<string,Guest>>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
 
+  // Fetch
   const fetchGuests = async () => {
     try {
       const data = await fetchMyGuests();
       setGuests(data);
     } catch {
-      setError('Failed to fetch guests');
+      toast.error('Failed to fetch guests');
     } finally {
       setLoading(false);
     }
   };
+  useEffect(() => { fetchGuests(); }, []);
 
-  useEffect(() => {
-    fetchGuests();
-  }, []);
-
+  // Stats
   const guestStats = useMemo(() => {
     const total = guests.length;
-    const yes = guests.filter((g) => g.rsvp === 'yes').length;
-    const no = guests.filter((g) => g.rsvp === 'no').length;
-    const maybe = guests.filter((g) => g.rsvp === 'maybe').length;
+    const yes   = guests.filter(g=>g.rsvp==='yes').length;
+    const no    = guests.filter(g=>g.rsvp==='no').length;
+    const maybe = guests.filter(g=>g.rsvp==='maybe').length;
     return { total, yes, no, maybe };
   }, [guests]);
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
+  // Filtered list
+  const displayed = useMemo(() => {
+    if (filter==='all') return guests;
+    return guests.filter(g=>g.rsvp===filter);
+  }, [guests, filter]);
+
+  // Handlers
+  const handleInputChange = (e:React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
-
-  const handleAddGuest = async (e: React.FormEvent) => {
+  const handleAddGuest = async (e:React.FormEvent) => {
     e.preventDefault();
     try {
       await createGuest(form);
-      setForm({ fullName: '', email: '', phone: '', rsvp: 'maybe' });
+      setForm({ fullName:'', email:'', phone:'', rsvp:'maybe' });
       await fetchGuests();
-      toast.success('Guest added successfully!');
+      toast.success('Guest added');
     } catch {
-      toast.error('Error adding guest.');
+      toast.error('Error adding guest');
     }
   };
-
   const handleSendEmails = async () => {
-    console.log(secondPartner);
-    console.log(firstPartner);
-
-    if (!firstPartner || !secondPartner) {
-      toast.error('Missing partner names. Please log in again.');
+    if (!firstPartner||!secondPartner) {
+      toast.error('Missing partner info');
       return;
     }
-
-    const validGuests = guests
-      .filter((g) => g.email && g.fullName)
-      .map((g) => ({
-        email: g.email,
-        fullName: g.fullName,
-      }));
-
-    if (validGuests.length === 0) {
-      toast.error('No valid guests to send invitations.');
+    const valid = guests
+      .filter(g=>g.fullName&&g.email)
+      .map(g=>({ fullName:g.fullName, email:g.email }));
+    if (!valid.length) {
+      toast.error('No guests to invite');
       return;
     }
-
     setSending(true);
     try {
       await sendInvitationToAllGuests({
-        partner1: firstPartner,
-        partner2: secondPartner,
-        weddingDate: WEDDING_DATE,
-        guests: validGuests,
+        partner1:firstPartner,
+        partner2:secondPartner,
+        weddingDate:WEDDING_DATE,
+        guests:valid
       });
-      toast.success('Invitations sent!');
+      toast.success('Invitations sent');
     } catch {
-      toast.error('Error sending invitations.');
+      toast.error('Error sending invites');
     } finally {
       setSending(false);
     }
   };
-
-  const handleExcelUpload = async (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const handleExcelUpload = async (e:React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]; if(!file) return;
     try {
-      const data = await file.arrayBuffer();
-      const workbook = XLSX.read(data);
-      const sheet = workbook.Sheets[workbook.SheetNames[0]];
-      const rows: GuestRow[] = XLSX.utils.sheet_to_json(sheet);
-
-      const newGuests = rows.filter((r) => r.fullName && r.email);
-      const failed: { fullName: string; email: string; reason: string }[] = [];
-
-      for (const guest of newGuests) {
+      const buf = await file.arrayBuffer();
+      const wb = XLSX.read(buf);
+      const rows: any[] = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+      const failed: any[] = [];
+      for (const r of rows.filter(r=>r.fullName&&r.email)) {
         try {
           await createGuest({
-            fullName: guest.fullName,
-            email: guest.email,
-            phone: guest.phone || '',
-            rsvp: guest.rsvp || 'maybe',
+            fullName:r.fullName,
+            email:r.email,
+            phone:r.phone||'',
+            rsvp:r.rsvp||'maybe'
           });
         } catch {
-          failed.push({
-            fullName: guest.fullName,
-            email: guest.email,
-            reason: 'Duplicate or error',
-          });
+          failed.push(r);
         }
       }
-
       await fetchGuests();
-
-      if (failed.length > 0) {
-        toast.error(
-          <div>
-            Some guests failed to import:
-            <ul>
-              {failed.map((f) => (
-                <li key={f.email}>
-                  {f.fullName} ({f.email}) — {f.reason}
-                </li>
-              ))}
-            </ul>
-          </div>,
-          { autoClose: false }
-        );
-      } else {
-        toast.success('Guests imported successfully!');
-      }
+      if (failed.length) toast.error(`${failed.length} failed to import`);
+      else toast.success('Imported');
     } catch {
-      toast.error('Failed to process Excel file.');
+      toast.error('Import error');
     }
   };
-
   const handleExportExcel = () => {
-    const excludedKeys = new Set(['_id', 'userId', '__v']);
-    const exportGuests = guests.map((g) =>
-      Object.fromEntries(Object.entries(g).filter(([key]) => !excludedKeys.has(key)))
-    );
-    const worksheet = XLSX.utils.json_to_sheet(exportGuests);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Guests');
-    XLSX.writeFile(workbook, 'guest-list.xlsx');
+    const exclude = new Set(['_id','userId','__v']);
+    const data = guests.map(g=>Object.fromEntries(
+      Object.entries(g).filter(([k])=>!exclude.has(k))
+    ));
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb,ws,'Guests');
+    XLSX.writeFile(wb,'guest-list.xlsx');
   };
-
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id:string) => {
+    if (!window.confirm('Delete this guest?')) return;
     try {
       await deleteGuest(id);
       await fetchGuests();
-      toast.success('Guest deleted.');
+      toast.success('Deleted');
     } catch {
-      toast.error('Error deleting guest.');
+      toast.error('Delete error');
     }
   };
-
-  const handleEditChange = (id: string, field: keyof Guest, value: string) => {
-    setEditingGuests((prev) => ({
+  const handleEditChange = (id:string, field:keyof Guest, val:string) => {
+    setEditingGuests(prev=>({
       ...prev,
-      [id]: {
-        ...guests.find((g) => g._id === id)!,
-        ...(prev[id] || {}),
-        [field]: value,
-      },
+      [id]:{ ...(prev[id]||guests.find(g=>g._id===id))!, [field]:val }
     }));
   };
-
-  const handleSave = async (guest: Guest) => {
-    const updatedGuest = editingGuests[guest._id];
-
-    if (!updatedGuest.fullName.trim()) {
-      toast.error('Full name is required.');
+  const handleSave = async (g:Guest) => {
+    const upd = editingGuests[g._id];
+    if (!upd.fullName||!upd.email) {
+      toast.error('Name & email required');
       return;
     }
-
-    if (!updatedGuest.email.trim()) {
-      toast.error('Email is required.');
-      return;
-    }
-
-    const phone = updatedGuest.phone?.trim() || '';
-    const phoneRegex = /^\+?[0-9]{7,15}$/;
-
-    if (phone && !phoneRegex.test(phone)) {
-      toast.error('Phone number is invalid. It must contain only digits and optionally start with +');
-      return;
-    }
-
     try {
-      await updateGuest(guest._id, updatedGuest);
+      await updateGuest(g._id,upd);
       setEditingGuestId(null);
-      setEditingGuests((prev) =>
-        Object.fromEntries(
-          Object.entries(prev).filter(([key]) => key !== guest._id)
-        )
-      );
+      setEditingGuests(prev=>{ const c={...prev}; delete c[g._id]; return c; });
       await fetchGuests();
-      toast.success('Guest updated.');
+      toast.success('Saved');
     } catch {
-      toast.error('Error updating guest.');
+      toast.error('Save error');
     }
   };
 
   return (
     <div className={styles.guestPage}>
       <div className={styles.guestContainer}>
-        <div className={styles.guestHeader}>Guest List</div>
+        <h2 className={styles.guestHeader}>Guest List</h2>
 
+        {/* Add Guest */}
         <form onSubmit={handleAddGuest} className={styles.guestForm}>
-          <input type="text" name="fullName" value={form.fullName} placeholder="Full Name" onChange={handleInputChange} required />
-          <input type="email" name="email" value={form.email} placeholder="Email" onChange={handleInputChange} required />
-          <input type="tel" name="phone" value={form.phone} placeholder="Phone" onChange={handleInputChange} />
-          {/* <select name="rsvp" value={form.rsvp} onChange={handleInputChange}>
-            <option value="maybe">Maybe</option>
-            <option value="yes">Yes</option>
-            <option value="no">No</option>
-          </select> */}
+          <input
+            name="fullName" value={form.fullName}
+            onChange={handleInputChange}
+            placeholder="Full Name" required
+          />
+          <input
+            name="email" type="email" value={form.email}
+            onChange={handleInputChange}
+            placeholder="Email" required
+          />
+          <input
+            name="phone" value={form.phone}
+            onChange={handleInputChange}
+            placeholder="Phone"
+          />
           <button type="submit">+ Add Guest</button>
         </form>
-              <div className={styles.toolbar}>
-                <div className={styles.actionsContainer}>
-                  {/* Send Invitations */}
-                  <div
-                    className={`${styles.iconAction} ${
-                      sending ? styles.disabled : ''
-                    }`}
-                    onClick={() => !sending && handleSendEmails()}
-                    title={sending ? 'Sending…' : 'Send Invitations'}
-                  >
-                    <FiSend className={styles.actionIcon} />
-                    <span className={styles.iconLabel}>Send Invitations</span>
-                  </div>
 
-                  {/* Import from Excel */}
-                  <div
-                    className={styles.iconAction}
-                    onClick={() => fileInputRef.current?.click()}
-                    title="Import"
-                  >
-                    <FiDownload className={styles.actionIcon} />
-                    <span className={styles.iconLabel}>Import from Excel</span>
-                  </div>
+        {/* Toolbar */}
+        <div className={styles.toolbar}>
+          <div className={styles.actionsContainer}>
+            <div
+              className={styles.iconAction}
+              onClick={()=>!sending&&handleSendEmails()}
+              style={{ opacity:sending?0.5:1 }}
+            >
+              <FiSend className={styles.actionIcon}/>
+              <span className={styles.iconLabel}>Send Invites</span>
+            </div>
 
-                  {/* Export to Excel */}
-                  <div
-                    className={styles.iconAction}
-                    onClick={handleExportExcel}
-                    title="Export"
-                  >
-                    <FiUpload className={styles.actionIcon} />
-                    <span className={styles.iconLabel}>Export to Excel</span>
-                  </div>
+            <div
+              className={styles.iconAction}
+              onClick={()=>fileInputRef.current?.click()}
+            >
+              <FiDownload className={styles.actionIcon}/>
+              <span className={styles.iconLabel}>Import Excel</span>
+            </div>
+            <div
+              className={styles.iconAction}
+              onClick={handleExportExcel}
+            >
+              <FiUpload className={styles.actionIcon}/>
+              <span className={styles.iconLabel}>Export Excel</span>
+            </div>
+            <input
+              type="file"
+              ref={fileInputRef}
+              accept=".xlsx,.xls"
+              onChange={handleExcelUpload}
+              style={{ display:'none' }}
+            />
+          </div>
 
-                  {/* hidden file input */}
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    accept=".xlsx, .xls"
-                    onChange={handleExcelUpload}
-                    style={{ display: 'none' }}
-                  />
+          <div className={styles.actionsContainer}>
+            {['all','yes','no','maybe'].map((key,index)=> {
+              const Icon = [FiBarChart2,FiCheckCircle,FiXCircle,FiHelpCircle][index];
+              const label = ['Total','Yes','No','Maybe'][index];
+              const count = [guestStats.total,guestStats.yes,guestStats.no,guestStats.maybe][index];
+              return (
+                <div
+                  key={key}
+                  className={`${styles.iconAction} ${
+                    filter===key?styles.activeFilter:''
+                  }`}
+                  onClick={()=>setFilter(key as any)}
+                >
+                  <Icon className={styles.actionIcon}/>
+                  <span className={styles.iconLabel}>{label}: {count}</span>
                 </div>
-                {guests.length > 0 && (
-                    <div className={styles.actionsContainer}>
-                      <div className={styles.iconAction}>
-                        <FiBarChart2 className={styles.actionIcon} />
-                        <span className={styles.iconLabel}>Total: {guestStats.total}</span>
-                      </div>
-                      <div className={styles.iconAction}>
-                        <FiCheckCircle className={styles.actionIcon} />
-                        <span className={styles.iconLabel}>Yes: {guestStats.yes}</span>
-                      </div>
-                      <div className={styles.iconAction}>
-                        <FiXCircle className={styles.actionIcon} />
-                        <span className={styles.iconLabel}>No: {guestStats.no}</span>
-                      </div>
-                      <div className={styles.iconAction}>
-                        <FiHelpCircle className={styles.actionIcon} />
-                        <span className={styles.iconLabel}>Maybe: {guestStats.maybe}</span>
-                      </div>
-                    </div>
-                )}
-                </div>
+              );
+            })}
+          </div>
+        </div>
 
+        {/* Table with sticky header + scrolling body */}
         {loading ? (
-          <div className={styles.emptyGuestList}>Loading guests...</div>
-        ) : error ? (
-          <div className={styles.emptyGuestList} style={{ color: 'red' }}>{error}</div>
-        ) : guests.length === 0 ? (
-          <div className={styles.emptyGuestList}>No guests found.</div>
+          <div className={styles.emptyGuestList}>Loading…</div>
+        ) : displayed.length===0 ? (
+          <div className={styles.emptyGuestList}>
+            {filter==='all'?'No guests':'No '+filter+' responses'}
+          </div>
         ) : (
-          <table className={styles.guestTable}>
-            <thead>
-              <tr>
-                <th>Full Name</th>
-                <th>Email</th>
-                <th>Phone</th>
-                <th>RSVP</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {guests.map((guest) => (
-                editingGuestId === guest._id ? (
-                  <tr key={guest._id}>
+          <div className={styles.tableWrapper}>
+            <table className={styles.guestTable}>
+              <thead>
+                <tr>
+                  <th>Full Name</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>RSVP</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {displayed.map(g=>(
+                  editingGuestId===g._id ?
+                  <tr key={g._id}>
                     <td>
                       <input
-                        value={editingGuests[guest._id]?.fullName ?? guest.fullName}
-                        onChange={e => handleEditChange(guest._id, 'fullName', e.target.value)}
                         className={styles.tableInput}
+                        value={editingGuests[g._id]?.fullName||g.fullName}
+                        onChange={e=>handleEditChange(g._id,'fullName',e.target.value)}
                       />
                     </td>
                     <td>
                       <input
-                        value={editingGuests[guest._id]?.email ?? guest.email}
-                        onChange={e => handleEditChange(guest._id, 'email', e.target.value)}
                         className={styles.tableInput}
+                        value={editingGuests[g._id]?.email||g.email}
+                        onChange={e=>handleEditChange(g._id,'email',e.target.value)}
                       />
                     </td>
                     <td>
                       <input
-                        value={editingGuests[guest._id]?.phone ?? guest.phone ?? ''}
-                        onChange={e => handleEditChange(guest._id, 'phone', e.target.value)}
                         className={styles.tableInput}
+                        value={editingGuests[g._id]?.phone||g.phone||''}
+                        onChange={e=>handleEditChange(g._id,'phone',e.target.value)}
                       />
                     </td>
                     <td>
                       <select
-                        value={editingGuests[guest._id]?.rsvp ?? guest.rsvp}
-                        onChange={e => handleEditChange(guest._id, 'rsvp', e.target.value)}
                         className={styles.tableSelect}
+                        value={editingGuests[g._id]?.rsvp||g.rsvp}
+                        onChange={e=>handleEditChange(g._id,'rsvp',e.target.value)}
                       >
                         <option value="yes">Yes</option>
                         <option value="no">No</option>
@@ -399,46 +673,29 @@ const GuestList: React.FC = () => {
                       </select>
                     </td>
                     <td>
-                      <FiSave
-                        className={styles.actionIcon}
-                        onClick={() => handleSave(guest)}
-                        title="Save"
-                      />
-                      <FiX
-                        className={styles.actionIcon}
-                        onClick={() => setEditingGuestId(null)}
-                        title="Cancel"
-                      />
+                      <FiSave className={styles.actionIcon} onClick={()=>handleSave(g)}/>
+                      <FiX    className={styles.actionIcon} onClick={()=>setEditingGuestId(null)}/>
                     </td>
                   </tr>
-                ) : (
-                  <tr key={guest._id}>
-                    <td>{guest.fullName}</td>
-                    <td>{guest.email}</td>
-                    <td>{guest.phone || '—'}</td>
-                    <td className={styles[`status_${guest.rsvp}`]}>
-                      {guest.rsvp}
-                    </td>
-                    <td>
-                      <FiEdit2
-                        className={styles.actionIcon}
-                        onClick={() => setEditingGuestId(guest._id)}
-                        title="Edit"
-                      />
-                      <FiTrash2
-                        className={styles.actionIcon}
-                        onClick={() => handleDelete(guest._id)}
-                        title="Delete"
-                      />
-                    </td>
-                  </tr>
-                )
-              ))}
-            </tbody>
-          </table>
+                  : <tr key={g._id}>
+                      <td>{g.fullName}</td>
+                      <td>{g.email}</td>
+                      <td>{g.phone||'—'}</td>
+                      <td className={styles[`status_${g.rsvp}`]}>
+                        {g.rsvp}
+                      </td>
+                      <td>
+                        <FiEdit2  className={styles.actionIcon} onClick={()=>setEditingGuestId(g._id)}/>
+                        <FiTrash2 className={styles.actionIcon} onClick={()=>handleDelete(g._id)}/>
+                      </td>
+                    </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
-      <ToastContainer />
+      <ToastContainer position="bottom-right"/>
     </div>
   );
 };
