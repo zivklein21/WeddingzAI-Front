@@ -63,33 +63,6 @@ apiClient.interceptors.response.use(
     ) {
       originalRequest._retry = true;
 
-      // V1
-      // if (isRefreshing) {
-      //   return new Promise((resolve, reject) => {
-      //     failedQueue.push({
-      //       resolve: (token: string) => {
-      //         originalRequest.headers.Authorization = "Bearer " + token;
-      //         resolve(apiClient(originalRequest));
-      //       },
-      //       reject: (err: any) => reject(err),
-      //     });
-      //   });
-      // }
-
-      // V2
-      // if (isRefreshing) {
-      //   return new Promise((resolve, reject) => {
-      //     failedQueue.push({
-      //       resolve: (token: string) => {
-      //         originalRequest.headers.Authorization = `Bearer ${token}`;
-      //         resolve(apiClient(originalRequest));
-      //       },
-      //       reject: reject,
-      //     });
-      //   });
-      // }
-
-      // V3
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({
