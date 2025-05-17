@@ -46,7 +46,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         const storedUser = Cookies.get('user');
 
         if (storedAccessToken && storedRefreshToken && storedUser) {
-            const parsedUser = JSON.parse(storedUser);
+            const parsedUser = JSON.parse(decodeURIComponent(storedUser));
 
             setAccessToken(storedAccessToken);
             setRefreshToken(storedRefreshToken);
@@ -70,7 +70,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             // Store data in cookies (with secure attributes)
             Cookies.set('accessToken', accessToken, { path: '/', secure: true, sameSite: 'Strict' });
             Cookies.set('refreshToken', refreshToken, { path: '/', secure: true, sameSite: 'Strict' });
-            Cookies.set('user', JSON.stringify(userData), { path: '/', secure: true, sameSite: 'Strict' });
+            Cookies.set('user', encodeURIComponent(JSON.stringify(userData)), {
+                path: '/',
+                secure: true,
+                sameSite: 'Strict'
+              });
 
             // Update React state
             setAccessToken(accessToken);
@@ -94,10 +98,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
             const { accessToken, refreshToken, _id, firstPartner, secondPartner, avatar, email } = googleSignInResponse.data;
             const userData = { accessToken, refreshToken, _id, avatar, email, firstPartner, secondPartner, password: '' };
+            console.log('Google Login successful', userData);
 
             Cookies.set('accessToken', accessToken, { path: '/', secure: true, sameSite: 'Strict' });
             Cookies.set('refreshToken', refreshToken, { path: '/', secure: true, sameSite: 'Strict' });
-            Cookies.set('user', JSON.stringify(userData), { path: '/', secure: true, sameSite: 'Strict' });
+            Cookies.set('user', encodeURIComponent(JSON.stringify(userData)), {
+                path: '/',
+                secure: true,
+                sameSite: 'Strict'
+              });
+              
             
             setAccessToken(accessToken);
             setRefreshToken(refreshToken);
@@ -124,7 +134,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         };
 
         setUser(updatedUser);
-        Cookies.set("user", JSON.stringify(updatedUser), { path: "/", secure: true, sameSite: "Strict" });
+        Cookies.set('user', encodeURIComponent(JSON.stringify(updatedUser)), {
+            path: '/',
+            secure: true,
+            sameSite: 'Strict'
+          });        
     };
 
     const logout = async () => {

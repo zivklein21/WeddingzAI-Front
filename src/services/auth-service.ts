@@ -30,7 +30,15 @@ const register = (user: User) => {
 const googleSignIn = (credentialsResponse: CredentialResponse) => {
     const abortController = new AbortController();
     const payload = { credential: credentialsResponse.credential };
-    const request = apiClient.post(
+    const request = apiClient.post<{
+        refreshToken: string;
+        accessToken: string;
+        _id: string;
+        firstPartner: string;
+        secondPartner: string;
+        email: string;
+        avatar: string;
+    }>(
         '/auth/google',
         payload,
         { signal: abortController.signal }

@@ -29,27 +29,31 @@ import {
   FiArrowLeft
 } from 'react-icons/fi';
 
+// CHANGE WHEN PRODUCTION //
 const WEDDING_DATE = '2025-08-10';
 
-// Utility to read partners from cookie
-function getCookieValue(name: string): string | null {
-  const match = document.cookie
-    .split('; ')
-    .find((row) => row.startsWith(name + '='));
-  return match ? decodeURIComponent(match.split('=')[1]) : null;
-}
-
-const userCookie = getCookieValue('user');
-let firstPartner = '', secondPartner = '';
-if (userCookie) {
-  try {
-    const p = JSON.parse(userCookie);
-    firstPartner = p.firstPartner || '';
-    secondPartner = p.secondPartner || '';
-  } catch { /* empty */ }
-}
-
 const GuestList: React.FC = () => {
+  // Utility to read partners from cookie
+  function getCookieValue(name: string): string | null {
+    const match = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith(name + '='));
+    return match ? decodeURIComponent(match.split('=')[1]) : null;
+  }
+
+  const userCookie = getCookieValue('user');
+  let firstPartner = '', secondPartner = '';
+  if (userCookie) {
+    try {
+      const p = JSON.parse(decodeURIComponent(userCookie));
+      firstPartner = p.firstPartner || '';
+      secondPartner = p.secondPartner || '';
+    } catch { 
+      console.error('Error parsing user cookie:', userCookie);
+     }
+  }
+
+
   // State
   const [guests, setGuests] = useState<Guest[]>([]);
   const [filter, setFilter] = useState<'all'|'yes'|'no'|'maybe'>('all');
