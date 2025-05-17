@@ -16,6 +16,23 @@ const apiClient = axios.create({
   headers: { "Content-Type": "application/json" },
 });
 
+
+// Set Up processQueue to avoid race conditions
+let isRefreshing = false;
+let failedQueue: any[] = [];
+
+const processQueue = (error: any, token: string | null = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+  failedQueue = [];
+};
+
+
 // Attach access token to every request
 apiClient.interceptors.request.use(
   (config) => {
@@ -39,27 +56,43 @@ apiClient.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    // Handle Token Expiration Error
     if (
       error.response &&
       error.response.status === 401 &&
       !originalRequest._retry
     ) {
-      console.log("Token expired. Attempting refresh...");
       originalRequest._retry = true;
 
-      try {
-        // Call the refresh token endpoint
-        console.log(`Refreshing token with refresh token ${Cookies.get('refreshToken')}`);
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          failedQueue.push({
+            resolve: () => {
+              const latestAccessToken = Cookies.get("accessToken");
+              resolve(
+                apiClient({
+                  ...originalRequest,
+                  headers: {
+                    ...originalRequest.headers,
+                    Authorization: `Bearer ${latestAccessToken}`,
+                  },
+                })
+              );
+            },
+            reject: reject,
+          });
+        });
+      }
 
+      isRefreshing = true;
+
+      try {
         const refreshResponse = await axios.post(
           backend_url + "/auth/refresh",
-          {
-            refreshToken: Cookies.get("refreshToken"),
-          }
+          { refreshToken: Cookies.get("refreshToken") }
         );
-        const newAccessToken = refreshResponse.data.accessToken;
-        const newRefreshToken = refreshResponse.data.refreshToken;
+
+        const newAccessToken = refreshResponse?.data?.accessToken;
+        const newRefreshToken = refreshResponse?.data?.refreshToken;
 
         Cookies.set("accessToken", newAccessToken, {
           secure: true,
@@ -70,24 +103,20 @@ apiClient.interceptors.response.use(
           sameSite: "Strict",
         });
 
-        // Retry the original request with the new token
-        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-        console.log("Retrying request with new access token...");
+        processQueue(null, newAccessToken);
 
+        originalRequest.headers.Authorization = "Bearer " + newAccessToken;
         return apiClient(originalRequest);
       } catch (refreshError) {
-        console.log("Error refreshing token:", refreshError);
-        console.error("Token refresh failed:", refreshError);
+        processQueue(refreshError, null);
 
-        // Clear Cookies Data
-        Cookies.remove("refreshToken");
         Cookies.remove("accessToken");
+        Cookies.remove("refreshToken");
         Cookies.remove("user");
 
-
-        // Redirect to login if refresh fails
-        // window.location.href = "/auth";
         return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
       }
     }
 
