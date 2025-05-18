@@ -17,6 +17,7 @@ html, body {
 
 .guestContainer {
   display: flex;
+  position: relative;
   flex-direction: column;
   max-width: 1000px;
   overflow: hidden; 
@@ -366,7 +367,6 @@ html, body {
 .activeFilter .iconLabel {
   color: var(--wedding-black);
 }
-
 
 .backIcon {
   position: absolute;
