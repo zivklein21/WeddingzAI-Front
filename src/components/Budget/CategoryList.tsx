@@ -1,6 +1,15 @@
 import { useState } from "react";
-import styles from "./budget.module.css";
+import styles from "./Budget.module.css";
 import { useBudget } from "./BudgetContext";
+
+import {
+  FiCheck,
+  FiX,
+  FiEdit2,
+  FiSave,
+  FiTrash2
+} from 'react-icons/fi';
+
 
 const CategoryList = () => {
   const { categories, setCategories, saveBudget, totalBudget } = useBudget();
@@ -26,88 +35,76 @@ const CategoryList = () => {
     setEditIndex(null);
   };
 
-  if (categories.length === 0) {
-    return <p className={styles.emptyMessage}>No categories yet.</p>;
-  }
-
   return (
     <>
-      <ul className={styles.categoryList}>
-        {categories.map((cat, index) => {
-          const isEditing = editIndex === index;
+    <hr style={{ margin: '32px 0 12px 0', border: 'none', borderTop: '1.5px solid #e3e3e3' }} />
+      <div
+      className={
+        categories.length === 0
+          ? styles.tableWrapperEmpty
+          : styles.tableWrapper
+      }
+    >
+      {categories.length === 0 ? (
+      <p className={styles.emptyMessage}>No categories yet.</p>
+    ) : (
+        <table className={styles.categoriesTable}>
+          <tbody>
+            {categories.map((cat, index) => {
+              const isEditing = editIndex === index;
 
-          return (
-            <li key={index} className={styles.categoryItem}>
-              {isEditing ? (
-                <>
-                  <input
-                    type="text"
-                    value={editedName}
-                    onChange={(e) => setEditedName(e.target.value)}
-                    className={styles.categoryInput}
-                  />
-                  <input
-                    type="number"
-                    value={editedAmount}
-                    onChange={(e) => setEditedAmount(e.target.value)}
-                    className={styles.categoryInput}
-                  />
-                  <button
-                    className={styles.confirmBtn}
-                    onClick={() => handleUpdate(index)}
-                    title="Confirm"
-                  >
-                    ✔
-                  </button>
-                  <button
-                    className={styles.cancelBtn}
-                    onClick={() => setEditIndex(null)}
-                    title="Cancel"
-                  >
-                    ✕
-                  </button>
-                </>
-              ) : (
-                <>
-                  <span className={styles.categoryName}>{cat.name}</span>
-                  <span className={styles.categoryAmount}>${cat.amount}</span>
-                  <div className={styles.categoryActions}>
-                    <button
-                      className={styles.categoryEditBtn}
-                      onClick={() => {
-                        setEditIndex(index);
-                        setEditedName(cat.name);
-                        setEditedAmount(cat.amount.toString());
-                      }}
-                    >
-                      ✎
-                    </button>
-                    <button
-                      className={styles.deleteBtn}
-                      onClick={() => handleDelete(index)}
-                    >
-                      ✕
-                    </button>
-                  </div>
-                </>
-              )}
-            </li>
-          );
-        })}
-      </ul>
-      <p className={styles.totalRow}>
-        Total Spent: $
-        {categories
-          .reduce((sum, cat) => sum + (Number(cat.amount) || 0), 0)
-          .toLocaleString()}
-      </p>
-      <p className={styles.totalRow}>
-        Remaining Budget: $
-        {(
-          parseFloat(totalBudget) -
-          categories.reduce((sum, cat) => sum + (Number(cat.amount) || 0), 0)
-        ).toLocaleString()}
-      </p>
+              return (
+                <tr key={index}>
+                  {isEditing ? (
+                    <>
+                      <td>
+                        <input
+                          type="text"
+                          value={editedName}
+                          onChange={(e) => setEditedName(e.target.value)}
+                          className={styles.tableInput}
+                        />
+                      </td>
+                      <td>
+                        <input
+                          type="number"
+                          value={editedAmount}
+                          onChange={(e) => setEditedAmount(e.target.value)}
+                          className={styles.tableInput}
+                        />
+                      </td>
+                      <td>
+                        <FiCheck className={styles.actionIcon} onClick={() => handleUpdate(index)}/>
+                        <FiX className={styles.actionIcon} onClick={() => setEditIndex(null)} />
+                      </td>
+                    </>
+                  ) : (
+                    <>
+                      <td className={styles.name}>
+                        {cat.name}
+                      </td>
+                      <td>
+                        <div className={styles.actions}>
+                          <span className={styles.amount}>${cat.amount}</span>
+                          <FiEdit2 
+                            onClick={() => {
+                              setEditIndex(index);
+                              setEditedName(cat.name);
+                              setEditedAmount(cat.amount.toString());
+                            }}
+                            className={styles.actionIcon}
+                          />
+                          <FiTrash2 className={styles.actionIcon} onClick={() => handleDelete(index)}/>
+                        </div>
+                      </td>
+                    </>
+                  )}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+    )}</div>
     </>
   );
 };

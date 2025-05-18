@@ -5,10 +5,10 @@ import { NavBar } from "../components/NavBar/NavBar";
 const HomePage: React.FC = () => {
 
   return (
-    <div>
+    <>
       <NavBar title="My Wedding"/>
       <Home />
-    </div>
+    </>
   );
 };
 

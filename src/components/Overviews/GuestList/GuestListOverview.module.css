@@ -1,0 +1,35 @@
+.summaryRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0.5rem 0;
+}
+
+.summaryLabel {
+  font-size: 1rem;
+  color: #333;
+  font-weight: 500;
+}
+
+.summaryValue {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #333;
+  text-align: right;
+}
+
+.progressBar {
+  margin-top: 10PX;
+  width: 100%;
+  height: 8px;
+  background-color: #eee;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+
+.progressFill {
+  height: 100%;
+  background-color: #a5e5b5;
+  transition: width 0.4s ease;
+}

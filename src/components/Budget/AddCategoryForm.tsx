@@ -1,5 +1,5 @@
 import { useState } from "react";
-import styles from "./budget.module.css";
+import styles from "./Budget.module.css";
 import { useBudget } from "./BudgetContext";
 
 const AddCategoryForm = () => {
@@ -31,16 +31,14 @@ const AddCategoryForm = () => {
         placeholder="Category name"
         value={name}
         onChange={(e) => setName(e.target.value)}
-        className={styles.categoryInput}
       />
       <input
         type="number"
         placeholder="Amount"
         value={amount}
-        onChange={(e) => setAmount(e.target.value)}
-        className={styles.categoryInput}
+        onChange={(e) => setAmount(e.target.value)}        
       />
-      <button type="submit" className={styles.addBtn}>
+      <button type="submit">
         Add
       </button>
     </form>
