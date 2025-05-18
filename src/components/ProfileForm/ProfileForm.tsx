@@ -34,6 +34,8 @@ const Profile = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
+  const [isPremium, setIsPremium] = useState<boolean | null>(null);
+
   useEffect(() => {
     if (user) {
       setUserDetails({
@@ -48,6 +50,27 @@ const Profile = () => {
             : defaultAvatar,
       });
     }
+
+    // Fetch Premium Status
+    const abortController = new AbortController();
+    const fetchPremiumStatus = async () => {
+      try {
+        const { request: getPremiumStatusRequest } = await authService.getUserPremiumStatus();
+        const response = await getPremiumStatusRequest;
+        if (response.status === 200) {
+          console.log("User Premium Status:", response.data.is_premium);
+          setIsPremium(response.data.is_premium);
+        }
+      } catch (error) {
+        console.error("Error fetching premium status:", error);
+      }
+    }
+    fetchPremiumStatus();
+
+    return () => {
+      abortController.abort();
+    };
+
   }, [user]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {

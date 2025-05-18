@@ -103,4 +103,16 @@ const resetPassword = (newPassword: string) => {
     return { request, abort: () => abortController.abort() };
 };
 
-export default { register, login, googleSignIn, updateUser, logout, resetPassword };
+// Get User Premium Status Service
+const getUserPremiumStatus = () => {
+    const abortController = new AbortController();
+    const request = apiClient.get<{
+        is_premium: boolean;
+        message: string;
+    }>("/auth/prem", {
+        signal: abortController.signal,
+    });
+    return { request, abort: () => abortController.abort() };
+};
+
+export default { register, login, googleSignIn, updateUser, logout, resetPassword, getUserPremiumStatus };
