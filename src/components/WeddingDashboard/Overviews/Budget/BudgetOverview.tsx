@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
-import { getBudget } from '../../../services/budget-service';
+import { getBudget } from '../../../../services/budget-service';
 import styles from './BudgetOverview.module.css';
 
 interface Budget {

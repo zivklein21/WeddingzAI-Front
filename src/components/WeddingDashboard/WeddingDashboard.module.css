@@ -84,7 +84,7 @@
       grid-row: 3 / 4;
   }
   
-  .view3d {
+  .detailsMatter {
       grid-column: 3 / 4;
       grid-row: 3 / 4;
   }
@@ -93,20 +93,7 @@
       grid-column: 4 / 5;
       grid-row: 2 / 4;
   }
-  
 
-.todoPreview {
-    margin-top: 0.5rem;
-    padding-left: 1rem;
-    list-style: disc;
-    font-size: 0.9rem;
-  }
-  
-  .todoPreviewEmpty {
-    margin-top: 0.5rem;
-    font-style: italic;
-    color: #666;
-  }
   
   .card.todo a,
   .card.todo a:visited {

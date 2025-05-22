@@ -1,7 +1,7 @@
 html, body {
   height: 100%;
   margin: 0;
-  overflow: hidden;
+  overflow: hidden !important;
 }
 
 .guestPage {
@@ -38,6 +38,20 @@ html, body {
   margin-bottom: 1.5rem;
   border-bottom: 2px solid #ddd;
   padding-bottom: 0.5rem;
+}
+
+.backIcon {
+  position: absolute;
+  top: 20px;        
+  right: 20px;      
+  font-size: 1.5rem;
+  color: var(--wedding-gray, #888);
+  cursor: pointer;
+  transition: color 0.2s;
+  z-index: 10;     
+}
+.backIcon:hover {
+  color: var(--wedding-purple, #b291ff);
 }
 
 .guestList {
@@ -368,16 +382,3 @@ html, body {
   color: var(--wedding-black);
 }
 
-.backIcon {
-  position: absolute;
-  top: 20px;        
-  right: 20px;      
-  font-size: 1.5rem;
-  color: var(--wedding-gray, #888);
-  cursor: pointer;
-  transition: color 0.2s;
-  z-index: 10;     
-}
-.backIcon:hover {
-  color: var(--wedding-purple, #b291ff);
-}
