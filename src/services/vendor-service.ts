@@ -1,39 +1,6 @@
 import apiClient, { CanceledError } from "./api-client";
 export { CanceledError };
-
-export interface Vendor {
-  _id: string;
-  name: string;
-  vendorType: string;
-  rating: number;
-  coverImage: string;
-  profileImage: string;
-  about: string;
-  price_range: string;
-  services: string;
-  area: string;
-  attributes: Record<string, string>;
-  galleryImages: string[];
-  faqs: Array<{
-    question: string;
-    answer: string;
-  }>;
-  reviews: Array<{
-    reviewer: string;
-    date: string;
-    comment: string;
-  }>;
-  socialMedia: {
-    facebook: string;
-    instagram: string;
-    twitter: string;
-    youtube: string;
-  };
-  website: string;
-  phone: string;
-  sourceUrl: string;
-  scrapedAt: string;
-}
+import { Vendor } from "../types/Vendor";
 
 export interface AIResearchResult {
   vendorType: string;
@@ -52,6 +19,11 @@ interface ApiResponse<T> {
   data?: T;
   error?: string;
   result?: any;
+}
+
+export interface VendorSummaryResponse {
+  total: number;
+  counts: Record<string, number>;
 }
 
 // 1. Send a task for AI research
@@ -133,18 +105,35 @@ export const deleteVendor = async (id: string): Promise<Vendor> => {
   }
 };
 
-// Start AI research in the background
-export const startAIResearchBackground = async (query: string): Promise<{ success: boolean; taskId?: string; error?: string }> => {
+// 7. Start AI research in the background
+export const startAIResearchBackground = async (query: string, userId: string): Promise<{ success: boolean; taskId?: string; error?: string }> => {
   try {
     const resp = await apiClient.post<{ success: boolean; taskId: string; error?: string }>(
       "/vendors/research/background",
-      { query }
+      { query , userId}
     );
     return resp.data;
   } catch (error: any) {
     throw new Error(error.response?.data?.error || "Failed to start AI research");
   }
 };
+
+// 8. GET /vendors/relevant - fetch AI-filtered vendors based on TDL
+export const fetchRelevantVendors = async (): Promise<Vendor[]> => {
+  try {
+    const resp = await apiClient.get<ApiResponse<Vendor[]>>("/vendors/relevant");
+    return resp.data.data || [];
+  } catch (error: any) {
+    throw new Error(error.response?.data?.error || "Failed to fetch relevant vendors");
+  }
+};
+
+// 9. GET /vendors/summary - get user vendor summay
+export const fetchVendorSummary= async(): Promise<VendorSummaryResponse> => {
+  const resp = await apiClient.get<{ total: number; counts: Record<string, number> }>("/vendors/summary");
+  return resp.data;
+}
+
 
 export default {
   runAIResearch,
@@ -153,5 +142,7 @@ export default {
   fetchVendorsByType,
   searchVendors,
   deleteVendor,
-  startAIResearchBackground
+  startAIResearchBackground,
+  fetchRelevantVendors,
+  fetchVendorSummary
 };

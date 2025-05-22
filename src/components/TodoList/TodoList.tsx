@@ -1,5 +1,5 @@
 // src/components/TodoList/TodoList.tsx
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import tdlService, { TdlData } from "../../services/tdl-service";
 import vendorService from "../../services/vendor-service";
@@ -11,6 +11,7 @@ import {
   Trash2,
 } from "lucide-react";
 import styles from "./TodoList.module.css";
+import { useAuth } from "../../hooks/useAuth/AuthContext";
 
 export default function TodoList() {
   const [todoList, setTodoList] = useState<TdlData | null>(null);
@@ -18,11 +19,17 @@ export default function TodoList() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const { user } = useAuth();
 
 
 const handleAIButtonClick = async (task: string) => {
   try {
-    await vendorService.startAIResearchBackground(task);
+    const userId = user?._id;
+    if (!userId) {
+      alert("User ID is missing. Please log in again.");
+      return;
+    }
+    await vendorService.startAIResearchBackground(task, userId);
     
     alert(`המחקר על "${task}" החל לרוץ ברקע! התוצאות יופיעו בדף הספקים.`);
   } catch (err) {

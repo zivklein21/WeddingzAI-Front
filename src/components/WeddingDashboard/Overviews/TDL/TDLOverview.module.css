@@ -1,0 +1,30 @@
+.todoPreview {
+    margin-top: 0.5rem;
+    padding-left: 1rem;
+    list-style: disc;
+    font-size: 0.9rem;
+  }
+  
+  .todoPreviewEmpty {
+    margin-top: 0.5rem;
+    font-style: italic;
+    color: #666;
+  }
+
+  .spinnerContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px; /* or 100vh if full screen */
+}
+
+.spinner {
+  font-size: 40px;
+  color: var(--wedding-purple);
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

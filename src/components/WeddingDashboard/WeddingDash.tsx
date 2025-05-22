@@ -1,34 +1,14 @@
-import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import tdlService, { TdlData } from "../../services/tdl-service";
+import { Link } from "react-router-dom";
 import styles from "./WeddingDashboard.module.css";
 
 // Components
-import BudgetOverview from "../Overviews/Budget/BudgetOverview";
-import GuestListOverview from "../Overviews/GuestList/GuestListOverview";
+import BudgetOverview from "./Overviews/Budget/BudgetOverview";
+import GuestListOverview from "./Overviews/GuestList/GuestListOverview";
+import VendorOverview from "./Overviews/Vendors/VendorsOverview";
+import TDLOverview from "./Overviews/TDL/TDLOverview";
 
 
 export default function WeddingDashboard() {
-  const [previewTasks, setPreviewTasks] = useState<string[]>([]);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    tdlService
-      .fetchMyTdl()
-      .then((tdl: TdlData) => {
-        const allTasks = tdl.sections.flatMap((sec) =>
-          sec.todos.map((todo) => todo.task)
-        );
-        setPreviewTasks(allTasks.slice(0, 3));
-      })
-      .catch((err) => {
-        console.error("Could not load TDL preview:", err);
-
-      });
-
- 
-  }, [navigate]);
-
 
   return (
     <div className={styles.main}>
@@ -78,15 +58,7 @@ export default function WeddingDashboard() {
         <div className={`${styles.card} ${styles.todo}`}>
           To-Do List
           <hr className={styles.divider} />
-          {previewTasks.length > 0 ? (
-            <ul className={styles.todoPreview}>
-              {previewTasks.map((task, i) => (
-                <li key={i}>{task}</li>
-              ))}
-            </ul>
-          ) : (
-            <p className={styles.todoPreviewEmpty}>Loading…</p>
-          )}
+          <TDLOverview />
           <Link to="/todolist">
             <div className={styles.manageLink}>Manage TDL</div>
           </Link>
@@ -95,12 +67,13 @@ export default function WeddingDashboard() {
         <div className={`${styles.card} ${styles.vendors}`}>
           Vendors
           <hr className={styles.divider} />
-          <Link to="/guests">
+          <VendorOverview />
+          <Link to="/myVendors">
             <div className={styles.manageLink}>Manage Vendors</div>
           </Link>
         </div>
 
-        <div className={`${styles.card} ${styles.view3d}`}>
+        <div className={`${styles.card} ${styles.detailsMatter}`}>
           Details matter
           <hr className={styles.divider} />
           <Link to="/guests">
@@ -113,7 +86,7 @@ export default function WeddingDashboard() {
           Invitation
           <hr className={styles.divider} />
           <Link to="/guests">
-            <div className={styles.manageLink}>Manage Vendors</div>
+            <div className={styles.manageLink}>Manage Invitation</div>
           </Link>
         </div>
       </div>

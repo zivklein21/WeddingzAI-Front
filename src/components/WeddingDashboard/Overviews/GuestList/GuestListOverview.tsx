@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import guestService, { Guest } from "../../../services/guest-service";
+import guestService, { Guest } from "../../../../services/guest-service";
 import styles from "./GuestListOverview.module.css";
 
 export default function GuestListOverview() {
