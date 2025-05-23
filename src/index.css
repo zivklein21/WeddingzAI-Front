@@ -1,6 +1,5 @@
 /* index.css - Global wedding-themed styles */
 @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700&display=swap');
-@import url('https://fonts.cdnfonts.com/css/relation-3'); 
 
 :root {
    --wedding-pink: #f9e6f0;
@@ -10,22 +9,26 @@
    --wedding-gray: #888888;
    --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
    --font-rubik: 'Rubik', sans-serif;
-   --font-relation: 'Relation', sans-serif;
  }
 
  p {
   font-family: var(--font-rubik);
  }
  
+ 
  /* Reset & base */
  html, body {
+  min-height: 100vh;
+  height: auto;
+  overflow-y: auto;
    margin: 0;
    padding: 0;
    font-family: var(--font-rubik);
    background: linear-gradient(to bottom right, var(--wedding-pink), var(--wedding-white));
    color: #333;
-   min-height: 100vh;
    scroll-behavior: smooth;
+  overflow-x: hidden; /* חשוב מאוד למנוע גלילה לרוחב */
+
  }
  
  /* HEADERS: black by default, pink on hover */

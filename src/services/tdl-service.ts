@@ -17,6 +17,7 @@ export interface TdlData {
       task: string;
       dueDate: string;
       priority: string;
+      aiSent: boolean;
     }[];
   }[];
 }

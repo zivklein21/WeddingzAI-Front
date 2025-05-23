@@ -1,6 +1,12 @@
 /* src/components/TodoList/TodoList.module.css */
+html, body {
+  height: 100%;
+  margin: 0;
+  overflow-y: auto !important;
+}
+
 .wrapper {
-  display: flex;
+  display: block;
   justify-content: center;
   align-items: flex-start;
   padding: 2rem;
@@ -40,7 +46,6 @@
   margin-top: 1.5rem;
   border: 1px solid #e0e0e0;
   border-radius: 8px;
-  overflow: hidden;
 }
 
 .sectionHeader {

@@ -16,10 +16,10 @@ const ProfilePage: React.FC = () => {
   }
 
   return (
-    <div>
-      <NavBar title=""/>
+    <>
+      <NavBar title="My Wedding"/>
       <Profile />
-    </div>
+    </>
   );
 };
 

@@ -17,9 +17,9 @@ const PrefFormPage: React.FC = () => {
   }
 
   return (
-    <div>
+    <>
       <PrefForm />
-    </div>
+    </>
   );
 };
 
