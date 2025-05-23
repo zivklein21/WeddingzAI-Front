@@ -10,16 +10,17 @@ export interface User {
     email: string;
     password: string;
     avatar?: string;
-    weddingDate?: Date;
+    weddingDate?: string;
     weddingVenue?: string;
     accessToken?: string;
     refreshToken?: string;
 }
 
 export interface UpdatedUser {
-    username?: string;
+    firstPartner?: string;
+    secondPartner?: string;
     avatar?: string;
-    weddingDate?: Date;
+    weddingDate?: string;
     weddingVenue?: string;
 }
 
@@ -42,7 +43,7 @@ const googleSignIn = (credentialsResponse: CredentialResponse) => {
         secondPartner: string;
         email: string;
         avatar: string;
-        weddingDate: Date;
+        weddingDate: string;
         weddingVenue: string;
     }>(
         '/auth/google',
@@ -70,7 +71,7 @@ const login = (credentials: { email: string; password: string }) => {
         secondPartner: string;
         email: string;
         avatar: string;
-        weddingDate: Date;
+        weddingDate: string;
         weddingVenue: string;
     }>('/auth/login', credentials, { signal: abortController.signal });
 
@@ -93,7 +94,7 @@ const updateUser = (updatedUser: UpdatedUser) => {
         firstPartner: string;
         secondPartner: string;
         avatar: string;
-        weddingDate: Date;
+        weddingDate: string;
         weddingVenue: string;
     }>("/auth/user", updatedUser, {
         signal: abortController.signal,

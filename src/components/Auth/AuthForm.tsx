@@ -19,8 +19,8 @@ export default function AuthForm() {
   });
 
   const RegisterSchema = z.object({
-    // firstPartner: z.string().nonempty('First partner name is required'),
-    // secondPartner: z.string().nonempty('Second partner name is required'),
+    firstPartner: z.string().nonempty('First partner name is required'),
+    secondPartner: z.string().nonempty('Second partner name is required'),
     email: z.string().email('Invalid email address').nonempty('Email is required'),
     password: z.string().min(6, 'Password must be at least 6 characters long').nonempty('Password is required'),
     confirmPassword: z.string().nonempty('Please confirm your password'),
@@ -96,8 +96,8 @@ export default function AuthForm() {
   const onSubmitRegister = async (data: RegisterFormData) => {
     setServerRegisterError(null);
     const user = {
-      // firstPartner: data.firstPartner,
-      // secondPartner: data.secondPartner,
+      firstPartner: data.firstPartner,
+      secondPartner: data.secondPartner,
       email: data.email,
       password: data.password,
       avatar: "",
@@ -187,7 +187,7 @@ export default function AuthForm() {
             </div>
               <form onSubmit={handleSubmitRegister(onSubmitRegister)} className={styles.registerFormWrapper}>
               <img src={logo} alt="WAI" className={styles.logo} />
-                {/* <input
+                <input
                   {...registerRegister('firstPartner')}
                   type="text"
                   placeholder="First partner name"
@@ -199,7 +199,7 @@ export default function AuthForm() {
                   type="text"
                   placeholder="Second partner name"
                 />
-                {errorsRegister.secondPartner && <p className={styles.error}>{errorsRegister.secondPartner.message}</p>} */}
+                {errorsRegister.secondPartner && <p className={styles.error}>{errorsRegister.secondPartner.message}</p>}
 
                 <input
                   {...registerRegister('email')}
