@@ -18,7 +18,7 @@ interface ApiResponse<T> {
   message?: string;
   data?: T;
   error?: string;
-  result?: any;
+  result?: unknown;
 }
 
 export interface VendorSummaryResponse {
@@ -28,53 +28,36 @@ export interface VendorSummaryResponse {
 
 // 1. Send a task for AI research
 export const runAIResearch = async (query: string): Promise<{ success: boolean; result: AIResearchResult }> => {
-  try {
     const resp = await apiClient.post<{ success: boolean; result: AIResearchResult }>(
       "/vendors/ai-research",
       { query }
     );
     return resp.data;
-  } catch (error: any) {
-    throw new Error(error.response?.data?.error || "Failed to run AI research");
-  }
 };
 
 // 2. GET /vendors
 export const fetchAllVendors = async (): Promise<Vendor[]> => {
-  try {
     const resp = await apiClient.get<ApiResponse<Vendor[]>>("/vendors");
     return resp.data.data || [];
-  } catch (error: any) {
-    throw new Error(error.response?.data?.error || "Failed to fetch vendors");
-  }
 };
 
 // 3. GET /vendors/:id
 export const fetchVendorById = async (id: string): Promise<Vendor> => {
-  try {
     const resp = await apiClient.get<ApiResponse<Vendor>>(`/vendors/${id}`);
     if (!resp.data.data) {
       throw new Error("Vendor not found");
     }
     return resp.data.data;
-  } catch (error: any) {
-    throw new Error(error.response?.data?.error || "Failed to fetch vendor");
-  }
 };
 
 // 4. GET /vendors/type/:type
 export const fetchVendorsByType = async (type: string): Promise<Vendor[]> => {
-  try {
     const resp = await apiClient.get<ApiResponse<Vendor[]>>(`/vendors/type/${type}`);
     return resp.data.data || [];
-  } catch (error: any) {
-    throw new Error(error.response?.data?.error || "Failed to fetch vendors by type");
-  }
 };
 
 // 5. GET /vendors/search?query=X&type=Y
 export const searchVendors = async (query?: string, type?: string): Promise<Vendor[]> => {
-  try {
     let url = "/vendors/search";
     const params = new URLSearchParams();
     
@@ -87,45 +70,30 @@ export const searchVendors = async (query?: string, type?: string): Promise<Vend
     
     const resp = await apiClient.get<ApiResponse<Vendor[]>>(url);
     return resp.data.data || [];
-  } catch (error: any) {
-    throw new Error(error.response?.data?.error || "Failed to search vendors");
-  }
 };
 
 // 6. DELETE /vendors/:id
 export const deleteVendor = async (id: string): Promise<Vendor> => {
-  try {
     const resp = await apiClient.delete<ApiResponse<Vendor>>(`/vendors/${id}`);
     if (!resp.data.data) {
       throw new Error("Failed to delete vendor");
     }
     return resp.data.data;
-  } catch (error: any) {
-    throw new Error(error.response?.data?.error || "Failed to delete vendor");
-  }
 };
 
 // 7. Start AI research in the background
 export const startAIResearchBackground = async (query: string, userId: string): Promise<{ success: boolean; taskId?: string; error?: string }> => {
-  try {
     const resp = await apiClient.post<{ success: boolean; taskId: string; error?: string }>(
       "/vendors/research/background",
       { query , userId}
     );
     return resp.data;
-  } catch (error: any) {
-    throw new Error(error.response?.data?.error || "Failed to start AI research");
-  }
 };
 
-// 8. GET /vendors/relevant - fetch AI-filtered vendors based on TDL
+// 8. GET /vendors/mine - fetch AI-filtered vendors based on TDL
 export const fetchRelevantVendors = async (): Promise<Vendor[]> => {
-  try {
-    const resp = await apiClient.get<ApiResponse<Vendor[]>>("/vendors/relevant");
+    const resp = await apiClient.get<ApiResponse<Vendor[]>>("/vendors/mine");
     return resp.data.data || [];
-  } catch (error: any) {
-    throw new Error(error.response?.data?.error || "Failed to fetch relevant vendors");
-  }
 };
 
 // 9. GET /vendors/summary - get user vendor summay

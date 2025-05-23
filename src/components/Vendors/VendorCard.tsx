@@ -1,5 +1,5 @@
 import React from "react";
-import { Vendor } from "../../services/vendor-service";
+import { Vendor } from "../../types/Vendor";
 import styles from "./vendors.module.css";
 
 interface Props {
