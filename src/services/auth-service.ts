@@ -10,6 +10,8 @@ export interface User {
     email: string;
     password: string;
     avatar?: string;
+    weddingDate?: Date;
+    weddingVenue?: string;
     accessToken?: string;
     refreshToken?: string;
 }
@@ -17,6 +19,8 @@ export interface User {
 export interface UpdatedUser {
     username?: string;
     avatar?: string;
+    weddingDate?: Date;
+    weddingVenue?: string;
 }
 
 // Register User Service
@@ -38,6 +42,8 @@ const googleSignIn = (credentialsResponse: CredentialResponse) => {
         secondPartner: string;
         email: string;
         avatar: string;
+        weddingDate: Date;
+        weddingVenue: string;
     }>(
         '/auth/google',
         payload,
@@ -64,6 +70,8 @@ const login = (credentials: { email: string; password: string }) => {
         secondPartner: string;
         email: string;
         avatar: string;
+        weddingDate: Date;
+        weddingVenue: string;
     }>('/auth/login', credentials, { signal: abortController.signal });
 
     request
@@ -85,6 +93,8 @@ const updateUser = (updatedUser: UpdatedUser) => {
         firstPartner: string;
         secondPartner: string;
         avatar: string;
+        weddingDate: Date;
+        weddingVenue: string;
     }>("/auth/user", updatedUser, {
         signal: abortController.signal,
     });
