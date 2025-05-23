@@ -29,11 +29,7 @@ import {
   FiArrowLeft
 } from 'react-icons/fi';
 
-// CHANGE WHEN PRODUCTION //
-const WEDDING_DATE = '2025-08-10';
-
 const GuestList: React.FC = () => {
-  // Utility to read partners from cookie
   function getCookieValue(name: string): string | null {
     const match = document.cookie
       .split('; ')
@@ -42,19 +38,19 @@ const GuestList: React.FC = () => {
   }
 
   const userCookie = getCookieValue('user');
-  let firstPartner = '', secondPartner = '';
+  let firstPartner = '', secondPartner = '', weddingDate = 'TBD', weddingVenue = 'TBD';
   if (userCookie) {
     try {
       const p = JSON.parse(decodeURIComponent(userCookie));
       firstPartner = p.firstPartner || '';
       secondPartner = p.secondPartner || '';
+      weddingDate = p.weddingDate || 'TBD';
+      weddingVenue = p.weddingVenue || 'TBD';
     } catch { 
       console.error('Error parsing user cookie:', userCookie);
-     }
+    }
   }
 
-
-  // State
   const [guests, setGuests] = useState<Guest[]>([]);
   const [filter, setFilter] = useState<'all'|'yes'|'no'|'maybe'>('all');
   const [loading, setLoading] = useState(true);
@@ -63,14 +59,14 @@ const GuestList: React.FC = () => {
     fullName: '',
     email: '',
     phone: '',
-    rsvp: 'maybe' as 'maybe'|'yes'|'no'
+    rsvp: 'maybe' as 'maybe'|'yes'|'no',
+    numberOfGuests: 1
   });
   const [editingGuestId, setEditingGuestId] = useState<string|null>(null);
   const [editingGuests, setEditingGuests] = useState<Record<string,Guest>>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
 
-  // Fetch
   const fetchGuests = async () => {
     try {
       const data = await fetchMyGuests();
@@ -83,36 +79,39 @@ const GuestList: React.FC = () => {
   };
   useEffect(() => { fetchGuests(); }, []);
 
-  // Stats
   const guestStats = useMemo(() => {
-    const total = guests.length;
-    const yes   = guests.filter(g=>g.rsvp==='yes').length;
-    const no    = guests.filter(g=>g.rsvp==='no').length;
-    const maybe = guests.filter(g=>g.rsvp==='maybe').length;
+    const total = guests.reduce((sum, g) => sum + (g.numberOfGuests ?? 1), 0);
+    const yes   = guests.filter(g => g.rsvp === 'yes').reduce((sum, g) => sum + (g.numberOfGuests ?? 1), 0);
+    const no    = guests.filter(g => g.rsvp === 'no').reduce((sum, g) => sum + (g.numberOfGuests ?? 1), 0);
+    const maybe = guests.filter(g => g.rsvp === 'maybe').reduce((sum, g) => sum + (g.numberOfGuests ?? 1), 0);
     return { total, yes, no, maybe };
   }, [guests]);
 
-  // Filtered list
   const displayed = useMemo(() => {
     if (filter==='all') return guests;
     return guests.filter(g=>g.rsvp===filter);
   }, [guests, filter]);
 
-  // Handlers
   const handleInputChange = (e:React.ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setForm({ 
+      ...form,
+      [name]: name === 'numberOfGuests' ? parseInt(value) || 1 : value 
+    });
   };
+
   const handleAddGuest = async (e:React.FormEvent) => {
     e.preventDefault();
     try {
       await createGuest(form);
-      setForm({ fullName:'', email:'', phone:'', rsvp:'maybe' });
+      setForm({ fullName:'', email:'', phone:'', rsvp:'maybe', numberOfGuests: 1 });
       await fetchGuests();
       toast.success('Guest added');
     } catch {
       toast.error('Error adding guest');
     }
   };
+
   const handleSendEmails = async () => {
     if (!firstPartner||!secondPartner) {
       toast.error('Missing partner info');
@@ -128,10 +127,11 @@ const GuestList: React.FC = () => {
     setSending(true);
     try {
       await sendInvitationToAllGuests({
-        partner1:firstPartner,
-        partner2:secondPartner,
-        weddingDate:WEDDING_DATE,
-        guests:valid
+        partner1: firstPartner,
+        partner2: secondPartner,
+        weddingDate: weddingDate,
+        venue: weddingVenue,
+        guests: valid
       });
       toast.success('Invitations sent');
     } catch {
@@ -140,6 +140,7 @@ const GuestList: React.FC = () => {
       setSending(false);
     }
   };
+
   const handleExcelUpload = async (e:React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]; if(!file) return;
     try {
@@ -150,10 +151,11 @@ const GuestList: React.FC = () => {
       for (const r of rows.filter(r=>r.fullName&&r.email)) {
         try {
           await createGuest({
-            fullName:r.fullName,
-            email:r.email,
-            phone:r.phone||'',
-            rsvp:r.rsvp||'maybe'
+            fullName: r.fullName,
+            email: r.email,
+            phone: r.phone || '',
+            rsvp: r.rsvp || 'maybe',
+            numberOfGuests: parseInt(r.numberOfGuests) || 1
           });
         } catch {
           failed.push(r);
@@ -166,16 +168,20 @@ const GuestList: React.FC = () => {
       toast.error('Import error');
     }
   };
+
   const handleExportExcel = () => {
-    const exclude = new Set(['_id','userId','__v']);
-    const data = guests.map(g=>Object.fromEntries(
-      Object.entries(g).filter(([k])=>!exclude.has(k))
-    ));
+    const exclude = new Set(['_id', 'userId', '__v', 'rsvpToken']);
+    const data = guests.map(g =>
+      Object.fromEntries(
+        Object.entries(g).filter(([k]) => !exclude.has(k))
+      )
+    );
     const ws = XLSX.utils.json_to_sheet(data);
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb,ws,'Guests');
-    XLSX.writeFile(wb,'guest-list.xlsx');
+    XLSX.utils.book_append_sheet(wb, ws, 'Guests');
+    XLSX.writeFile(wb, 'guest-list.xlsx');
   };
+
   const handleDelete = async (id:string) => {
     if (!window.confirm('Delete this guest?')) return;
     try {
@@ -186,12 +192,17 @@ const GuestList: React.FC = () => {
       toast.error('Delete error');
     }
   };
+
   const handleEditChange = (id:string, field:keyof Guest, val:string) => {
     setEditingGuests(prev=>({
       ...prev,
-      [id]:{ ...(prev[id]||guests.find(g=>g._id===id))!, [field]:val }
+      [id]:{ 
+        ...(prev[id]||guests.find(g=>g._id===id))!, 
+        [field]: field === 'numberOfGuests' ? parseInt(val) || 1 : val 
+      }
     }));
   };
+
   const handleSave = async (g:Guest) => {
     const upd = editingGuests[g._id];
     if (!upd.fullName||!upd.email) {
@@ -212,67 +223,32 @@ const GuestList: React.FC = () => {
   return (
     <div className={styles.guestPage}>
       <div className={styles.guestContainer}>
-        <FiArrowLeft
-          className={styles.backIcon}
-          onClick={() => navigate(-1)}
-          title="Go Back"
-        />
-
+        <FiArrowLeft className={styles.backIcon} onClick={() => navigate(-1)} title="Go Back" />
         <h2 className={styles.guestHeader}>Guest List</h2>
 
-        {/* Add Guest */}
         <form onSubmit={handleAddGuest} className={styles.guestForm}>
-          <input
-            name="fullName" value={form.fullName}
-            onChange={handleInputChange}
-            placeholder="Full Name" required
-          />
-          <input
-            name="email" type="email" value={form.email}
-            onChange={handleInputChange}
-            placeholder="Email" required
-          />
-          <input
-            name="phone" value={form.phone}
-            onChange={handleInputChange}
-            placeholder="Phone"
-          />
+          <input name="fullName" value={form.fullName} onChange={handleInputChange} placeholder="Full Name" required />
+          <input name="email" type="email" value={form.email} onChange={handleInputChange} placeholder="Email" required />
+          <input name="phone" value={form.phone} onChange={handleInputChange} placeholder="Phone" />
+          <input name="numberOfGuests" type="number" min={1} value={form.numberOfGuests} onChange={handleInputChange} placeholder="# Guests" />
           <button type="submit">+ Add Guest</button>
         </form>
 
-        {/* Toolbar */}
         <div className={styles.toolbar}>
           <div className={styles.actionsContainer}>
-            <div
-              className={styles.iconAction}
-              onClick={()=>!sending&&handleSendEmails()}
-              style={{ opacity:sending?0.5:1 }}
-            >
+            <div className={styles.iconAction} onClick={()=>!sending&&handleSendEmails()} style={{ opacity:sending?0.5:1 }}>
               <FiSend className={styles.actionIcon}/>
               <span className={styles.iconLabel}>Send Invites</span>
             </div>
-
-            <div
-              className={styles.iconAction}
-              onClick={()=>fileInputRef.current?.click()}
-            >
+            <div className={styles.iconAction} onClick={()=>fileInputRef.current?.click()}>
               <FiDownload className={styles.actionIcon}/>
               <span className={styles.iconLabel}>Import Excel</span>
             </div>
-            <div
-              className={styles.iconAction}
-              onClick={handleExportExcel}
-            >
+            <div className={styles.iconAction} onClick={handleExportExcel}>
               <FiUpload className={styles.actionIcon}/>
               <span className={styles.iconLabel}>Export Excel</span>
             </div>
-            <input
-              type="file"
-              ref={fileInputRef}
-              accept=".xlsx,.xls"
-              onChange={handleExcelUpload}
-              style={{ display:'none' }}
-            />
+            <input type="file" ref={fileInputRef} accept=".xlsx,.xls" onChange={handleExcelUpload} style={{ display:'none' }} />
           </div>
 
           <div className={styles.actionsContainer}>
@@ -281,13 +257,7 @@ const GuestList: React.FC = () => {
               const label = ['Total','Yes','No','Maybe'][index];
               const count = [guestStats.total,guestStats.yes,guestStats.no,guestStats.maybe][index];
               return (
-                <div
-                  key={key}
-                  className={`${styles.iconAction} ${
-                    filter===key?styles.activeFilter:''
-                  }`}
-                  onClick={()=>setFilter(key as any)}
-                >
+                <div key={key} className={`${styles.iconAction} ${filter===key?styles.activeFilter:''}`} onClick={()=>setFilter(key as any)}>
                   <Icon className={styles.actionIcon}/>
                   <span className={styles.iconLabel}>{label}: {count}</span>
                 </div>
@@ -299,9 +269,7 @@ const GuestList: React.FC = () => {
         {loading ? (
           <div className={styles.emptyGuestList}>Loading…</div>
         ) : displayed.length===0 ? (
-          <div className={styles.emptyGuestList}>
-            {filter==='all'?'No guests':'No '+filter+' responses'}
-          </div>
+          <div className={styles.emptyGuestList}>{filter==='all'?'No guests':'No '+filter+' responses'}</div>
         ) : (
           <div className={styles.tableWrapper}>
             <table className={styles.guestTable}>
@@ -311,6 +279,7 @@ const GuestList: React.FC = () => {
                   <th>Email</th>
                   <th>Phone</th>
                   <th>RSVP</th>
+                  <th># Guests</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -318,52 +287,30 @@ const GuestList: React.FC = () => {
                 {displayed.map(g=>(
                   editingGuestId===g._id ?
                   <tr key={g._id}>
+                    <td><input className={styles.tableInput} value={editingGuests[g._id]?.fullName||g.fullName} onChange={e=>handleEditChange(g._id,'fullName',e.target.value)} /></td>
+                    <td><input className={styles.tableInput} value={editingGuests[g._id]?.email||g.email} onChange={e=>handleEditChange(g._id,'email',e.target.value)} /></td>
+                    <td><input className={styles.tableInput} value={editingGuests[g._id]?.phone||g.phone||''} onChange={e=>handleEditChange(g._id,'phone',e.target.value)} /></td>
                     <td>
-                      <input
-                        className={styles.tableInput}
-                        value={editingGuests[g._id]?.fullName||g.fullName}
-                        onChange={e=>handleEditChange(g._id,'fullName',e.target.value)}
-                      />
-                    </td>
-                    <td>
-                      <input
-                        className={styles.tableInput}
-                        value={editingGuests[g._id]?.email||g.email}
-                        onChange={e=>handleEditChange(g._id,'email',e.target.value)}
-                      />
-                    </td>
-                    <td>
-                      <input
-                        className={styles.tableInput}
-                        value={editingGuests[g._id]?.phone||g.phone||''}
-                        onChange={e=>handleEditChange(g._id,'phone',e.target.value)}
-                      />
-                    </td>
-                    <td>
-                      <select
-                        className={styles.tableSelect}
-                        value={editingGuests[g._id]?.rsvp||g.rsvp}
-                        onChange={e=>handleEditChange(g._id,'rsvp',e.target.value)}
-                      >
+                      <select className={styles.tableSelect} value={editingGuests[g._id]?.rsvp||g.rsvp} onChange={e=>handleEditChange(g._id,'rsvp',e.target.value)}>
                         <option value="yes">Yes</option>
                         <option value="no">No</option>
                         <option value="maybe">Maybe</option>
                       </select>
                     </td>
+                    <td><input type="number" min={1} className={styles.tableInput} value={editingGuests[g._id]?.numberOfGuests ?? g.numberOfGuests ?? 1} onChange={e=>handleEditChange(g._id, 'numberOfGuests', e.target.value)} /></td>
                     <td>
                       <FiSave className={styles.actionIcon} onClick={()=>handleSave(g)}/>
-                      <FiX    className={styles.actionIcon} onClick={()=>setEditingGuestId(null)}/>
+                      <FiX className={styles.actionIcon} onClick={()=>setEditingGuestId(null)}/>
                     </td>
                   </tr>
                   : <tr key={g._id}>
                       <td>{g.fullName}</td>
                       <td>{g.email}</td>
                       <td>{g.phone||'—'}</td>
-                      <td className={styles[`status_${g.rsvp}`]}>
-                        {g.rsvp}
-                      </td>
+                      <td className={styles[`status_${g.rsvp}`]}>{g.rsvp}</td>
+                      <td>{g.numberOfGuests ?? 1}</td>
                       <td>
-                        <FiEdit2  className={styles.actionIcon} onClick={()=>setEditingGuestId(g._id)}/>
+                        <FiEdit2 className={styles.actionIcon} onClick={()=>setEditingGuestId(g._id)}/>
                         <FiTrash2 className={styles.actionIcon} onClick={()=>handleDelete(g._id)}/>
                       </td>
                     </tr>
