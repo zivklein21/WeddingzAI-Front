@@ -77,7 +77,10 @@ const handleAIButtonClick = async (task: string) => {
            💍 {todoList.firstPartner} &  {todoList.secondPartner}
         </p>
         <p className={styles.weddingDate}>
-          📅 Wedding Date: <strong>{todoList.weddingDate}</strong>
+          📅 Wedding Date: <strong>{user?.weddingDate || "TBD"}</strong>
+        </p>
+        <p className={styles.weddingDate}>
+          💒 Wedding Venue: <strong>{user?.weddingVenue || "TBD"}</strong>
         </p>
 
         {todoList.sections.map((section, idx) => (
