@@ -9,6 +9,7 @@ export interface Guest {
   email: string;
   phone?: string;
   rsvp?: "yes" | "no" | "maybe";
+  numberOfGuests?: number;
 }
 
 interface BaseResponse<T> {
@@ -53,6 +54,7 @@ export const createGuest = async (guest: {
   email: string;
   phone?: string;
   rsvp?: "yes" | "no" | "maybe";
+  numberOfGuests?: number; 
 }): Promise<Guest> => {
   const resp = await apiClient.post<BaseResponse<Guest>>("/guests", guest);
   return resp.data.data;
@@ -66,6 +68,7 @@ export const updateGuest = async (
     email: string;
     phone?: string;
     rsvp?: "yes" | "no" | "maybe";
+    numberOfGuests?: number; 
   }
 ): Promise<Guest> => {
   const resp = await apiClient.put<BaseResponse<Guest>>(`/guests/${id}`, guest);
