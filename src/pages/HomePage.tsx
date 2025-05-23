@@ -6,7 +6,7 @@ const HomePage: React.FC = () => {
 
   return (
     <>
-      <NavBar title="My Wedding"/>
+      <NavBar title=""/>
       <Home />
     </>
   );
