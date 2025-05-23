@@ -36,7 +36,7 @@ const Vendors: React.FC = () => {
 
         <h2 className={styles.vendorHeader}>My Vendors</h2>
         <div className={styles.vendorSection}>
-          {loading ? <FiLoader className={styles.spinner} /> : <VendorAccordionGroup vendors={vendors} />}
+          {loading ? <FiLoader className={styles.spinner} /> : <VendorAccordionGroup vendors={vendors} isMyVendorsView={true}/>}
         </div>
       </div>
     </div>
