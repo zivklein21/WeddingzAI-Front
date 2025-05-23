@@ -80,10 +80,10 @@ const GuestList: React.FC = () => {
   useEffect(() => { fetchGuests(); }, []);
 
   const guestStats = useMemo(() => {
-    const total = guests.length;
-    const yes   = guests.filter(g=>g.rsvp==='yes').length;
-    const no    = guests.filter(g=>g.rsvp==='no').length;
-    const maybe = guests.filter(g=>g.rsvp==='maybe').length;
+    const total = guests.reduce((sum, g) => sum + (g.numberOfGuests ?? 1), 0);
+    const yes   = guests.filter(g => g.rsvp === 'yes').reduce((sum, g) => sum + (g.numberOfGuests ?? 1), 0);
+    const no    = guests.filter(g => g.rsvp === 'no').reduce((sum, g) => sum + (g.numberOfGuests ?? 1), 0);
+    const maybe = guests.filter(g => g.rsvp === 'maybe').reduce((sum, g) => sum + (g.numberOfGuests ?? 1), 0);
     return { total, yes, no, maybe };
   }, [guests]);
 
