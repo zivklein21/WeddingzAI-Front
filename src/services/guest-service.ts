@@ -79,7 +79,8 @@ export const updateGuest = async (
 export const sendInvitationToAllGuests = async (data: {
   partner1: string;
   partner2: string;
-  weddingDate: string;
+  weddingDate?: string;
+  venue?: string;
   guests: GuestContact[];
 }): Promise<void> => {
   const resp = await apiClient.post<BaseResponse<null>>("/guests/send-invitation", data);

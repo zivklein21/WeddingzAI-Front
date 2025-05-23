@@ -29,8 +29,6 @@ import {
   FiArrowLeft
 } from 'react-icons/fi';
 
-const WEDDING_DATE = '2025-08-10';
-
 const GuestList: React.FC = () => {
   function getCookieValue(name: string): string | null {
     const match = document.cookie
@@ -40,15 +38,17 @@ const GuestList: React.FC = () => {
   }
 
   const userCookie = getCookieValue('user');
-  let firstPartner = '', secondPartner = '';
+  let firstPartner = '', secondPartner = '', weddingDate = 'TBD', weddingVenue = 'TBD';
   if (userCookie) {
     try {
       const p = JSON.parse(decodeURIComponent(userCookie));
       firstPartner = p.firstPartner || '';
       secondPartner = p.secondPartner || '';
+      weddingDate = p.weddingDate || 'TBD';
+      weddingVenue = p.weddingVenue || 'TBD';
     } catch { 
       console.error('Error parsing user cookie:', userCookie);
-     }
+    }
   }
 
   const [guests, setGuests] = useState<Guest[]>([]);
@@ -127,10 +127,11 @@ const GuestList: React.FC = () => {
     setSending(true);
     try {
       await sendInvitationToAllGuests({
-        partner1:firstPartner,
-        partner2:secondPartner,
-        weddingDate:WEDDING_DATE,
-        guests:valid
+        partner1: firstPartner,
+        partner2: secondPartner,
+        weddingDate: weddingDate,
+        venue: weddingVenue,
+        guests: valid
       });
       toast.success('Invitations sent');
     } catch {
