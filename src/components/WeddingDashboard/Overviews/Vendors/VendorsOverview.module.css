@@ -1,0 +1,75 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.manageLink {
+  font-size: 16px;
+  text-decoration: none;
+  color: #444;
+}
+
+.total {
+  font-size: 15px;
+  color: #333;
+  font-weight: 500;
+  margin: 12px 0;
+}
+
+.vendorList {
+  font-size: 15px;
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+  line-height: 1.8;
+}
+
+.empty {
+  font-style: italic;
+  color: #999;
+  margin-top: 0.5rem;
+}
+
+.summary {
+  margin-top: 1rem;
+}
+
+.total {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.list li {
+  margin-bottom: 0.25rem;
+}
+
+.spinner {
+  font-size: 40px;
+  color: var(--wedding-purple);
+  animation: spin 1s linear infinite;
+}
+
+.spinnerContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+}
+
+.spinner {
+  font-size: 40px;
+  color: var(--wedding-purple);
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

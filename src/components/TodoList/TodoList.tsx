@@ -1,85 +1,141 @@
 // src/components/TodoList/TodoList.tsx
-
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import tdlService, { TdlData } from "../../services/tdl-service";
+import vendorService from "../../services/vendor-service";
+import {
+  ChevronDown,
+  ChevronRight,
+  Info,
+  Activity,
+  Trash2,
+} from "lucide-react";
 import styles from "./TodoList.module.css";
+import { useAuth } from "../../hooks/useAuth/AuthContext";
 
 export default function TodoList() {
   const [todoList, setTodoList] = useState<TdlData | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string>("");
+  const [openSections, setOpenSections] = useState<Record<number, boolean>>({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
+  const { user } = useAuth();
+
+
+const handleAIButtonClick = async (task: string) => {
+  try {
+    const userId = user?._id;
+    if (!userId) {
+      alert("User ID is missing. Please log in again.");
+      return;
+    }
+    await vendorService.startAIResearchBackground(task, userId);
+    
+    alert(`המחקר על "${task}" החל לרוץ ברקע! התוצאות יופיעו בדף הספקים.`);
+  } catch (err) {
+    console.error("Error starting AI research:", err);
+    alert("אירעה שגיאה בהפעלת המחקר. אנא נסה שוב מאוחר יותר.");
+  }
+};
 
   useEffect(() => {
     tdlService
       .fetchMyTdl()
       .then((list) => {
         setTodoList(list);
+        const init: Record<number, boolean> = {};
+        list.sections.forEach((_, idx) => (init[idx] = true));
+        setOpenSections(init);
       })
       .catch((err) => {
         console.error(err);
         setError(err.message || "Could not load your to-do list.");
-        // if you want to redirect when nothing found:
-        // navigate("/");
       })
       .finally(() => setLoading(false));
   }, [navigate]);
 
+  const toggleSection = (idx: number) => {
+    setOpenSections((prev) => ({ ...prev, [idx]: !prev[idx] }));
+  };
+
   if (loading) return <p className={styles.loading}>Loading to-do list…</p>;
   if (error) return <p className={styles.error}>{error}</p>;
   if (!todoList)
-    return <p className={styles.noTasks}>No to-do list found. Please create one.</p>;
+    return (
+      <p className={styles.noTasks}>
+        No to-do list found. Please create one.
+      </p>
+    );
 
   return (
     <div className={styles.wrapper}>
-      {todoList ? (
-        <div className={styles.todoListContainer}>
-          <h2 className={styles.todoTitle}>{todoList.weddingTodoListName}</h2>
-          <p className={styles.coupleNames}>
-            👰 {todoList.bride} & 🤵 {todoList.groom}
-          </p>
-          <p className={styles.weddingDate}>
-            📅 Wedding Date: <strong>{todoList.weddingDate}</strong>
-          </p>
+      <div className={styles.todoListContainer}>
+        <h2 className={styles.todoTitle}>
+          {todoList.weddingTodoListName}
+        </h2>
+        <p className={styles.coupleNames}>
+           💍 {todoList.firstPartner} &  {todoList.secondPartner}
+        </p>
+        <p className={styles.weddingDate}>
+          📅 Wedding Date: <strong>{user?.weddingDate || "TBD"}</strong>
+        </p>
+        <p className={styles.weddingDate}>
+          💒 Wedding Venue: <strong>{user?.weddingVenue || "TBD"}</strong>
+        </p>
 
-          {todoList.sections.length > 0 ? (
-            todoList.sections.map((section, index) => (
-              <div key={index} className={styles.todoSection}>
-                <h3 className={styles.sectionTitle}>{section.sectionName}</h3>
-                <ul className={styles.todoList}>
-                  {section.todos.map((todo, i) => (
-                    <li key={i} className={styles.todoItem}>
-                      <div className={styles.taskRow}>
-                        <input type="checkbox" className={styles.checkbox} />
-                        <div className={styles.taskInfo}>
-                          <strong className={styles.taskTitle}>
-                            {todo.task}
-                          </strong>
-                          <span
-                            className={`${styles.priority} ${
-                              styles[`priority${todo.priority}`]
-                            }`}
-                          >
-                            {todo.priority}
-                          </span>
-                        </div>
-                        <span className={styles.dueDate}>
-                          📅 {todo.dueDate}
-                        </span>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))
-          ) : (
-            <p className={styles.noTasks}>No tasks found.</p>
-          )}
-        </div>
-      ) : (
-        <p className={styles.loading}>Loading to-do list...</p>
-      )}
+        {todoList.sections.map((section, idx) => (
+          <div key={idx} className={styles.todoSection}>
+            <div
+              className={styles.sectionHeader}
+              onClick={() => toggleSection(idx)}
+            >
+              {openSections[idx] ? (
+                <ChevronDown size={20} />
+              ) : (
+                <ChevronRight size={20} />
+              )}
+              <h3 className={styles.sectionTitle}>{section.sectionName}</h3>
+            </div>
+
+            {openSections[idx] && (
+              <ul className={styles.todoList}>
+                {section.todos.map((todo, i) => (
+                  <li key={i} className={styles.todoItem}>
+                    <div className={styles.taskRow}>
+                      <span className={styles.taskTitle}>{todo.task}</span>
+                      <div className={styles.actions}>  
+                        <button type="button" className={styles.infoBtn} aria-label="Info">
+                          <Info size={16} />
+                        </button>
+                        <button 
+                          type="button" 
+                          className={styles.aiBtn} 
+                          aria-label="Run AI" 
+                          onClick={() => handleAIButtonClick(todo.task)}
+                        > 
+                          <Activity size={16} />
+                        </button>
+                        <button type="button" className={styles.deleteBtn} aria-label="Delete">
+                          <Trash2 size={16} />
+                        </button>
+                    </div>
+                      <input
+                        type="checkbox"
+                        className={styles.statusCheckbox}
+                        onChange={() => {
+                        }}
+                      />
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            <button className={styles.newTaskBtn}>+ New Task</button>
+          </div>
+        ))}
+      </div>
     </div>
+    
   );
 }

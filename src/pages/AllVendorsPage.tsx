@@ -1,9 +1,10 @@
-import ScrapeDj from "../components/DJ/scrape-dj";
-import { NavBar } from "../components/NavBar/NavBar";
+import React from "react";
+import AllVendors from "../components/Vendors/AllVendors";
 import { useAuth } from "../hooks/useAuth/AuthContext";
+import { NavBar } from "../components/NavBar/NavBar";
 import { Navigate } from 'react-router-dom';
 
-const ScrapeDjPage: React.FC = () => {
+const AllVendorsPage: React.FC = () => {
 
   const { isAuthenticated, loading } = useAuth();
 
@@ -16,11 +17,11 @@ const ScrapeDjPage: React.FC = () => {
   }
 
   return (
-    <div>
-      <NavBar />
-      <ScrapeDj />
-    </div>
+    <>
+      <NavBar title="" />
+      <AllVendors />
+    </>
   );
 };
 
-export default ScrapeDjPage;
+export default AllVendorsPage;

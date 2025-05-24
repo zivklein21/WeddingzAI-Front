@@ -7,8 +7,8 @@ import apiClient from "./api-client";
  */
 export interface TdlData {
   weddingTodoListName: string;
-  bride: string;
-  groom: string;
+  firstPartner: string;
+  secondPartner: string;
   weddingDate: string;
   estimatedBudget: string;
   sections: {
@@ -17,6 +17,7 @@ export interface TdlData {
       task: string;
       dueDate: string;
       priority: string;
+      aiSent: boolean;
     }[];
   }[];
 }
@@ -39,10 +40,7 @@ interface UploadResponse {
   data: TdlDocument;
 }
 
-/**
- * Uploads the user’s preferences JSON file to the server.
- * Server generates a TDL, saves it under their userId, and returns the saved doc.
- */
+// Upload PrefFormn to generate TDL
 export async function uploadFormJson(file: File): Promise<UploadResponse> {
   const formData = new FormData();
   formData.append("file", file);
@@ -55,10 +53,7 @@ export async function uploadFormJson(file: File): Promise<UploadResponse> {
   return resp.data;
 }
 
-/**
- * Fetches all TDL documents for the current user via GET /tdl/mine,
- * then returns the most recent document’s `.tdl` payload.
- */
+// Get Current User TDL
 export async function fetchMyTdl(): Promise<TdlData> {
   const resp = await apiClient.get<{ message: string; data: TdlDocument[] }>(
     "/tdl/mine"
@@ -67,11 +62,19 @@ export async function fetchMyTdl(): Promise<TdlData> {
   if (!Array.isArray(docs) || docs.length === 0) {
     throw new Error("No to-do list found for this user");
   }
-  // If your server doesn't already sort, you can sort by createdAt here.
   return docs[0].tdl;
+}
+
+// Get TDL by user id
+export async function getByUserId(userId: string): Promise<TdlDocument[]> {
+  const resp = await apiClient.get<{ message: string; data: TdlDocument[] }>(
+    `/tdl/user/${userId}`
+  );
+  return resp.data.data;
 }
 
 export default {
   uploadFormJson,
   fetchMyTdl,
+  getByUserId
 };

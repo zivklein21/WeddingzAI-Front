@@ -17,10 +17,10 @@ const TodoListPage: React.FC = () => {
   }
 
   return (
-    <div>
-      <NavBar />
+    <>
+      <NavBar title="" />
       <TodoList />
-    </div>
+    </>
   );
 };
 

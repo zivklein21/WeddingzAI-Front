@@ -46,7 +46,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         const storedUser = Cookies.get('user');
 
         if (storedAccessToken && storedRefreshToken && storedUser) {
-            const parsedUser = JSON.parse(storedUser);
+            const parsedUser = JSON.parse(decodeURIComponent(storedUser));
 
             setAccessToken(storedAccessToken);
             setRefreshToken(storedRefreshToken);
@@ -63,21 +63,25 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         try {
             const { request } = userService.login({ email, password });
             const response = await request;
-            const { accessToken, refreshToken, _id, firstPartner, secondPartner, avatar, email: userEmail } = response.data;
+            const { accessToken, refreshToken, _id, firstPartner, secondPartner, avatar, weddingDate, weddingVenue, email: userEmail } = response.data;
 
-            const userData = { accessToken, refreshToken, _id, firstPartner, secondPartner, avatar, email: userEmail, password: '' };
+            const userData = { accessToken, refreshToken, _id, firstPartner, secondPartner, avatar, weddingDate, weddingVenue, email: userEmail, password: '' };
 
             // Store data in cookies (with secure attributes)
             Cookies.set('accessToken', accessToken, { path: '/', secure: true, sameSite: 'Strict' });
             Cookies.set('refreshToken', refreshToken, { path: '/', secure: true, sameSite: 'Strict' });
-            Cookies.set('user', JSON.stringify(userData), { path: '/', secure: true, sameSite: 'Strict' });
+            Cookies.set('user', encodeURIComponent(JSON.stringify(userData)), {
+                path: '/',
+                secure: true,
+                sameSite: 'Strict'
+              });
 
             // Update React state
             setAccessToken(accessToken);
             setRefreshToken(refreshToken);
             setUser(userData);
             setIsAuthenticated(true);
-        } catch (error: unknown) {
+        } catch (error: any) {
             if (error instanceof AxiosError) {
                 const errorMessage = error.response?.data?.message;
                 throw new Error(errorMessage || 'An unexpected error occurred');
@@ -92,21 +96,24 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             const {request: googleSignInRequest } = await userService.googleSignIn(response);
             const googleSignInResponse = await googleSignInRequest;
 
-            console.log('Google Sign-In Response:', googleSignInResponse.data);
-
-            const { accessToken, refreshToken, _id, firstPartner, secondPartner, avatar, email } = googleSignInResponse.data;
-            const userData = { accessToken, refreshToken, _id, avatar, email, firstPartner, secondPartner, password: '' };
+            const { accessToken, refreshToken, _id, firstPartner, secondPartner, avatar, weddingDate, weddingVenue, email } = googleSignInResponse.data;
+            const userData = { accessToken, refreshToken, _id, avatar, weddingDate, weddingVenue, email, firstPartner, secondPartner, password: '' };
 
             Cookies.set('accessToken', accessToken, { path: '/', secure: true, sameSite: 'Strict' });
             Cookies.set('refreshToken', refreshToken, { path: '/', secure: true, sameSite: 'Strict' });
-            Cookies.set('user', JSON.stringify(userData), { path: '/', secure: true, sameSite: 'Strict' });
+            Cookies.set('user', encodeURIComponent(JSON.stringify(userData)), {
+                path: '/',
+                secure: true,
+                sameSite: 'Strict'
+              });
+              
             
             setAccessToken(accessToken);
             setRefreshToken(refreshToken);
             setUser(userData);
             setIsAuthenticated(true);
 
-        } catch (error) {
+        } catch (error: any) {
             if (error instanceof AxiosError) {
                 const errorMessage = error.response?.data?.message;
                 throw new Error(errorMessage || 'An unexpected error occurred');
@@ -126,7 +133,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         };
 
         setUser(updatedUser);
-        Cookies.set("user", JSON.stringify(updatedUser), { path: "/", secure: true, sameSite: "Strict" });
+        Cookies.set('user', encodeURIComponent(JSON.stringify(updatedUser)), {
+            path: '/',
+            secure: true,
+            sameSite: 'Strict'
+          });        
     };
 
     const logout = async () => {

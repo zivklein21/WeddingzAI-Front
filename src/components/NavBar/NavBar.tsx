@@ -1,18 +1,39 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import styles from './NavBar.module.css';
 import logo from '../../assets/ wai-logo.svg';
 import userIcon from "../../assets/images/user-icon.svg";
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth/AuthContext';
 
-export const NavBar: React.FC = () => {
+interface NavBarProps {
+  title: string;
+}
+
+export const NavBar: React.FC<NavBarProps> = ({title}) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const [showConfirm, setShowConfirm] = useState(false);
+  const confirmRef = useRef<HTMLDivElement>(null);
 
-  const handleLogout = () => {
-    logout();              // clear auth
-    navigate('/auth');     // redirect to login
+  const handleLogoutClick = () => setShowConfirm(true);
+  const cancelLogout = () => setShowConfirm(false);
+  const confirmLogout = () => {
+    logout();
+    navigate('/auth');
   };
+
+  // Close on outside click
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (confirmRef.current && !confirmRef.current.contains(e.target as Node)) {
+        setShowConfirm(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  
   return (
     <nav className={styles.navbar}>
       <div className={styles.logo}>
@@ -23,44 +44,51 @@ export const NavBar: React.FC = () => {
 
       <div className={styles.title}>
         {user ? (
-          <a href="/weddash">My Weddings</a>
+          <a href="/weddash">{title}</a>
         ) : (
-          <a href="/auth?mode=login">My Weddings</a>
+          <a href="/auth?mode=login">{title}</a>
         )}
       </div>
 
       {user ? (
         <div className={styles.authWrapper}>
-          <img src={userIcon} alt="User Avatar" />
-          <div>
+          <img
+            src={user.avatar?.trim() ? user.avatar : userIcon}
+            alt="User Avatar"
+          />
+          <div className={styles.authInfo}>
             <div className={styles.authName}><strong>{user.firstPartner}</strong></div>
             <div className={styles.auth}>
-              <a href="/profile">Profile</a> | <button onClick={handleLogout} className={styles.logoutButton}>Logout</button>
+              <a href="/profile">Profile</a> |{" "}
+              <div className={styles.logoutContainer}>
+                <a onClick={handleLogoutClick} className={styles.logoutButton}>Logout</a>
+                {/* <button onClick={handleLogoutClick} className={styles.logoutButton}>Logout</button> */}
+
+                {showConfirm && (
+                  <div className={styles.logoutConfirm} ref={confirmRef}>
+                    <span>Are you sure?</span>
+                    <div className={styles.logoutActions}>
+                      <a onClick={cancelLogout} className={styles.logoutOption}>Cancel</a>
+                      <a onClick={confirmLogout} className={styles.logoutOption}>Yes</a>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
       ) : (
         <div className={styles.authWrapper}>
           <img src={userIcon} alt="Guest Icon" />
-          <div>
+          <div className={styles.authInfo}>
             <div className={styles.authName}><strong>Anonymous</strong></div>
             <div className={styles.auth}>
-            {user ? (
-              <>
-                <a href="/profile">Profile</a> |{' '}
-                <a href="#" onClick={handleLogout} className={styles.logoutLink}>Logout</a>
-              </>
-            ) : (
-              <>
-                <a href="/auth?mode=login">Login</a> |{' '}
-                <a href="/auth?mode=signup">Register</a>
-              </>
-            )}
-          </div>
+              <a href="/auth?mode=login">Login</a> |{" "}
+              <a href="/auth?mode=signup">Register</a>
+            </div>
           </div>
         </div>
       )}
     </nav>
-
   );
 };

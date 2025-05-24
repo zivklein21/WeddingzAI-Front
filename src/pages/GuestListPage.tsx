@@ -4,10 +4,10 @@ import { NavBar } from "../components/NavBar/NavBar";
 
 const GuestPage: React.FC = () => {
   return (
-    <div>
-      <NavBar />
+    <>
+      <NavBar title=""/>
       <GuestList />
-    </div>
+    </>
   );
 };
 

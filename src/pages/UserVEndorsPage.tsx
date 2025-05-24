@@ -1,9 +1,10 @@
-import DjsGrid from "../components/DJ/dj-grid";
-import { NavBar } from "../components/NavBar/NavBar";
+import React from "react";
+import Vendor from "../components/Vendors/Vendors";
 import { useAuth } from "../hooks/useAuth/AuthContext";
+import { NavBar } from "../components/NavBar/NavBar";
 import { Navigate } from 'react-router-dom';
 
-const DJPage: React.FC = () => {
+const UserVendorsPage: React.FC = () => {
 
   const { isAuthenticated, loading } = useAuth();
 
@@ -16,11 +17,11 @@ const DJPage: React.FC = () => {
   }
 
   return (
-    <div>
-      <NavBar />
-      <DjsGrid />
-    </div>
+    <>
+      <NavBar title="" />
+      <Vendor />
+    </>
   );
 };
 
-export default DJPage;
+export default UserVendorsPage;

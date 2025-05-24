@@ -9,11 +9,19 @@ export interface Guest {
   email: string;
   phone?: string;
   rsvp?: "yes" | "no" | "maybe";
+  numberOfGuests?: number;
 }
 
 interface BaseResponse<T> {
   message: string;
   data: T;
+}
+
+export interface GuestContact {
+  fullName: string;
+  email: string;
+  guestId: string;
+  rsvpToken: string;
 }
 
 // 1. GET all guests
@@ -34,7 +42,7 @@ export const fetchGuestById = async (id: string): Promise<Guest> => {
   return resp.data.data;
 };
 
-// 4. DELETE guest (new: using custom remove)
+// 4. DELETE guest
 export const deleteGuest = async (id: string): Promise<Guest> => {
   const resp = await apiClient.delete<BaseResponse<Guest>>(`/guests/${id}`);
   return resp.data.data;
@@ -46,27 +54,34 @@ export const createGuest = async (guest: {
   email: string;
   phone?: string;
   rsvp?: "yes" | "no" | "maybe";
+  numberOfGuests?: number; 
 }): Promise<Guest> => {
   const resp = await apiClient.post<BaseResponse<Guest>>("/guests", guest);
   return resp.data.data;
 };
 
 // 6. PUT guest (update)
-export const updateGuest = async (id: string, guest: {
-  fullName: string;
-  email: string;
-  phone?: string;
-  rsvp?: "yes" | "no" | "maybe";
-}): Promise<Guest> => {
+export const updateGuest = async (
+  id: string,
+  guest: {
+    fullName: string;
+    email: string;
+    phone?: string;
+    rsvp?: "yes" | "no" | "maybe";
+    numberOfGuests?: number; 
+  }
+): Promise<Guest> => {
   const resp = await apiClient.put<BaseResponse<Guest>>(`/guests/${id}`, guest);
   return resp.data.data;
 };
 
-// 7. POST invitations
+// 7. POST invitations with full guest data
 export const sendInvitationToAllGuests = async (data: {
   partner1: string;
   partner2: string;
-  weddingDate: string;
+  weddingDate?: string;
+  venue?: string;
+  guests: GuestContact[];
 }): Promise<void> => {
   const resp = await apiClient.post<BaseResponse<null>>("/guests/send-invitation", data);
   if (resp.status !== 200) {

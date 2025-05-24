@@ -1,20 +1,34 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden !important;
+}
+
 .guestPage {
-  height: 100vh;
+  padding-top: 90px;  
   width: 100%;
+  height: 100vh;
   background: url('../../assets/images/main-bg.png') no-repeat center center;
   background-size: cover;
-  background-color: #fff8fb;
-  overflow: auto;
-  padding: 50px 20px;
+  background-color: #fff0f5;
+  position: relative;
+  overflow: hidden;
 }
 
 .guestContainer {
+  display: flex;
+  position: relative;
+  flex-direction: column;
   max-width: 1000px;
+  overflow: hidden; 
   margin: 0 auto;
+  height: calc(100vh - 100px); 
   background: #fff;
   border-radius: 16px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   padding: 40px 50px;
+  margin-bottom: 20px;
+  box-sizing: border-box;
 }
 
 .guestHeader {
@@ -24,6 +38,20 @@
   margin-bottom: 1.5rem;
   border-bottom: 2px solid #ddd;
   padding-bottom: 0.5rem;
+}
+
+.backIcon {
+  position: absolute;
+  top: 20px;        
+  right: 20px;      
+  font-size: 1.5rem;
+  color: var(--wedding-gray, #888);
+  cursor: pointer;
+  transition: color 0.2s;
+  z-index: 10;     
+}
+.backIcon:hover {
+  color: var(--wedding-purple, #b291ff);
 }
 
 .guestList {
@@ -85,6 +113,7 @@
 
 .guestForm input,
 .guestForm select {
+  max-width: none;
   padding: 10px;
   font-size: 0.95rem;
   flex: 1 1 200px;
@@ -94,17 +123,10 @@
 
 .guestForm button {
   padding: 10px 18px;
-  font-size: 1rem;
-  background-color: #5c67f2;
-  color: white;
-  border: none;
-  cursor: pointer;
-  border-radius: 6px;
-  transition: background 0.3s ease;
-}
-
-.guestForm button:hover {
-  background-color: #3f4ad4;
+  width: 140px;
+  height: 40px;
+  flex: 0 0 auto;
+  padding: 10px 18px;
 }
 
 .sendEmailButton {
@@ -168,8 +190,195 @@
 }
 
 .guestStats {
-  margin-top: 15px;
   font-weight: 500;
   font-size: 1rem;
   color: #2c3e50;
 }
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+  flex: 0 0 auto;
+}
+
+.actionsContainer {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.iconAction {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  color: var(--wedding-purple);
+  transition: color 0.2s, opacity 0.2s;
+}
+
+.iconAction:hover {
+  color: var(--wedding-pink);
+}
+.iconAction.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.actionIcon {
+  cursor: pointer;
+  font-size: 1.5rem;
+  color: var(--wedding-purple, #d291ff);
+  margin-right: 0.5rem;
+  transition: color 0.2s;
+  vertical-align: middle;
+}
+
+.iconLabel {
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+  color: var(--wedding-gray);
+}
+
+.actionIcon:last-child {
+  margin-right: 0;
+}
+.actionIcon:hover {
+  color: var(--wedding-pink, #b074e8);
+}
+
+.guestTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1.5rem;
+  table-layout: fixed;
+  display: table;
+}
+
+.guestTable th{
+  padding: 0.75rem 1rem;
+  white-space: normal;
+  text-align: center;
+  border-bottom: 2px solid #e0e0e0;
+  vertical-align: middle;
+}
+
+.guestTable td {
+  padding: 0.75rem 1rem;
+  white-space: normal;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.guestTable thead {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.guestTable thead th {
+  position: sticky;
+  top: 0;             
+  background: #fff;
+  z-index: 2;
+  border-bottom: none;  
+}
+
+
+.guestTable tbody {
+  display: block;
+  max-height: 60vh;
+  overflow-y: auto;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.guestTable tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.tableWrapper {
+  flex: 1;
+  margin-top: 1.5rem;
+  align-items: center;
+}
+
+.guestTable th:nth-child(1),
+.guestTable td:nth-child(1) { width: 20%; }
+.guestTable th:nth-child(2),
+.guestTable td:nth-child(2) { width: 30%; }
+.guestTable th:nth-child(3),
+.guestTable td:nth-child(3) { width: 20%; }
+.guestTable th:nth-child(4),
+.guestTable td:nth-child(4) { width: 15%; }
+.guestTable th:nth-child(5),
+.guestTable td:nth-child(5) { width: 15%; }
+.tableInput,
+.tableSelect {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  font-size: 1rem;
+  line-height: 1.2;
+  height: 2.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  background-color: #fff;
+}
+
+.emptyGuestList {
+  text-align: center;
+  color: #999;
+  font-style: italic;
+  padding: 1rem 0;
+}
+
+.statsRow {
+  display: flex;
+  gap: 2rem;
+  align-items: center;  
+  justify-content: flex-end; 
+  margin-top: 1rem;
+}
+
+.statsBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: var(--wedding-gray, #888);
+  font-size: 2.2rem;
+  color: var(--wedding-purple, #b291ff);
+  margin-bottom: 0.25rem; 
+  transition: color 0.2s;
+}
+
+.statsBlock:hover {
+  color: var(--wedding-pink, #d291ff);
+}
+
+.statsBlock .iconLabel {
+  font-size: 0.9rem;        
+  font-weight: 500;
+  color: var(--wedding-dark, #2c3e50);
+}
+
+.toolbar .actionsContainer + .actionsContainer {
+  margin-left: auto;  
+}
+
+.statsRow, 
+.toolbar .actionsContainer + .actionsContainer {
+  gap: 1.5rem; 
+}
+
+.activeFilter {
+  color: var(--wedding-black);
+}
+.activeFilter .iconLabel {
+  color: var(--wedding-black);
+}
+
