@@ -6,6 +6,7 @@
    --wedding-black: #000000;
    --wedding-white: #ffffff;
    --wedding-purple: #d2b1e5e1;
+   --wedding-dark-purple: #8a57a7e1;
    --wedding-gray: #888888;
    --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
    --font-rubik: 'Rubik', sans-serif;
@@ -20,7 +21,6 @@
  html, body {
   min-height: 100vh;
   height: auto;
-  overflow-y: auto;
    margin: 0;
    padding: 0;
    font-family: var(--font-rubik);
@@ -28,7 +28,6 @@
    color: #333;
    scroll-behavior: smooth;
   overflow-x: hidden; /* חשוב מאוד למנוע גלילה לרוחב */
-
  }
  
  /* HEADERS: black by default, pink on hover */
