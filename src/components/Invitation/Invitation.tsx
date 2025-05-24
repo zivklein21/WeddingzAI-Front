@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styles from './Invitation.module.css';
-import { FaImage, FaSpinner, FaExternalLinkAlt } from 'react-icons/fa';
+import { FaImage, FaSpinner, FaExternalLinkAlt, FaDownload } from 'react-icons/fa';
 import invitationService, { CanceledError } from '../../services/invitation-service';
 import type { Invitation } from '../../services/invitation-service';
 
@@ -9,6 +9,17 @@ const Invitation: React.FC = () => {
   const [invitation, setInvitation] = useState<Invitation | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const handleDownload = () => {
+    if (invitation?.imageUrl) {
+      const link = document.createElement('a');
+      link.href = invitation.imageUrl;
+      link.download = `wedding-invitation-${new Date().getTime()}.png`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  };
 
   const handleCreateInvitation = async () => {
     if (!prompt.trim()) {
@@ -99,7 +110,15 @@ const Invitation: React.FC = () => {
         
         {invitation && (
           <div className={styles.result}>
-            <h3>Your Invitation</h3>
+            <div className={styles.resultHeader}>
+              <h3>Your Invitation</h3>
+              <button 
+                onClick={handleDownload}
+                className={styles.downloadButton}
+              >
+                <FaDownload /> Download
+              </button>
+            </div>
             <div className={styles.imageContainer}>
               <img 
                 src={invitation.imageUrl} 
@@ -109,10 +128,7 @@ const Invitation: React.FC = () => {
             </div>
           </div>
         )}
-      </section>
 
-      <section className={styles.section}>
-        <h2 className={styles.sectionTitle}>Useful Resources</h2>
         <div className={styles.linksContainer}>
           <div className={styles.linkCategory}>
             <h3>Invitation Design Inspiration</h3>
@@ -125,38 +141,6 @@ const Invitation: React.FC = () => {
               <li>
                 <a href="https://www.minted.com/wedding-invitations" target="_blank" rel="noopener noreferrer">
                   Minted Wedding Invitations <FaExternalLinkAlt />
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          <div className={styles.linkCategory}>
-            <h3>Invitation Wording Guides</h3>
-            <ul className={styles.linkList}>
-              <li>
-                <a href="https://www.theknot.com/content/wedding-invitation-wording" target="_blank" rel="noopener noreferrer">
-                  The Knot - Invitation Wording Guide <FaExternalLinkAlt />
-                </a>
-              </li>
-              <li>
-                <a href="https://www.zola.com/expert-advice/wedding-invitation-wording" target="_blank" rel="noopener noreferrer">
-                  Zola - Invitation Wording Examples <FaExternalLinkAlt />
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          <div className={styles.linkCategory}>
-            <h3>Printing Services</h3>
-            <ul className={styles.linkList}>
-              <li>
-                <a href="https://www.vistaprint.com/wedding-invitations" target="_blank" rel="noopener noreferrer">
-                  Vistaprint Wedding Invitations <FaExternalLinkAlt />
-                </a>
-              </li>
-              <li>
-                <a href="https://www.shutterfly.com/wedding-invitations" target="_blank" rel="noopener noreferrer">
-                  Shutterfly Wedding Invitations <FaExternalLinkAlt />
                 </a>
               </li>
             </ul>
