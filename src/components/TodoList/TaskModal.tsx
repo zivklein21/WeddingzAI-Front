@@ -9,6 +9,7 @@ export interface TaskData {
   text: string;
   dueDate?: string;
   priority?: 'Low' | 'Medium' | 'High';
+  deleted?: boolean;
 }
 
 interface Props {
@@ -27,34 +28,34 @@ export const TaskModal: React.FC<Props> = ({
   const [text, setText] = useState('');
   const [dueDate, setDueDate] = useState('');
   const [priority, setPriority] = useState<TaskData['priority']>('Medium');
+  const [deleted, setDeleted] = useState<boolean>(false);
 
   useEffect(() => {
     if (initial) {
       setText(initial.text);
       setDueDate(initial.dueDate || '');
       setPriority(initial.priority || 'Medium');
+      setDeleted(initial.deleted || false);
     } else {
       setText('');
       setDueDate('');
       setPriority('Medium');
+      setDeleted(false);
     }
   }, [initial, isOpen]);
 
   const handleSave = async () => {
     if (mode === 'add') {
-      await tdlService.addTask(sectionName, text, dueDate, priority);
+      await tdlService.addTask(sectionName, text, dueDate, priority, false);
     } else {
       await tdlService.updateTask(
         sectionName,
         index ?? 0,
-        { task: text, dueDate, priority }
+        { task: text, dueDate, priority, deleted }
       );
     }
-    // still call onSave so parent can close modal / reload list
-    onSave({ id: initial?.id, text, dueDate, priority });
+    onSave({ id: initial?.id, text, dueDate, priority, deleted });
   };
-
-
 
   return (
     <Modal
@@ -94,6 +95,18 @@ export const TaskModal: React.FC<Props> = ({
             <option>Low</option>
           </select>
         </div>
+
+        {mode === 'edit' && (
+          <label className={styles.checkboxRow}>
+            <input
+              type="checkbox"
+              checked={deleted}
+              onChange={e => setDeleted(e.target.checked)}
+            />
+            Mark as deleted
+          </label>
+        )}
+
         <div className={styles.buttons}>
           <button onClick={onCancel} className={styles.cancelBtn}>
             Cancel

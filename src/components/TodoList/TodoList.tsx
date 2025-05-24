@@ -18,20 +18,15 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export default function TodoList() {
-  // ---------- Component State ----------
   const [todoList, setTodoList] = useState<TdlData | null>(null);
-  const [openSections, setOpenSections] = useState<Record<number, boolean>>(
-    {}
-  );
+  const [openSections, setOpenSections] = useState<Record<number, boolean>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // wedding-date editing
   const [isEditingDate, setIsEditingDate] = useState(false);
   const [weddingDateInput, setWeddingDateInput] = useState("");
   const [isSavingDate, setIsSavingDate] = useState(false);
 
-  // add/edit/delete task modals
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [addSectionIdx, setAddSectionIdx] = useState<number | null>(null);
   const [editModal, setEditModal] = useState<{
@@ -48,14 +43,12 @@ export default function TodoList() {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  // ---------- Load To-Do List on Mount ----------
   useEffect(() => {
     (async () => {
       try {
         const list = await tdlService.fetchMyTdl();
         setTodoList(list);
         setWeddingDateInput(list.weddingDate);
-        // open all sections by default
         const init: Record<number, boolean> = {};
         list.sections.forEach((_, i) => (init[i] = true));
         setOpenSections(init);
@@ -67,7 +60,6 @@ export default function TodoList() {
     })();
   }, [navigate]);
 
-  // ---------- Handlers ----------
   const handleAIButtonClick = async (task: string) => {
     if (!user?._id) {
       toast.error("User ID is missing. Please log in again.");
@@ -106,12 +98,7 @@ export default function TodoList() {
     if (!todoList || addSectionIdx === null) return;
     try {
       const sectionName = todoList.sections[addSectionIdx].sectionName;
-      await tdlService.addTask(
-        sectionName,
-        data.text,
-        data.dueDate,
-        data.priority
-      );
+      await tdlService.addTask(sectionName, data.text, data.dueDate, data.priority);
       const fresh = await tdlService.fetchMyTdl();
       setTodoList(fresh);
       toast.success("Task added");
@@ -150,21 +137,31 @@ export default function TodoList() {
     try {
       const { section, index } = deleteModal;
       const sectionName = todoList.sections[section].sectionName;
-      await tdlService.deleteTask(sectionName, index);
+      await tdlService.updateTask(sectionName, index, { deleted: true });
       const fresh = await tdlService.fetchMyTdl();
       setTodoList(fresh);
-      toast.success("Task deleted");
+      toast.success("Task marked as deleted");
     } catch (err) {
       console.error(err);
-      toast.error("Failed to delete task");
+      toast.error("Failed to mark task as deleted");
     } finally {
       setDeleteModal(null);
     }
   };
 
+  const handleToggleDone = async (sectionIdx: number, taskIdx: number, done: boolean) => {
+    try {
+      const sectionName = todoList!.sections[sectionIdx].sectionName;
+      await tdlService.updateTask(sectionName, taskIdx, { done });
+      const fresh = await tdlService.fetchMyTdl();
+      setTodoList(fresh);
+      toast.success(done ? "Marked as done" : "Marked as not done");
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to update task status");
+    }
+  };
 
-
-  // ---------- Render ----------
   if (loading)
     return (
       <p className={styles.loading}>
@@ -208,15 +205,11 @@ export default function TodoList() {
                     type="date"
                     className={styles.budgetInput}
                     value={weddingDateInput}
-                    onChange={(e) =>
-                      setWeddingDateInput(e.target.value)
-                    }
+                    onChange={(e) => setWeddingDateInput(e.target.value)}
                     disabled={isSavingDate}
                   />
                   {isSavingDate ? (
-                    <span className={styles.savingText}>
-                      Saving…
-                    </span>
+                    <span className={styles.savingText}>Saving…</span>
                   ) : (
                     <FiSave
                       className={styles.actionIcon}
@@ -241,7 +234,7 @@ export default function TodoList() {
               <TodoSection
                 key={idx}
                 sectionName={section.sectionName}
-                todos={section.todos as TodoType[]}
+                todos={(section.todos as TodoType[])}
                 isOpen={openSections[idx]}
                 onToggle={() => toggleSection(idx)}
                 onEdit={(i) =>
@@ -253,7 +246,9 @@ export default function TodoList() {
                       text: section.todos[i].task,
                       dueDate: section.todos[i].dueDate,
                       priority: section.todos[i].priority,
-                      aiSent: section.todos[i].aiSent
+                      aiSent: section.todos[i].aiSent,
+                      done: section.todos[i].done,
+                      deleted: section.todos[i].deleted,
                     }
                   })
                 }
@@ -269,6 +264,8 @@ export default function TodoList() {
                   setAddSectionIdx(idx);
                   setAddModalOpen(true);
                 }}
+                onToggleDone={(taskIdx, done) => handleToggleDone(idx, taskIdx, done)}
+
               />
             ))}
           </div>
@@ -279,11 +276,7 @@ export default function TodoList() {
           isOpen={addModalOpen || !!editModal}
           mode={editModal ? "edit" : "add"}
           initial={editModal?.data}
-          onSave={(data) =>
-            editModal
-              ? handleEditSave(data)
-              : handleAddSave(data)
-          }
+          onSave={(data) => (editModal ? handleEditSave(data) : handleAddSave(data))}
           onCancel={() => {
             setEditModal(null);
             setAddModalOpen(false);

@@ -1,3 +1,4 @@
+// src/components/TodoList/ToDoSection.tsx
 import React from "react";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import TodoItem from "./ToDoItem";
@@ -10,6 +11,7 @@ export interface Todo {
   aiSent: boolean;
   priority?: "Low" | "Medium" | "High";
   done: boolean;
+  deleted?: boolean; // for soft delete
 }
 
 interface Props {
@@ -21,6 +23,7 @@ interface Props {
   onRunAI: (task: string) => void;
   onDelete: (idx: number) => void;
   onNewTask: () => void;
+  onToggleDone: (idx: number, done: boolean) => void;
 }
 
 const TodoSection: React.FC<Props> = ({
@@ -31,7 +34,8 @@ const TodoSection: React.FC<Props> = ({
   onEdit,
   onRunAI,
   onDelete,
-  onNewTask
+  onNewTask,
+  onToggleDone,
 }) => (
   <div className={styles.todoSection}>
     <div className={styles.sectionHeader} onClick={onToggle}>
@@ -41,15 +45,19 @@ const TodoSection: React.FC<Props> = ({
 
     {isOpen && (
       <ul className={styles.todoList}>
-        {todos.map((todo, i) => (
-          <TodoItem
-            key={i}
-            todo={todo}
-            onEdit={() => onEdit(i)}
-            onRunAI={() => onRunAI(todo.task)}
-            onDelete={() => onDelete(i)}
-          />
-        ))}
+        {todos.map((todo, i) => {
+          const originalIndex = todos.findIndex(t => t === todo); // preserve original position
+          return (
+            <TodoItem
+              key={i}
+              todo={todo}
+              onEdit={() => onEdit(originalIndex)}
+              onRunAI={() => onRunAI(todo.task)}
+              onDelete={() => onDelete(originalIndex)}
+              onToggleDone={(done) => onToggleDone(originalIndex, done)}
+            />
+          );
+        })}
         <li>
           <NewTaskButton onClick={onNewTask} />
         </li>
