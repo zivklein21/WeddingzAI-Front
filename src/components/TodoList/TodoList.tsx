@@ -1,5 +1,5 @@
 // src/components/TodoList/TodoList.tsx
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import tdlService, { TdlData } from "../../services/tdl-service";
 import vendorService from "../../services/vendor-service";
