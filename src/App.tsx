@@ -14,6 +14,7 @@ import { AuthProvider } from "./hooks/useAuth/AuthContext";
 import GuestPage from "./pages/GuestListPage";
 import UserVendorsPage from "./pages/UserVEndorsPage";
 import AllVendors from "./components/Vendors/AllVendors";
+import InvitationPage from "./pages/InvitationPage";
 
 export default function App() {
   return (
@@ -33,6 +34,7 @@ export default function App() {
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/myVendors" element={<UserVendorsPage /> } />
           <Route path="/vendors" element={<AllVendors /> } />
+          <Route path="/invitation" element={<InvitationPage />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
