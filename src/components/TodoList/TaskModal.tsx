@@ -10,8 +10,9 @@ export interface TaskData {
   dueDate?: string;
   priority?: 'Low' | 'Medium' | 'High';
   deleted?: boolean;
+  aiSent?: boolean; 
+  done?: boolean;   
 }
-
 interface Props {
   isOpen: boolean;
   mode: 'add' | 'edit';

@@ -52,8 +52,13 @@ export default function TodoList() {
         const init: Record<number, boolean> = {};
         list.sections.forEach((_, i) => (init[i] = true));
         setOpenSections(init);
-      } catch (err: any) {
-        setError(err.message || "Could not load your to-do list.");
+      } catch (err) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("Could not load your to-do list.");
+          console.error("Unexpected error:", err);
+        }
       } finally {
         setLoading(false);
       }
@@ -245,13 +250,19 @@ export default function TodoList() {
                       id: `${idx}-${i}`,
                       text: section.todos[i].task,
                       dueDate: section.todos[i].dueDate,
-                      priority: section.todos[i].priority,
+                      priority: section.todos[i].priority
+                        ? (section.todos[i].priority.charAt(0).toUpperCase() +
+                            section.todos[i].priority.slice(1).toLowerCase()) as
+                            "Low" | "Medium" | "High"
+                        : undefined,
                       aiSent: section.todos[i].aiSent,
                       done: section.todos[i].done,
                       deleted: section.todos[i].deleted,
                     }
+
                   })
                 }
+
                 onRunAI={(task) => handleAIButtonClick(task)}
                 onDelete={(i) =>
                   setDeleteModal({

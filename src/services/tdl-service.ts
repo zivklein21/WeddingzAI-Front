@@ -67,14 +67,16 @@ export async function addTask(
   sectionName: string,
   task: string,
   dueDate?: string,
-  priority?: "Low" | "Medium" | "High"
+  priority?: "Low" | "Medium" | "High",
+  deleted?: boolean // ← add this
 ): Promise<TdlDocument> {
   const resp = await apiClient.post<{ message: string; data: TdlDocument }>(
     "/tdl/task",
-    { sectionName, task, dueDate, priority }
+    { sectionName, task, dueDate, priority, deleted } 
   );
   return resp.data.data;
 }
+
 
 export async function updateTask(
   sectionName: string,
