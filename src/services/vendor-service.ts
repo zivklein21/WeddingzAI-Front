@@ -102,6 +102,28 @@ export const fetchVendorSummary= async(): Promise<VendorSummaryResponse> => {
   return resp.data;
 }
 
+// 10. GET /vendor/relvant - refetch the user vendor again
+export const refetchRelevantVendors = async (): Promise<Vendor[]> => {
+  const resp = await apiClient.get<{ data: Vendor[] }>("/vendors/relvant");
+  return resp.data.data;
+};
+
+// 11. PATCH /vendors/book - toggle a vendor as booked/unbooked
+export const toggleBookedVendor = async (
+  vendorId: string
+): Promise<{ added: boolean; message: string; vendorType?: string }> => {
+  const resp = await apiClient.patch<{ added: boolean; message: string; vendorType?: string }>(
+    "/vendors/book",
+    { vendorId }
+  );
+  return resp.data;
+};
+
+// 12. PATCH /vendor/cancle - cancle book
+export const cancelBookedVendor = async (vendorId: string) => {
+  const resp = await apiClient.patch("/vendors/cancel", { vendorId });
+  return resp.data;
+};
 
 export default {
   runAIResearch,
@@ -112,5 +134,8 @@ export default {
   deleteVendor,
   startAIResearchBackground,
   fetchRelevantVendors,
-  fetchVendorSummary
+  fetchVendorSummary,
+  refetchRelevantVendors,
+  toggleBookedVendor,
+  cancelBookedVendor
 };

@@ -119,7 +119,7 @@ export async function setTaskDone(
   done: boolean
 ): Promise<TdlDocument> {
   const resp = await apiClient.patch<{ message: string; data: TdlDocument }>(
-    "/tdl/task/done",
+    "/tdl/done",
     { sectionName, todoId, done }
   );
   return resp.data.data;

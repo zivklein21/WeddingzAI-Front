@@ -36,8 +36,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
     const [accessToken, setAccessToken] = useState<string | null>(localStorage.getItem('accessToken'));
     const [refreshToken, setRefreshToken] = useState<string | null>(localStorage.getItem('refreshToken'));
-
-    // Loading state
     const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
@@ -47,7 +45,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
         if (storedAccessToken && storedRefreshToken && storedUser) {
             const parsedUser = JSON.parse(decodeURIComponent(storedUser));
-
             setAccessToken(storedAccessToken);
             setRefreshToken(storedRefreshToken);
             setUser(parsedUser);
@@ -63,20 +60,41 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         try {
             const { request } = userService.login({ email, password });
             const response = await request;
-            const { accessToken, refreshToken, _id, firstPartner, secondPartner, avatar, weddingDate, weddingVenue, email: userEmail } = response.data;
+            const {
+                accessToken,
+                refreshToken,
+                _id,
+                firstPartner,
+                secondPartner,
+                avatar,
+                weddingDate,
+                weddingVenue,
+                email: userEmail,
+                bookedVendors
+            } = response.data;
 
-            const userData = { accessToken, refreshToken, _id, firstPartner, secondPartner, avatar, weddingDate, weddingVenue, email: userEmail, password: '' };
+            const userData = {
+                accessToken,
+                refreshToken,
+                _id,
+                firstPartner,
+                secondPartner,
+                avatar,
+                weddingDate,
+                weddingVenue,
+                email: userEmail,
+                password: '',
+                bookedVendors: bookedVendors || []
+            };
 
-            // Store data in cookies (with secure attributes)
             Cookies.set('accessToken', accessToken, { path: '/', secure: true, sameSite: 'Strict' });
             Cookies.set('refreshToken', refreshToken, { path: '/', secure: true, sameSite: 'Strict' });
             Cookies.set('user', encodeURIComponent(JSON.stringify(userData)), {
                 path: '/',
                 secure: true,
                 sameSite: 'Strict'
-              });
+            });
 
-            // Update React state
             setAccessToken(accessToken);
             setRefreshToken(refreshToken);
             setUser(userData);
@@ -93,11 +111,35 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     const googleSignIn = async (response: CredentialResponse) => {
         try {
-            const {request: googleSignInRequest } = await userService.googleSignIn(response);
+            const { request: googleSignInRequest } = await userService.googleSignIn(response);
             const googleSignInResponse = await googleSignInRequest;
 
-            const { accessToken, refreshToken, _id, firstPartner, secondPartner, avatar, weddingDate, weddingVenue, email } = googleSignInResponse.data;
-            const userData = { accessToken, refreshToken, _id, avatar, weddingDate, weddingVenue, email, firstPartner, secondPartner, password: '' };
+            const {
+                accessToken,
+                refreshToken,
+                _id,
+                firstPartner,
+                secondPartner,
+                avatar,
+                weddingDate,
+                weddingVenue,
+                email,
+                bookedVendors
+            } = googleSignInResponse.data;
+
+            const userData = {
+                accessToken,
+                refreshToken,
+                _id,
+                avatar,
+                weddingDate,
+                weddingVenue,
+                email,
+                firstPartner,
+                secondPartner,
+                password: '',
+                bookedVendors: bookedVendors || []
+            };
 
             Cookies.set('accessToken', accessToken, { path: '/', secure: true, sameSite: 'Strict' });
             Cookies.set('refreshToken', refreshToken, { path: '/', secure: true, sameSite: 'Strict' });
@@ -105,14 +147,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                 path: '/',
                 secure: true,
                 sameSite: 'Strict'
-              });
-              
-            
+            });
+
             setAccessToken(accessToken);
             setRefreshToken(refreshToken);
             setUser(userData);
             setIsAuthenticated(true);
-
         } catch (error: any) {
             if (error instanceof AxiosError) {
                 const errorMessage = error.response?.data?.message;
@@ -121,10 +161,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                 throw new Error('An unexpected error occurred');
             }
         }
-    }
+    };
 
     const updateUserSession = (updatedFields: Partial<User>) => {
-        // Ensure user exists before updating
         if (!user) return;
 
         const updatedUser: User = {
@@ -137,11 +176,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             path: '/',
             secure: true,
             sameSite: 'Strict'
-          });        
+        });
     };
 
     const logout = async () => {
-        // Check refresh token exists
         if (refreshToken) {
             try {
                 const { request } = userService.logout(refreshToken);
@@ -151,18 +189,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             }
         }
 
-        // Remove all States
         setAccessToken(null);
         setRefreshToken(null);
         setUser(null);
         setIsAuthenticated(false);
 
-        // Remove stored cookies
         Cookies.remove('accessToken');
         Cookies.remove('refreshToken');
         Cookies.remove('user');
 
-        // Remove Local Straoge Data
         localStorage.clear();
     };
 
