@@ -15,16 +15,15 @@ export default function Home() {
     const checkDocs = async () => {
       if (isAuthenticated && user) {
         try {
-          const userId = (user as any)._id;
-          const docs = await tdlService.getByUserId(userId);
-          setHasWeddingDocs(Array.isArray(docs) && docs.length > 0);
+          const docs = await tdlService.fetchMyTdl();
+          setHasWeddingDocs(docs && Object.keys(docs).length > 0);
         } catch (err) {
           console.error("Error checking docs:", err);
           setHasWeddingDocs(false);
         }
       }
     };
-
+  
     checkDocs();
   }, [isAuthenticated, user]);
 

@@ -6,12 +6,15 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faImage } from "@fortawesome/free-solid-svg-icons";
 import fileService from "../../services/file-service";
 import authService from "../../services/auth-service";
+import tdlService from "../../services/tdl-service";
 
 interface UserDetails {
   email: string;
   firstPartner: string;
   secondPartner: string;
   avatar: string;
+  weddingDate: string;
+  weddingVenue: string;
 }
 
 const Profile = () => {
@@ -20,6 +23,8 @@ const Profile = () => {
     firstPartner: "",
     secondPartner: "",
     avatar: defaultAvatar,
+    weddingDate: "",
+    weddingVenue: "",
   });
 
   const [newAvatarFile, setNewAvatarFile] = useState<File | null>(null);
@@ -42,6 +47,8 @@ const Profile = () => {
         email: user.email || "",
         firstPartner: user.firstPartner || "",
         secondPartner: user.secondPartner || "",
+        weddingDate: user.weddingDate || "",
+        weddingVenue: user.weddingVenue || "",
         avatar:
           user.avatar && user.avatar.trim() !== ""
             ? user.avatar.startsWith("/uploads/")
@@ -129,6 +136,16 @@ const Profile = () => {
         setUserDetails(updatedUser);
         setNewAvatarFile(null);
         setSuccessMessage("Profile updated successfully!");
+
+        // ✅ Update TDL wedding date if changed
+        if (user?.weddingDate !== updatedDetails.weddingDate) {
+          try {
+            await tdlService.updateWeddingDate(updatedDetails.weddingDate);
+          } catch (err) {
+            console.error("Failed to update TDL wedding date:", err);
+            setServerError("Profile updated, but failed to sync wedding date.");
+          }
+        }
 
       } else {
         setServerError("Failed to update profile.");
@@ -226,6 +243,28 @@ const Profile = () => {
                 type="text"
                 name="secondPartner"
                 value={userDetails.secondPartner}
+                onChange={handleChange}
+                className={styles.input}
+              />
+            </div>
+
+            <div className={styles.infoItem}>
+              <label>Wedding Date</label>
+              <input
+                type="text"
+                name="weddingDate"
+                value={userDetails.weddingDate}
+                onChange={handleChange}
+                className={styles.input}
+              />
+            </div>
+
+            <div className={styles.infoItem}>
+              <label>Wedding Venue</label>
+              <input
+                type="text"
+                name="weddingVenue"
+                value={userDetails.weddingVenue}
                 onChange={handleChange}
                 className={styles.input}
               />
