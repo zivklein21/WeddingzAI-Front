@@ -9,7 +9,9 @@ export interface Guest {
   email: string;
   phone?: string;
   rsvp?: "yes" | "no" | "maybe";
+  rsvpToken: string;
   numberOfGuests?: number;
+  tableId?: string | null;
 }
 
 interface BaseResponse<T> {
@@ -54,7 +56,7 @@ export const createGuest = async (guest: {
   email: string;
   phone?: string;
   rsvp?: "yes" | "no" | "maybe";
-  numberOfGuests?: number; 
+  numberOfGuests?: number;
 }): Promise<Guest> => {
   const resp = await apiClient.post<BaseResponse<Guest>>("/guests", guest);
   return resp.data.data;
@@ -68,7 +70,7 @@ export const updateGuest = async (
     email: string;
     phone?: string;
     rsvp?: "yes" | "no" | "maybe";
-    numberOfGuests?: number; 
+    numberOfGuests?: number;
   }
 ): Promise<Guest> => {
   const resp = await apiClient.put<BaseResponse<Guest>>(`/guests/${id}`, guest);
@@ -83,10 +85,33 @@ export const sendInvitationToAllGuests = async (data: {
   venue?: string;
   guests: GuestContact[];
 }): Promise<void> => {
-  const resp = await apiClient.post<BaseResponse<null>>("/guests/send-invitation", data);
+  const resp = await apiClient.post<BaseResponse<null>>(
+    "/guests/send-invitation",
+    data
+  );
   if (resp.status !== 200) {
     throw new Error(resp.data.message || "Failed to send invitations");
   }
+};
+
+// 8. PATCH assign guest to table
+export const assignGuestToTable = async (
+  guestId: string,
+  tableId: string
+): Promise<Guest> => {
+  const resp = await apiClient.patch<BaseResponse<Guest>>("/guests/assign", {
+    guestId,
+    tableId,
+  });
+  return resp.data.data;
+};
+
+// 9. PATCH unassign guest from table
+export const unassignGuest = async (guestId: string): Promise<Guest> => {
+  const resp = await apiClient.patch<BaseResponse<Guest>>("/guests/unassign", {
+    guestId,
+  });
+  return resp.data.data;
 };
 
 export default {
@@ -97,4 +122,6 @@ export default {
   updateGuest,
   deleteGuest,
   sendInvitationToAllGuests,
+  assignGuestToTable,
+  unassignGuest,
 };

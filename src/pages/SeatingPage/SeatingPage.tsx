@@ -5,6 +5,7 @@ import styles from "./SeatingPage.module.css";
 import AddTableForm from "../../components/Seating/AddTableForm";
 import { getMyTables, updateTable } from "../../services/seating-service";
 import { NavBar } from "../../components/NavBar/NavBar";
+import UnassignedGuestList from "../../components/Seating/UnassignedGuestList";
 
 export type Table = {
   _id: string;
@@ -59,6 +60,7 @@ export default function SeatingPage() {
   return (
     <div className={styles.canvas}>
       <NavBar />
+      <UnassignedGuestList />
       <DndContext onDragEnd={handleDragEnd}>
         {tables.map((table) => (
           <DraggableTable

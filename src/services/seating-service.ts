@@ -45,3 +45,9 @@ export const updateTable = async (
   const response = await apiClient.patch(`${API_BASE}/${id}`, updates);
   return response.data;
 };
+
+// Get available tables for a specific guest count
+export const getAvailableTables = async (guestCount: number) => {
+  const response = await apiClient.get(`${API_BASE}/available/${guestCount}`);
+  return response.data.data;
+};

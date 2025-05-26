@@ -1,0 +1,83 @@
+.sidebar {
+  position: absolute;
+  left: 0;
+  top: 60px;
+  bottom: 0;
+  width: 250px;
+  background-color: #f9f9f9; /* צבע רקע עדין */
+  padding: 1rem;
+  overflow-y: auto;
+  border-right: 1px solid #ddd;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.list li {
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #333;
+  transition: background-color 0.3s, box-shadow 0.3s;
+  cursor: pointer;
+  user-select: none;
+}
+
+.list li:hover {
+  background-color: #f0f0f0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.list li.selected {
+  background-color: #e0dfff;
+  border-color: #b0a5ff;
+}
+
+.tableSelection {
+  margin-top: 1rem;
+  padding: 0.5rem;
+  background-color: #f1f0ff;
+  border-radius: 6px;
+}
+
+.tableSelection h4 {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 0.5rem;
+}
+
+.tableSelection ul {
+  list-style: none;
+  padding: 0;
+}
+
+.tableSelection li {
+  margin-bottom: 0.5rem;
+}
+
+.tableSelection button {
+  background-color: #d0caff;
+  border: none;
+  border-radius: 4px;
+  padding: 0.4rem 0.7rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.tableSelection button:hover {
+  background-color: #b8adff;
+}
+
+h3 {
+  font-size: 16px;
+  margin-bottom: 1rem;
+  color: #555;
+}
