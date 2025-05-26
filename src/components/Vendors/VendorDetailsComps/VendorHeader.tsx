@@ -14,10 +14,6 @@ const VendorHeader: React.FC<Props> = ({ vendor, onClose }) => {
 
   return (
     <>
-      <button className={styles.closeBtn} onClick={onClose}>
-        <X size={24} />
-      </button>
-
       <header className={styles.header}>
         {vendor.profileImage && (
           <img
@@ -27,6 +23,9 @@ const VendorHeader: React.FC<Props> = ({ vendor, onClose }) => {
           />
         )}
         <h1 className={styles.title}>{vendor.name}</h1>
+        <button className={styles.closeBtn} onClick={onClose}>
+        <X size={24} />
+      </button>
       </header>
 
     </>

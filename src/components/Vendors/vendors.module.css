@@ -240,10 +240,28 @@ html, body {
 }
 
 /* internal nav pills */
+
 .nav {
   display: flex;
-  background: var(--wedding-black);
-  padding: 8px 16px;
+  justify-content: space-between;
+  align-items: center;
+  background: black;
+  color: white;
+  padding: 0 16px;
+}
+
+.bookmarkIcon {
+  cursor: pointer;
+  margin-left: auto;
+  transition: color 0.3s ease;
+}
+
+.booked {
+  color: var(--wedding-green);
+}
+
+.unbooked {
+  color: var(--wedding-purple);
 }
 
 .nav button {
@@ -462,3 +480,14 @@ html, body {
 .contactIcons a:hover {
   color: var(--wedding-purple);
 }
+
+.reload {
+  font-size: 1.5rem;
+  padding-left: 10px;
+  color: var(--wedding-purple);
+}
+
+.reload:hover {
+  color: var(--wedding-black);
+}
+
