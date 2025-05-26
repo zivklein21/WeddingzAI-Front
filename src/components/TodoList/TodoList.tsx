@@ -11,51 +11,44 @@ import {
 } from "react-icons/fi";
 import { useAuth } from "../../hooks/useAuth/AuthContext";
 import TodoSection, { Todo as TodoType } from "./ToDoSection";
-import { TaskModal, TaskData } from "./TaskModal";
+import { AddTaskModal, EditTaskModal, TaskData } from "./TaskModal";
 import { ConfirmDeleteModal } from "./DeleteTaskModal";
 import styles from "./TodoList.module.css";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export default function TodoList() {
-  // ---------- Component State ----------
   const [todoList, setTodoList] = useState<TdlData | null>(null);
-  const [openSections, setOpenSections] = useState<Record<number, boolean>>(
-    {}
-  );
+  const [openSections, setOpenSections] = useState<Record<number, boolean>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // wedding-date editing
   const [isEditingDate, setIsEditingDate] = useState(false);
   const [weddingDateInput, setWeddingDateInput] = useState("");
   const [isSavingDate, setIsSavingDate] = useState(false);
 
-  // add/edit/delete task modals
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [addSectionIdx, setAddSectionIdx] = useState<number | null>(null);
   const [editModal, setEditModal] = useState<{
     section: number;
-    index: number;
+    todoId: string;
     data: TaskData;
   } | null>(null);
   const [deleteModal, setDeleteModal] = useState<{
     section: number;
-    index: number;
+    todoId: string;
     text: string;
   } | null>(null);
 
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  // ---------- Load To-Do List on Mount ----------
   useEffect(() => {
     (async () => {
       try {
         const list = await tdlService.fetchMyTdl();
         setTodoList(list);
         setWeddingDateInput(list.weddingDate);
-        // open all sections by default
         const init: Record<number, boolean> = {};
         list.sections.forEach((_, i) => (init[i] = true));
         setOpenSections(init);
@@ -67,7 +60,6 @@ export default function TodoList() {
     })();
   }, [navigate]);
 
-  // ---------- Handlers ----------
   const handleAIButtonClick = async (task: string) => {
     if (!user?._id) {
       toast.error("User ID is missing. Please log in again.");
@@ -76,6 +68,7 @@ export default function TodoList() {
     try {
       await vendorService.startAIResearchBackground(task, user._id);
       toast.success("Sent to AI for vendor research");
+      window.location.reload();
     } catch (err) {
       console.error(err);
       toast.error("Failed to send to AI");
@@ -94,6 +87,7 @@ export default function TodoList() {
       setWeddingDateInput(fresh.weddingDate);
       setIsEditingDate(false);
       toast.success("Wedding date updated");
+      window.location.reload();
     } catch (err) {
       console.error(err);
       toast.error("Failed to update wedding date");
@@ -105,16 +99,11 @@ export default function TodoList() {
   const handleAddSave = async (data: TaskData) => {
     if (!todoList || addSectionIdx === null) return;
     try {
-      const sectionName = todoList.sections[addSectionIdx].sectionName;
-      await tdlService.addTask(
-        sectionName,
-        data.text,
-        data.dueDate,
-        data.priority
-      );
+      await tdlService.addTask(data.text, data.dueDate, data.priority);
       const fresh = await tdlService.fetchMyTdl();
       setTodoList(fresh);
       toast.success("Task added");
+      window.location.reload();
     } catch (err) {
       console.error(err);
       toast.error("Failed to add task");
@@ -127,9 +116,9 @@ export default function TodoList() {
   const handleEditSave = async (data: TaskData) => {
     if (!todoList || !editModal) return;
     try {
-      const { section, index } = editModal;
+      const { section, todoId } = editModal;
       const sectionName = todoList.sections[section].sectionName;
-      await tdlService.updateTask(sectionName, index, {
+      await tdlService.updateTask(sectionName, todoId, {
         task: data.text,
         dueDate: data.dueDate,
         priority: data.priority
@@ -137,6 +126,7 @@ export default function TodoList() {
       const fresh = await tdlService.fetchMyTdl();
       setTodoList(fresh);
       toast.success("Task updated");
+      window.location.reload();
     } catch (err) {
       console.error(err);
       toast.error("Failed to update task");
@@ -148,12 +138,13 @@ export default function TodoList() {
   const handleDeleteConfirm = async () => {
     if (!todoList || !deleteModal) return;
     try {
-      const { section, index } = deleteModal;
+      const { section, todoId } = deleteModal;
       const sectionName = todoList.sections[section].sectionName;
-      await tdlService.deleteTask(sectionName, index);
+      await tdlService.deleteTask(sectionName, todoId);
       const fresh = await tdlService.fetchMyTdl();
       setTodoList(fresh);
       toast.success("Task deleted");
+      window.location.reload();
     } catch (err) {
       console.error(err);
       toast.error("Failed to delete task");
@@ -162,9 +153,21 @@ export default function TodoList() {
     }
   };
 
+  const handleToggleDone = async (sectionIdx: number, todoIdx: number, done: boolean) => {
+    if (!todoList) return;
+    try {
+      const section = todoList.sections[sectionIdx];
+      const todoId = section.todos[todoIdx]._id;
+      await tdlService.setTaskDone(section.sectionName, todoId, done);
+      const fresh = await tdlService.fetchMyTdl();
+      setTodoList(fresh);
+      toast.success(done ? "Task marked as done" : "Task marked as not done");
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to update task status");
+    }
+  };
 
-
-  // ---------- Render ----------
   if (loading)
     return (
       <p className={styles.loading}>
@@ -174,16 +177,9 @@ export default function TodoList() {
   if (error) return <p className={styles.error}>{error}</p>;
   if (!todoList) return null;
 
-  const modalSectionName = editModal
-    ? todoList.sections[editModal.section].sectionName
-    : addSectionIdx !== null
-    ? todoList.sections[addSectionIdx].sectionName
-    : "";
-
   const deleteSectionName = deleteModal
     ? todoList.sections[deleteModal.section].sectionName
     : "";
-  const deleteIndex = deleteModal?.index ?? 0;
 
   return (
     <>
@@ -195,46 +191,47 @@ export default function TodoList() {
             title="Go Back"
           />
           <h2 className={styles.tdlHeader}>To Do List</h2>
-
-          <div className={styles.wedDetails}>
-            <p className={styles.coupleNames}>
-              💍 {todoList.firstPartner} & {todoList.secondPartner}
-            </p>
-            <p className={styles.weddingDate}>
-              📅 Wedding Date:{" "}
-              {isEditingDate ? (
-                <>
-                  <input
-                    type="date"
-                    className={styles.budgetInput}
-                    value={weddingDateInput}
-                    onChange={(e) =>
-                      setWeddingDateInput(e.target.value)
-                    }
-                    disabled={isSavingDate}
-                  />
-                  {isSavingDate ? (
-                    <span className={styles.savingText}>
-                      Saving…
-                    </span>
-                  ) : (
-                    <FiSave
-                      className={styles.actionIcon}
-                      onClick={handleSaveWeddingDate}
+          <div className={styles.headerRow}>
+            <div className={styles.wedDetails}>
+              <p className={styles.coupleNames}>
+                <strong>💍 Couple Names:{" "}</strong>
+                 {todoList.firstPartner} & {todoList.secondPartner}
+              </p>
+              <p className={styles.weddingDate}>
+                <strong>📅 Wedding Date:{" "}</strong>
+                {isEditingDate ? (
+                  <>
+                    <input
+                      type="date"
+                      value={weddingDateInput}
+                      onChange={(e) => setWeddingDateInput(e.target.value)}
+                      disabled={isSavingDate}
                     />
-                  )}
-                </>
-              ) : (
-                <>
-                  <strong>{todoList.weddingDate}</strong>
-                  <FiEdit2
-                    className={styles.actionIcon}
-                    onClick={() => setIsEditingDate(true)}
-                  />
-                </>
-              )}
-            </p>
+                    {isSavingDate ? (
+                      <span className={styles.savingText}>Saving…</span>
+                    ) : (
+                      <FiSave
+                        className={styles.actionIcon}
+                        onClick={handleSaveWeddingDate}
+                      />
+                    )}
+                  </>
+                ) : (
+                  <>
+                    {todoList.weddingDate}
+                    <FiEdit2
+                      className={styles.actionIcon}
+                      onClick={() => setIsEditingDate(true)}
+                    />
+                  </>
+                )}
+              </p>
+            </div>
+            <button onClick={() => {
+    setAddSectionIdx(0); // or any default section index
+    setAddModalOpen(true);}} className={styles.addBtn} title="Add Task">+</button>
           </div>
+          
 
           <div className={styles.tdlSection}>
             {todoList.sections.map((section, idx) => (
@@ -244,12 +241,13 @@ export default function TodoList() {
                 todos={section.todos as TodoType[]}
                 isOpen={openSections[idx]}
                 onToggle={() => toggleSection(idx)}
+                onToggleDone={(i, done) => handleToggleDone(idx, i, done)}
                 onEdit={(i) =>
                   setEditModal({
                     section: idx,
-                    index: i,
+                    todoId: section.todos[i]._id,
                     data: {
-                      id: `${idx}-${i}`,
+                      id: section.todos[i]._id,
                       text: section.todos[i].task,
                       dueDate: section.todos[i].dueDate,
                       priority: section.todos[i].priority,
@@ -261,39 +259,39 @@ export default function TodoList() {
                 onDelete={(i) =>
                   setDeleteModal({
                     section: idx,
-                    index: i,
+                    todoId: section.todos[i]._id,
                     text: section.todos[i].task
                   })
                 }
-                onNewTask={() => {
-                  setAddSectionIdx(idx);
-                  setAddModalOpen(true);
-                }}
               />
             ))}
           </div>
         </div>
 
-        <TaskModal
-          sectionName={modalSectionName}
-          isOpen={addModalOpen || !!editModal}
-          mode={editModal ? "edit" : "add"}
-          initial={editModal?.data}
-          onSave={(data) =>
-            editModal
-              ? handleEditSave(data)
-              : handleAddSave(data)
-          }
+        <AddTaskModal
+          sectionName={addSectionIdx !== null ? todoList.sections[addSectionIdx].sectionName : ""}
+          isOpen={addModalOpen}
+          onSave={handleAddSave}
           onCancel={() => {
-            setEditModal(null);
             setAddModalOpen(false);
             setAddSectionIdx(null);
           }}
         />
 
+        {editModal && (
+          <EditTaskModal
+            sectionName={todoList.sections[editModal.section].sectionName}
+            isOpen={true}
+            todoId={editModal.todoId}
+            initial={editModal.data}
+            onSave={handleEditSave}
+            onCancel={() => setEditModal(null)}
+          />
+        )}
+
         <ConfirmDeleteModal
           sectionName={deleteSectionName}
-          index={deleteIndex}
+          index={0}
           isOpen={!!deleteModal}
           taskText={deleteModal?.text || ""}
           onConfirm={handleDeleteConfirm}
