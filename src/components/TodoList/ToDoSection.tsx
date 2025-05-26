@@ -1,7 +1,6 @@
 import React from "react";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import TodoItem from "./ToDoItem";
-import NewTaskButton from "./NewTaskButton";
 import styles from "./TodoList.module.css";
 
 export interface Todo {
@@ -20,7 +19,7 @@ interface Props {
   onEdit: (idx: number) => void;
   onRunAI: (task: string) => void;
   onDelete: (idx: number) => void;
-  onNewTask: () => void;
+  onToggleDone: (idx: number, done: boolean) => void; // ✅ add this
 }
 
 const TodoSection: React.FC<Props> = ({
@@ -31,7 +30,7 @@ const TodoSection: React.FC<Props> = ({
   onEdit,
   onRunAI,
   onDelete,
-  onNewTask
+  onToggleDone
 }) => (
   <div className={styles.todoSection}>
     <div className={styles.sectionHeader} onClick={onToggle}>
@@ -42,17 +41,16 @@ const TodoSection: React.FC<Props> = ({
     {isOpen && (
       <ul className={styles.todoList}>
         {todos.map((todo, i) => (
-          <TodoItem
-            key={i}
-            todo={todo}
-            onEdit={() => onEdit(i)}
-            onRunAI={() => onRunAI(todo.task)}
-            onDelete={() => onDelete(i)}
-          />
+          
+        <TodoItem
+          key={i}
+          todo={todo}
+          onEdit={() => onEdit(i)}
+          onRunAI={() => onRunAI(todo.task)}
+          onDelete={() => onDelete(i)}
+          onToggleDone={(done) => onToggleDone(i, done)} // ✅ pass done handler
+        />
         ))}
-        <li>
-          <NewTaskButton onClick={onNewTask} />
-        </li>
       </ul>
     )}
   </div>
