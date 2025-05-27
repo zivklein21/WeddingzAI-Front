@@ -226,13 +226,40 @@ const GuestList: React.FC = () => {
         <FiArrowLeft className={styles.backIcon} onClick={() => navigate(-1)} title="Go Back" />
         <h2 className={styles.guestHeader}>Guest List</h2>
 
-        <form onSubmit={handleAddGuest} className={styles.guestForm}>
-          <input name="fullName" value={form.fullName} onChange={handleInputChange} placeholder="Full Name" required />
-          <input name="email" type="email" value={form.email} onChange={handleInputChange} placeholder="Email" required />
-          <input name="phone" value={form.phone} onChange={handleInputChange} placeholder="Phone" />
-          <input name="numberOfGuests" type="number" min={1} value={form.numberOfGuests} onChange={handleInputChange} placeholder="# Guests" />
-          <button type="submit">+ Add Guest</button>
-        </form>
+          <form className={styles.guestForm} onSubmit={handleAddGuest}>
+            <input
+              name="fullName"
+              value={form.fullName}
+              onChange={handleInputChange}
+              placeholder="Full Name"
+              required
+            />
+            <input
+              name="email"
+              type="email"
+              value={form.email}
+              onChange={handleInputChange}
+              placeholder="Email"
+              required
+            />
+            <input
+              name="phone"
+              value={form.phone}
+              onChange={handleInputChange}
+              placeholder="Phone"
+            />
+            <input
+              name="numberOfGuests"
+              type="number"
+              min={1}
+              value={form.numberOfGuests}
+              onChange={handleInputChange}
+              placeholder="# Guests"
+            />
+            <button type="submit" >
+              + Add Guest
+            </button>
+          </form>
 
         <div className={styles.toolbar}>
           <div className={styles.actionsContainer}>
