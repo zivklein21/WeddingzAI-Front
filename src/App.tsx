@@ -15,6 +15,7 @@ import GuestPage from "./pages/GuestListPage";
 import UserVendorsPage from "./pages/UserVEndorsPage";
 import AllVendors from "./components/Vendors/AllVendors";
 import InvitationPage from "./pages/InvitationPage";
+import MenuPage from "./pages/MenuPage";
 
 export default function App() {
   return (
@@ -35,6 +36,7 @@ export default function App() {
           <Route path="/myVendors" element={<UserVendorsPage /> } />
           <Route path="/vendors" element={<AllVendors /> } />
           <Route path="/invitation" element={<InvitationPage />} />
+          <Route path="/menu" element={<MenuPage />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
