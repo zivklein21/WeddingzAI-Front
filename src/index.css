@@ -3,6 +3,7 @@
 
 :root {
    --wedding-pink: #f9e6f0;
+   --wedding-pink-06: rgba(249, 230, 240, 0.6);
    --wedding-black: #000000;
    --wedding-white: #ffffff;
    --wedding-purple: #d2b1e5e1;
@@ -52,7 +53,7 @@
  }
  
  /* BUTTONS: purple bg default, pink on hover */
- button:not(.submitBtn) {
+ button {
    font-family: var(--font-rubik);
    font-weight: 700;
    padding: 0.6em 1.4em;
@@ -100,3 +101,7 @@
  }
  
  /* Any other base button hover opacity rule is overridden above */
+
+ .no-scroll {
+  overflow: hidden;
+}

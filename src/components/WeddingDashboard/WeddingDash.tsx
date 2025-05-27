@@ -76,7 +76,7 @@ export default function WeddingDashboard() {
         <div className={`${styles.card} ${styles.detailsMatter}`}>
           Details matter
           <hr className={styles.divider} />
-          <Link to="/guests">
+          <Link to="/details-matter">
             <div className={styles.manageLink}>Manage Details</div>
           </Link>
         </div>
