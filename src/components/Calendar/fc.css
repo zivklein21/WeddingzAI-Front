@@ -1,0 +1,52 @@
+
+
+.fc {
+  width: 100%;
+  height: 90%;
+}
+
+.fc-toolbar-title {
+  color: var(--wedding-pink) !important;
+  font-size: 1.28rem;
+  font-weight: 700;
+}
+
+.fc .fc-button,
+.fc .fc-today-button,
+.fc .fc-prev-button,
+.fc .fc-next-button {
+  background: var(--wedding-purple) !important;
+  color: black !important;
+  border: none !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  box-shadow: 0 1px 8px 0 rgba(178,145,255,0.08) !important;
+  transition: background 0.18s;
+}
+.fc .fc-button-active,
+.fc .fc-button:focus {
+  background: var(--wedding-pink) !important;
+  color: black !important;
+  outline: none !important;
+}
+.fc .fc-button:hover {
+  background: var(--wedding-pink) !important;
+  color: black !important;
+}
+
+.fc .fc-button-group > .fc-button {
+  margin: 0 2px !important;
+}
+
+.fc .fc-daygrid-body {
+  min-height: 320px;
+}
+.fc .fc-daygrid-day-frame {
+  min-height: 36px;
+  padding: 2px 0;
+}
+.fc-scroller {
+  overflow: visible !important;
+  max-height: none !important;
+}
+
