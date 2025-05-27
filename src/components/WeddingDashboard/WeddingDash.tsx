@@ -43,7 +43,7 @@ export default function WeddingDashboard() {
         <div className={`${styles.card} ${styles.calendar}`}>
           Calendar
           <hr className={styles.divider} />
-          <Link to="/guests">
+          <Link to="/calendar">
             <div className={styles.manageLink}>Manage Calendar</div>
           </Link>
         </div>
@@ -51,7 +51,7 @@ export default function WeddingDashboard() {
         <div className={`${styles.card} ${styles.menu}`}>
           Menu
           <hr className={styles.divider} />
-          <Link to="/guests">
+          <Link to="/menu">
             <div className={styles.manageLink}>Manage Menu</div>
           </Link>
         </div>
@@ -87,7 +87,7 @@ export default function WeddingDashboard() {
         <div className={`${styles.card} ${styles.invitation}`}>
           Invitation
           <hr className={styles.divider} />
-          <Link to="/guests">
+          <Link to="/invitation">
             <div className={styles.manageLink}>Manage Invitation</div>
           </Link>
         </div>
