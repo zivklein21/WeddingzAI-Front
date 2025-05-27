@@ -56,6 +56,13 @@ export async function fetchMyTdl(): Promise<TdlData> {
   return docs[0].tdl;
 }
 
+export async function getByUserId(userId: string): Promise<TdlDocument[]> {
+  const resp = await apiClient.get<{ message: string; data: TdlDocument[] }>(
+    `/tdl/mine`
+  );
+  return resp.data.data;
+}
+
 export async function addTask(
   task: string,
   dueDate?: string,
