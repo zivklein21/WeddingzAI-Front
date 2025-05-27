@@ -128,7 +128,6 @@ export async function setTaskDone(
 export default {
   uploadFormJson,
   fetchMyTdl,
-  getByUserId,
   addTask,
   updateTask,
   deleteTask,

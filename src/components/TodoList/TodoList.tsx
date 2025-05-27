@@ -41,7 +41,7 @@ export default function TodoList() {
   } | null>(null);
 
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, updateUserSession } = useAuth();
 
   useEffect(() => {
     (async () => {
@@ -82,6 +82,10 @@ export default function TodoList() {
     setIsSavingDate(true);
     try {
       await tdlService.updateWeddingDate(weddingDateInput);
+      updateUserSession({
+        ...user,
+        weddingDate: weddingDateInput
+      });
       const fresh = await tdlService.fetchMyTdl();
       setTodoList(fresh);
       setWeddingDateInput(fresh.weddingDate);
