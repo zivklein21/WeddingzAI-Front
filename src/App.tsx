@@ -16,6 +16,8 @@ import UserVendorsPage from "./pages/UserVEndorsPage";
 import AllVendors from "./components/Vendors/AllVendors";
 import InvitationPage from "./pages/InvitationPage";
 import CalendarPage from "./pages/CalendarPage";
+import MenuPage from "./pages/MenuPage";
+
 
 export default function App() {
   return (
@@ -37,6 +39,7 @@ export default function App() {
           <Route path="/vendors" element={<AllVendors /> } />
           <Route path="/invitation" element={<InvitationPage />} />
           <Route path="/calendar" element={<CalendarPage />} />
+          <Route path="/menu" element={<MenuPage />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
