@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import styles from "./ProfileForm.module.css";
+import vendorStyles from "../Vendors/vendors.module.css";
 import { useAuth } from "../../hooks/useAuth/AuthContext";
 import defaultAvatar from "../../assets/images/user-icon.svg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -7,6 +8,10 @@ import { faImage } from "@fortawesome/free-solid-svg-icons";
 import fileService from "../../services/file-service";
 import authService from "../../services/auth-service";
 import tdlService from "../../services/tdl-service";
+import { Vendor } from "../../types/Vendor";
+import vendorService from "../../services/vendor-service";
+import VendorCardList from "../Vendors/VendorCardList";
+
 
 interface UserDetails {
   email: string;
@@ -41,6 +46,8 @@ const Profile = () => {
 
   const [isPremium, setIsPremium] = useState<boolean | null>(null);
 
+  const [vendors, setVendors] = useState<Vendor[]>([]);
+
   useEffect(() => {
     if (user) {
       setUserDetails({
@@ -58,8 +65,8 @@ const Profile = () => {
       });
     }
 
-    // Fetch Premium Status
     const abortController = new AbortController();
+
     const fetchPremiumStatus = async () => {
       try {
         const { request: getPremiumStatusRequest } = await authService.getUserPremiumStatus();
@@ -71,13 +78,24 @@ const Profile = () => {
       } catch (error) {
         console.error("Error fetching premium status:", error);
       }
-    }
+    };
+
+    const fetchVendors = async () => {
+      try {
+        const vendors = await vendorService.fetchBookedVendors();
+        console.log("Fetched Vendors:", vendors);
+        setVendors(vendors);
+      } catch (error) {
+        console.error("Error fetching vendors:", error);
+      }
+    };
+
     fetchPremiumStatus();
+    fetchVendors();
 
     return () => {
       abortController.abort();
     };
-
   }, [user]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -278,6 +296,24 @@ const Profile = () => {
             </button>
           </form>
         </div>
+
+        <br />
+        <br />
+
+        {/* Booked Vendors Section */}
+        <div className={vendorStyles.vendorPage}>
+          <div className={vendorStyles.vendorContainer}>
+            <div className={styles.card} style={{ justifyContent: "center" }}>
+              {vendors.length > 0 && (
+                <div className={vendorStyles.vendorSection}>
+                  <h2 className={vendorStyles.vendorHeader}>Booked Vendors</h2>
+                  <VendorCardList vendors={vendors} />
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+        
         <br />
         <br />
 
@@ -322,6 +358,31 @@ const Profile = () => {
 
             {passServerError && <div className={`${styles["alert-profile"]} ${styles["alert-danger-profile"]}`}>{passServerError}</div>}
             {passSuccessMessage && <div className={`${styles["alert-profile"]} ${styles["alert-success-profile"]}`}>{passSuccessMessage}</div>}
+
+            {/* Booked Vendors Section */}
+            {/* {vendors.length > 0 && (
+              <div className={styles.card}>
+                <h3 style={{ marginBottom: "1rem", color: "#2e2e2e" }}>Vendors</h3>
+                <ul style={{ listStyle: "none", paddingLeft: 0 }}>
+                  {vendors.map((vendor) => (
+                    <li key={vendor._id} style={{ marginBottom: "1rem", borderBottom: "1px solid #ddd", paddingBottom: "1rem" }}>
+                      <div style={{ display: "flex", alignItems: "center" }}>
+                        <img
+                          src={vendor.profileImage}
+                          alt={vendor.name}
+                          style={{ width: "60px", height: "60px", borderRadius: "50%", marginRight: "1rem" }}
+                        />
+                        <div>
+                          <strong>{vendor.name}</strong>
+                          <p style={{ margin: 0, fontSize: "0.9rem" }}>{vendor.vendorType}</p>
+                          {vendor.area && <p style={{ margin: 0, fontSize: "0.8rem", color: "#888" }}>{vendor.area}</p>}
+                        </div>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )} */}
 
             <button type="submit" className={styles.updateBtn} style={{ width: "105%" }}>
               Reset Password
