@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavBar } from "../components/NavBar/NavBar";
 import { useAuth } from '../hooks/useAuth/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import Invitation from '../components/Invitation/Invitation';
 
 class ErrorBoundary extends React.Component<
@@ -31,22 +31,19 @@ class ErrorBoundary extends React.Component<
 }
 
 const InvitationPage: React.FC = () => {
-  const { isAuthenticated, loading: authLoading } = useAuth();
-  const navigate = useNavigate();
+  const { isAuthenticated, loading } = useAuth();
 
-  React.useEffect(() => {
-    if (!authLoading && !isAuthenticated) {
-      navigate('/auth');
-    }
-  }, [isAuthenticated, authLoading, navigate]);
+  if (loading) {
+    return <h1>Loading...</h1>;
+  }
 
-  if (authLoading) {
-    return <div>Loading...</div>;
+  if (!isAuthenticated) {
+    return <Navigate to="/auth" />;
   }
 
   return (
     <>
-      <NavBar title="Create Your Wedding Invitation"/>
+      <NavBar title=""/>
       <ErrorBoundary>
         <Invitation />
       </ErrorBoundary>
