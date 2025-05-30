@@ -1,26 +1,21 @@
-html, body {
-  height: 100%;
-  margin: 0;
-}
-
-.container {
+.invitePage {
   padding-top: 90px;  
   width: 100%;
-  min-height: 100vh;
+  height: 100vh;
   background: url('../../assets/images/main-bg.png') no-repeat center center;
   background-size: cover;
   background-color: #fff0f5;
   position: relative;
-  overflow-x: hidden;
+  overflow: hidden;
 }
 
-.section {
+.inviteContainer {
   display: flex;
   position: relative;
   flex-direction: column;
   max-width: 1000px;
   margin: 0 auto;
-  min-height: calc(100vh - 100px);
+  height: calc(100vh - 100px); 
   background: #fff;
   border-radius: 16px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
@@ -28,93 +23,76 @@ html, body {
   margin-bottom: 20px;
   box-sizing: border-box;
   overflow-y: auto;
+  scrollbar-width: none;
 }
 
-.sectionTitle {
+.inviteHeader {
   font-size: 2rem;
   font-weight: 700;
   color: #2c3e50;
   margin-bottom: 1.5rem;
   border-bottom: 2px solid #ddd;
   padding-bottom: 0.5rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
 }
 
-.icon {
+.backIcon {
+  position: absolute;
+  top: 20px;        
+  right: 20px;      
+  font-size: 1.5rem;
+  color: var(--wedding-gray, #888);
+  cursor: pointer;
+  transition: color 0.2s;
+  z-index: 10;     
+}
+.backIcon:hover {
   color: var(--wedding-purple, #b291ff);
 }
 
 .promptSection {
   display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin-bottom: 2rem;
+  gap: 8px;
+  margin-bottom: 1rem;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid #eaeaea;
+  border-radius: 8px;
+  padding: 20px;
 }
 
 .promptInput {
-  width: 100%;
-  padding: 1rem;
-  border: 1px solid #eaeaea;
-  border-radius: 8px;
-  font-size: 1rem;
-  min-height: 120px;
-  resize: vertical;
-  background: #fdfdfd;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.createButton {
-  padding: 1rem 2rem;
-  background-color: var(--wedding-purple, #b291ff);
-  color: white;
+  flex: 1;
+  padding: 0.75rem;
   border: none;
-  border-radius: 8px;
+  border-radius: 4px;
+  resize: none;
+  height: 100px;
+}
+
+.createIcon {
+  font-size: 1.5rem;
+  color: var(--wedding-purple);
   cursor: pointer;
-  font-size: 1.1rem;
-  transition: background-color 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  font-weight: 600;
 }
 
-.createButton:hover {
-  background-color: var(--wedding-pink, #d291ff);
+.createIcon:hover {
+  color: var(--wedding-pink);
 }
 
-.createButton:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
-}
 
 .spinner {
+  font-size: 1.5rem;
   animation: spin 1s linear infinite;
+  color: var(--wedding-purple);
 }
 
 @keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+  to { transform: rotate(360deg); }
 }
 
-.error {
-  color: #dc3545;
-  background-color: #f8d7da;
-  border: 1px solid #f5c6cb;
-  border-radius: 8px;
-  padding: 1rem;
-  margin-bottom: 1rem;
-}
 
 .result {
   margin-top: 2rem;
-  background: #fdfdfd;
   border: 1px solid #eaeaea;
   border-radius: 8px;
   padding: 1.5rem;
@@ -129,7 +107,7 @@ html, body {
 }
 
 .resultHeader h3 {
-  font-size: 1.5rem;
+  font-size: 18px;
   color: #2c3e50;
   margin: 0;
 }
@@ -138,10 +116,11 @@ html, body {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  background-color: var(--wedding-purple, #b291ff);
-  color: white;
+  padding: 0;
+  background-color: white !important;
+  color: var(--wedding-purple);
   border: none;
+  box-shadow: none !important;
   border-radius: 6px;
   cursor: pointer;
   font-size: 1rem;
@@ -150,12 +129,9 @@ html, body {
 }
 
 .downloadButton:hover {
-  background-color: var(--wedding-pink, #d291ff);
+  color: var(--wedding-pink);
 }
 
-.downloadButton svg {
-  font-size: 1rem;
-}
 
 .imageContainer {
   display: flex;
@@ -191,7 +167,7 @@ html, body {
 .linkCategory h3 {
   color: #2c3e50;
   margin-bottom: 1rem;
-  font-size: 1.2rem;
+  font-size: 18px;
   font-weight: 600;
 }
 
@@ -206,19 +182,16 @@ html, body {
 }
 
 .linkList a {
-  color: var(--wedding-purple, #b291ff);
+  color: black;
   text-decoration: none;
   display: flex;
   align-items: center;
+  font-size: 15px;
   gap: 0.5rem;
   transition: color 0.2s;
-  font-weight: 500;
+  font-weight: 400;
 }
 
 .linkList a:hover {
-  color: var(--wedding-pink, #d291ff);
+  color: var(--wedding-purple);
 }
-
-.linkList svg {
-  font-size: 0.8rem;
-} 
