@@ -119,10 +119,15 @@ export const toggleBookedVendor = async (
   return resp.data;
 };
 
-// 12. PATCH /vendor/cancle - cancle book
+// 12. PATCH /vendor/cancel - cancel book
 export const cancelBookedVendor = async (vendorId: string) => {
   const resp = await apiClient.patch("/vendors/cancel", { vendorId });
   return resp.data;
+};
+
+export const fetchBookedVendors = async (): Promise<Vendor[]> => {
+  const resp = await apiClient.get<ApiResponse<Vendor[]>>("/vendors/booked");
+  return resp.data.data || [];
 };
 
 export default {
@@ -137,5 +142,6 @@ export default {
   fetchVendorSummary,
   refetchRelevantVendors,
   toggleBookedVendor,
-  cancelBookedVendor
+  cancelBookedVendor,
+  fetchBookedVendors
 };
