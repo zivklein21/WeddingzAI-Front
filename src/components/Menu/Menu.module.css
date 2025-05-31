@@ -1,26 +1,23 @@
-html, body {
-  height: 100%;
-  margin: 0;
-}
+/* All Page */
 
-.container {
+.menuPage {
   padding-top: 90px;  
   width: 100%;
-  min-height: 100vh;
+  height: 100vh;
   background: url('../../assets/images/main-bg.png') no-repeat center center;
   background-size: cover;
   background-color: #fff0f5;
   position: relative;
-  overflow-x: hidden;
+  overflow: hidden;
 }
 
-.section {
+.menuContainer {
   display: flex;
   position: relative;
   flex-direction: column;
   max-width: 1000px;
   margin: 0 auto;
-  min-height: calc(100vh - 100px);
+  height: calc(100vh - 100px); 
   background: #fff;
   border-radius: 16px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
@@ -28,273 +25,451 @@ html, body {
   margin-bottom: 20px;
   box-sizing: border-box;
   overflow-y: auto;
+  scrollbar-width: none;
 }
 
-.sectionTitle {
+
+.menuHeader {
   font-size: 2rem;
   font-weight: 700;
   color: #2c3e50;
   margin-bottom: 1.5rem;
   border-bottom: 2px solid #ddd;
   padding-bottom: 0.5rem;
+}
+
+.backIcon {
+  position: absolute;
+  top: 20px;        
+  right: 20px;      
+  font-size: 1.5rem;
+  color: var(--wedding-gray, #888);
+  cursor: pointer;
+  transition: color 0.2s;
+  z-index: 10;     
+}
+
+.backIcon:hover {
+  color: var(--wedding-purple, #b291ff);
+}
+
+.section {
   display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  flex-direction: column;
+  align-items: center;     /* תמרכז אופקית את התוכן! */
+  gap: 8px;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid #eaeaea;
+  border-radius: 8px;
+  padding: 20px;
+  width: 100%;   /* זה סבבה, שימי לב שזה לפי הקונטיינר */
+  box-sizing: border-box;
+}
+
+.section h3{
+  color: var(--wedding-black);
+  font-size: 15px;
+  font-weight: 400;
 }
 
 .icon {
-  color: var(--wedding-purple, #b291ff);
-}
-
-.formSection {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  margin-bottom: 2rem;
-}
-
-.inputGroup {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.inputGroup label {
-  font-weight: 600;
-  color: #2c3e50;
-}
-
-.input, .textarea {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #eaeaea;
-  border-radius: 8px;
-  font-size: 1rem;
-  background: #fdfdfd;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.textarea {
-  min-height: 100px;
-  resize: vertical;
-}
-
-.dishesSection {
-  background: #f8f9fa;
-  padding: 1.5rem;
-  border-radius: 8px;
-  border: 1px solid #eaeaea;
-}
-
-.dishesSection h3 {
-  color: #2c3e50;
-  margin-bottom: 1rem;
-  font-size: 1.2rem;
-}
-
-.dishItem {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 1rem;
-  align-items: flex-start;
-}
-
-.dishInputs {
-  flex: 1;
-  display: flex;
-  gap: 1rem;
-}
-
-.removeButton {
-  background: none;
-  border: none;
-  color: #dc3545;
+  font-size: 1.5rem;
+  color: var(--wedding-dark-purple);
   cursor: pointer;
-  padding: 0.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: color 0.2s;
 }
 
-.removeButton:hover {
-  color: #c82333;
-}
-
-.addButton {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1rem;
-  background-color: #f8f9fa;
-  color: var(--wedding-purple, #b291ff);
-  border: 1px solid var(--wedding-purple, #b291ff);
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 1rem;
-  font-weight: 500;
-  transition: all 0.2s;
-}
-
-.addButton:hover {
-  background-color: var(--wedding-purple, #b291ff);
-  color: white;
-}
-
-.createButton {
-  padding: 1rem 2rem;
-  background-color: var(--wedding-purple, #b291ff);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 1.1rem;
-  transition: background-color 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  font-weight: 600;
-}
-
-.createButton:hover {
-  background-color: var(--wedding-pink, #d291ff);
-}
-
-.createButton:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
+.icon:hover {
+  color: var(--wedding-pink);
 }
 
 .spinner {
+  font-size: 1.5rem;
   animation: spin 1s linear infinite;
+  color: var(--wedding-purple);
 }
 
 @keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+  to { transform: rotate(360deg); }
 }
 
-.error {
-  color: #dc3545;
-  background-color: #f8d7da;
-  border: 1px solid #f5c6cb;
-  border-radius: 8px;
-  padding: 1rem;
-  margin-bottom: 1rem;
-}
+/* Flow section */
 
-.result {
-  margin-top: 2rem;
-  background: #fdfdfd;
-  border: 1px solid #eaeaea;
-  border-radius: 8px;
-  padding: 1.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.resultHeader {
+.stepsWrapper {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  width: 100%;
+  margin: 24px 0;
+  position: relative;
 }
 
-.resultHeader h3 {
-  font-size: 1.5rem;
-  color: #2c3e50;
-  margin: 0;
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  position: relative;
+  z-index: 2;
+  transition: color 0.3s ease;
 }
 
-.downloadButton {
+.iconCircle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color:  var(--wedding-pink);
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  background-color: var(--wedding-purple, #b291ff);
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 1rem;
-  font-weight: 500;
-  transition: background-color 0.2s;
-}
-
-.downloadButton:hover {
-  background-color: var(--wedding-pink, #d291ff);
-}
-
-.downloadButton svg {
-  font-size: 1rem;
-}
-
-.imageContainer {
-  display: flex;
   justify-content: center;
+  color:  var(--wedding-gray);
+  font-size: 20px;
+  transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+}
+
+.stepLabel {
+  margin-top: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--wedding-gray);
+  transition: color 0.3s ease;
+}
+
+.connector {
+  flex: 1;
+  height: 2px;
+  background-color: #ccc;
+  margin: 0 -4px;
+  transition: background-color 0.3s ease;
+  z-index: 1;
+}
+
+.completedConnector {
+  flex: 1;
+  height: 2px;
+  background-color: var(--wedding-purple);
+  margin: 0 -4px;
+  transition: background-color 0.3s ease;
+  z-index: 1;
+}
+
+.activeStep .iconCircle {
+  background-color: var(--wedding-dark-purple);
+  color: var(--wedding-white);
+  transform: scale(1.1);
+}
+
+.completedStep .iconCircle {
+  background-color:  var(--wedding-purple);
+  color: var(--wedding-white);
+}
+
+.completedStep .stepLabel {
+  color: var(--wedding-purple);;
+}
+
+.activeStep .stepLabel {
+  color:var(--wedding-dark-purple);
+}
+
+/* Background Section */
+
+.inputRow {
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  justify-content: space-between;
   align-items: center;
-  background: #fff;
-  border-radius: 8px;
-  padding: 1rem;
+  gap: 16px;
+  width: 100%;
+}
+
+.promptInput {
+  width: 100%;
+  height: 100px;
+  border: none;
+  font-size: 18px;
+  resize: none;
+  outline: none;
+  padding: 10px;
+}
+
+.icons {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+}
+
+.previewContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
 }
 
 .menuImage {
-  max-width: 100%;
-  height: auto;
-  border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  max-width: 50%;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
 }
 
-.linksContainer {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
-  margin-top: 1rem;
+
+/* Dish Section */
+.dishInputs {
+  padding-top: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap:5px;
+  margin-bottom: 25px;
 }
 
-.linkCategory {
-  background: #fdfdfd;
-  padding: 1.5rem;
-  border-radius: 8px;
-  border: 1px solid #eaeaea;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.linkCategory h3 {
-  color: #2c3e50;
-  margin-bottom: 1rem;
-  font-size: 1.2rem;
-  font-weight: 600;
-}
-
-.linkList {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.linkList li {
-  margin-bottom: 0.8rem;
-}
-
-.linkList a {
-  color: var(--wedding-purple, #b291ff);
-  text-decoration: none;
+.dishInputs input[type="text"],
+.dishInputs select {
+  height: 35px;
+  font-size: 15px;
+  padding: 0 16px;
+  border-radius: 6px;
+  box-sizing: border-box;
+  min-width: 180px;
+  max-width: 330px;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  transition: color 0.2s;
+  line-height: 1.1;  
+  vertical-align: middle;
+}
+
+.dishInputs select {
+  min-width: 135px;
+  max-width: 160px;
+  height: 35px;
+  padding-right: 28px;
+  padding-left: 16px;
+}
+
+.vegBox {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 15px;
+  font-weight: 400;
+  height: 35px;
+  margin: 0;
+  line-height: 1.1;
+}
+
+.vegBox input[type="checkbox"] {
+  width: 22px;
+  height: 22px;
+  accent-color: var(--wedding-purple);
+  margin: 0 4px 0 0;
+  vertical-align: middle;
+  position: relative;
+  top: 1px; 
+}
+
+.menuTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 auto 14px auto;
+}
+
+.menuTable th, .menuTable td {
+  padding: 10px 12px;
+  text-align: center;
+  border-bottom: 1.5px solid #eee;
+  font-size: 15px;
+  font-weight: 400;
+  color: #393939;
+}
+
+.menuTable th {
+  background: #faf7ff;
   font-weight: 500;
+  color: #222;
+  font-size: 15px;
+  text-align: center;
 }
 
-.linkList a:hover {
-  color: var(--wedding-pink, #d291ff);
+.menuTable td:last-child, .menuTable th:last-child {
+  text-align: center;
+  min-width: 90px;
 }
 
-.linkList svg {
-  font-size: 0.8rem;
-} 
+.menuTable tr:last-child td {
+  border-bottom: none;
+}
+
+.editRow input[type="text"],
+.editRow select {
+  width: 100%;
+  padding: 5px 8px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
+  background: #fff;
+  text-align: center;
+}
+.editRow input[type="checkbox"] {
+  transform: scale(1.2);
+  accent-color: #b291ff;
+}
+
+.divider {
+  width: 100%;
+  height: 2px;
+  background: lightgray;
+  margin: 28px 0 8px 0;
+  border-radius: 4px;
+  opacity: 0.88;
+}
+
+
+/* Design Section */
+.menuMain {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  width: 100%;
+  max-width: 1300px;
+  margin: auto;
+  min-height: 550px;
+  border-radius: 16px;
+  border: 1px solid lightgray;
+}
+
+.editZone {
+  flex: 1 1 210px;
+  min-width: 210px;
+  max-width: 250px;
+  background: #fffdfe;
+  border-radius: 16px;
+  padding: 18px 14px 14px 18px;
+  height: 550px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.editTitle {
+  font-weight: 600;
+  font-size: 20px;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.editPlaceholder {
+  color: #b2a8b5;
+  text-align: center;
+  margin-top: 45%;
+  font-size: 17px;
+}
+
+.editControls {
+  margin-top: 18px;
+  width: 100%;
+}
+
+.editRow {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  gap: 6px;
+  font-size: 15px;
+}
+
+.editRow input[type="range"] {
+  width: 90px;   /* Adjust to the desired width */
+  height: 3px;
+  margin-right: 8px; /* space from the value */
+}
+
+.editRow span {
+  font-size: 14px; /* or smaller */
+  margin-left: 4px;
+}
+
+.dishListZone {
+  flex: 1 1 140px;
+  min-width: 140px;
+  max-width: 170px;
+  background: #fffdfe;
+  border-radius: 16px;
+  padding: 14px 14px 12px 16px;
+  height: 550px;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+.dishesTitle {
+  font-weight: 600;
+  font-size: 20px;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.dishCategory {
+  margin-bottom: 10px;
+}
+
+.catLabel {
+  font-weight: 500;
+  font-size: 18px;
+  color: var(--wedding-dark-purple);
+  margin-bottom: 2px;
+}
+
+.dishRow {
+  display: flex;
+  align-items: center;
+  margin-bottom: 2px;
+  gap: 4px;
+}
+
+.dishName {
+  font-weight: 400;
+  font-size: 14px;
+}
+
+.vegLeaf {
+  font-size: 15px;
+  margin-left: 3px;
+  margin-right: 0px;
+}
+
+.imageZone {
+  width: 450px;
+  height: 550px;
+  min-width: 450px;
+  min-height: 550px;
+  max-width: 450px;
+  max-height: 550px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  box-shadow: 0 4px 24px #d3bef636;
+  border-radius: 16px;
+  margin: 0 auto;
+  background: #fff;
+}
+
+.downloadRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 36px;
+  margin-top: 30px;
+  margin-bottom: 10px;
+}
+.downloadRow .icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  color: var(--wedding-dark-purple, #7e46c1);
+  font-size: 1.6rem;
+  transition: color 0.15s;
+}
+.downloadRow .icon:hover {
+  color: var(--wedding-pink, #be80ff);
+}
