@@ -64,25 +64,25 @@ const Invitation: React.FC = () => {
           <FiArrowLeft className={styles.backIcon} onClick={() => navigate(-1)} title="Go Back" />
           <h2 className={styles.inviteHeader}>Invintation</h2>
           <div className={styles.promptSection}>
-          <textarea
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-            placeholder="Describe your dream wedding invitation... (e.g., 'A beautiful wedding invitation with elegant typography and floral elements')"
-            className={styles.promptInput}
-          />
-          {isLoading
-          ? <FiLoader className={styles.spinner} />
-          : (
-            <span
-              role="button"
-              tabIndex={0}
-              onClick={handleCreateInvitation}
-              className={styles.createIcon}
-            >
-              <ImMagicWand />
-            </span>
-          )
-        }
+              <textarea
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+                placeholder="Describe your dream wedding invitation... (e.g., 'A beautiful wedding invitation with elegant typography and floral elements')"
+                className={styles.promptInput}
+              />
+              {isLoading
+              ? <FiLoader className={styles.spinner} />
+              : (
+                <span
+                  role="button"
+                  tabIndex={0}
+                  onClick={handleCreateInvitation}
+                  className={styles.createIcon}
+                >
+                  <ImMagicWand />
+                </span>
+              )
+            }
           </div>
           <div>
             {invitation && (

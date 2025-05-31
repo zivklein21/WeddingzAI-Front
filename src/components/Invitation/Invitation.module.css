@@ -79,7 +79,6 @@
   color: var(--wedding-pink);
 }
 
-
 .spinner {
   font-size: 1.5rem;
   animation: spin 1s linear infinite;
