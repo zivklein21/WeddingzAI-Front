@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styles from "./Table.module.css";
 
 export type TableProps = {
@@ -8,6 +8,8 @@ export type TableProps = {
   onDelete?: () => void;
   onRotate?: () => void;
   rotation?: number;
+  guests?: { fullName: string; numberOfGuests?: number }[];
+  onClick?: () => void;
 };
 
 export default function TableShape({
@@ -17,6 +19,8 @@ export default function TableShape({
   onDelete,
   onRotate,
   rotation = 0,
+  guests = [],
+  onClick,
 }: TableProps) {
   const baseSize = 40;
   const factor = 6;
@@ -50,7 +54,7 @@ export default function TableShape({
           ↻
         </button>
       )}
-      <div className={styles.tableShape} style={style}>
+      <div className={styles.tableShape} style={style} onClick={onClick}>
         {name}
       </div>
     </div>

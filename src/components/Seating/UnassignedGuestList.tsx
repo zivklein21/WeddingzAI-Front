@@ -70,7 +70,8 @@ export default function UnassignedGuestList() {
                             handleTableSelection(guest._id, table._id)
                           }
                         >
-                          {table.name} (Seats: {table.capacity})
+                          {table.name} (Seats:{" "}
+                          {table.freeSeats ?? table.capacity})
                         </button>
                       </li>
                     ))

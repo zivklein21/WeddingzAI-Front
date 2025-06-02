@@ -13,6 +13,7 @@ export type Table = {
   shape: "round" | "rectangle" | "square";
   capacity: number;
   position: { x: number; y: number };
+  guests: { fullName: string; numberOfGuests?: number }[]; // נוסיף את השדה הזה
 };
 
 export default function SeatingPage() {
@@ -71,6 +72,7 @@ export default function SeatingPage() {
             capacity={table.capacity}
             x={table.position.x}
             y={table.position.y}
+            guests={table.guests}
           />
         ))}
       </DndContext>

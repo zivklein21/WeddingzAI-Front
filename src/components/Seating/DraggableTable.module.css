@@ -1,0 +1,47 @@
+.guestPopup {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  background-color: #ffffff;
+  border: 1px solid #d1d1d1;
+  border-radius: 8px;
+  padding: 10px 14px;
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  min-width: 220px;
+  font-size: 0.9rem;
+}
+
+.guestList {
+  list-style: none;
+  margin: 8px 0 0 0;
+  padding: 0;
+}
+
+.guestList li {
+  padding: 4px 0;
+  border-bottom: 1px solid #ececec;
+}
+
+.guestList li:last-child {
+  border-bottom: none;
+}
+
+.closeButton {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  background: transparent;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  color: #999;
+  font-weight: bold;
+}
+
+.guestPopup h4 {
+  margin: 0 0 6px 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #a26bc9;
+}
