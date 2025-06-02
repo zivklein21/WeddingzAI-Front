@@ -6,6 +6,8 @@ import AddTableForm from "../../components/Seating/AddTableForm";
 import { getMyTables, updateTable } from "../../services/seating-service";
 import { NavBar } from "../../components/NavBar/NavBar";
 import UnassignedGuestList from "../../components/Seating/UnassignedGuestList";
+import { fetchMyGuests } from "../../services/guest-service";
+import { Guest } from "../../types/guest";
 
 export type Table = {
   _id: string;
@@ -13,11 +15,12 @@ export type Table = {
   shape: "round" | "rectangle" | "square";
   capacity: number;
   position: { x: number; y: number };
-  guests: { fullName: string; numberOfGuests?: number }[]; // נוסיף את השדה הזה
+  guests: { _id?: string; fullName: string; numberOfGuests?: number }[];
 };
 
 export default function SeatingPage() {
   const [tables, setTables] = useState<Table[]>([]);
+  const [unassignedGuests, setUnassignedGuests] = useState<Guest[]>([]);
 
   useEffect(() => {
     const fetchTables = async () => {
@@ -28,8 +31,30 @@ export default function SeatingPage() {
         console.error("Error loading tables:", err);
       }
     };
+
+    const fetchGuests = async () => {
+      try {
+        const data = await fetchMyGuests();
+        const unassigned = data.filter((g) => !g.tableId);
+        setUnassignedGuests(unassigned);
+      } catch (err) {
+        console.error("Error loading unassigned guests:", err);
+      }
+    };
+
     fetchTables();
+    fetchGuests();
   }, []);
+
+  const refreshUnassignedGuests = async () => {
+    try {
+      const data = await fetchMyGuests();
+      const unassigned = data.filter((g) => !g.tableId);
+      setUnassignedGuests(unassigned);
+    } catch (err) {
+      console.error("Error refreshing unassigned guests:", err);
+    }
+  };
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { delta, active } = event;
@@ -58,10 +83,35 @@ export default function SeatingPage() {
     });
   };
 
+  const refreshTables = async () => {
+    try {
+      const data = await getMyTables();
+      setTables(data);
+    } catch (err) {
+      console.error("Error refreshing tables:", err);
+    }
+  };
+
+  // Add updateLocalTableGuests function to update local table guests array
+  const updateLocalTableGuests = (tableId: string, guest: Guest) => {
+    setTables((prevTables) =>
+      prevTables.map((table) =>
+        table._id === tableId
+          ? { ...table, guests: [...table.guests, guest] }
+          : table
+      )
+    );
+  };
+
   return (
     <div className={styles.canvas}>
       <NavBar />
-      <UnassignedGuestList />
+      <UnassignedGuestList
+        guests={unassignedGuests}
+        refreshGuests={refreshUnassignedGuests}
+        refreshTables={refreshTables}
+        updateLocalTableGuests={updateLocalTableGuests}
+      />
       <DndContext onDragEnd={handleDragEnd}>
         {tables.map((table) => (
           <DraggableTable
@@ -73,6 +123,7 @@ export default function SeatingPage() {
             x={table.position.x}
             y={table.position.y}
             guests={table.guests}
+            onGuestRemoved={refreshUnassignedGuests}
           />
         ))}
       </DndContext>

@@ -1,30 +1,24 @@
-import { useEffect, useState } from "react";
-import {
-  fetchMyGuests,
-  assignGuestToTable,
-  Guest,
-} from "../../services/guest-service";
+import { useState } from "react";
+import { Guest } from "../../types/guest";
+import { assignGuestToTable } from "../../services/guest-service";
 import { getAvailableTables } from "../../services/seating-service";
 import styles from "./UnassignedGuestList.module.css";
 
-export default function UnassignedGuestList() {
-  const [guests, setGuests] = useState<Guest[]>([]);
+interface UnassignedGuestListProps {
+  guests: Guest[];
+  refreshGuests: () => void;
+  refreshTables: () => void;
+  updateLocalTableGuests: (tableId: string, guest: Guest) => void;
+}
+
+export default function UnassignedGuestList({
+  guests,
+  refreshGuests,
+  refreshTables,
+  updateLocalTableGuests,
+}: UnassignedGuestListProps) {
   const [selectedGuestId, setSelectedGuestId] = useState<string | null>(null);
   const [availableTables, setAvailableTables] = useState<any[]>([]);
-
-  const fetchGuests = async () => {
-    try {
-      const data = await fetchMyGuests();
-      const unassigned = data.filter((g) => !g.tableId);
-      setGuests(unassigned);
-    } catch (err) {
-      console.error("Error fetching guests:", err);
-    }
-  };
-
-  useEffect(() => {
-    fetchGuests();
-  }, []);
 
   const handleGuestClick = async (guest: Guest) => {
     if (selectedGuestId === guest._id) {
@@ -41,7 +35,12 @@ export default function UnassignedGuestList() {
     await assignGuestToTable(guestId, tableId);
     setSelectedGuestId(null);
     setAvailableTables([]);
-    fetchGuests(); // רענון הרשימה לאחר השיבוץ
+    refreshGuests();
+    refreshTables();
+    const assignedGuest = guests.find((g) => g._id === guestId);
+    if (assignedGuest) {
+      updateLocalTableGuests(tableId, assignedGuest);
+    }
   };
 
   return (
