@@ -1,0 +1,109 @@
+.seatPage {
+  padding-top: 90px;  
+  width: 100%;
+  height: 100vh;
+  background-image: url("/textures/wood-grain.jpg");
+  background-size: cover;
+  background-color: #fff0f5;
+  position: relative;
+  overflow: hidden;
+}
+
+.seatContainer {
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  max-width: 1000px;
+  overflow: hidden; 
+  margin: 0 auto;
+  height: calc(100vh - 100px); 
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  padding: 40px 50px;
+  margin-bottom: 20px;
+  box-sizing: border-box;
+}
+
+.seatHeader {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid #ddd;
+  padding-bottom: 0.5rem;
+}
+
+.backIcon {
+  position: absolute;
+  top: 20px;        
+  right: 20px;      
+  font-size: 1.5rem;
+  color: var(--wedding-gray, #888);
+  cursor: pointer;
+  transition: color 0.2s;
+  z-index: 10;     
+}
+.backIcon:hover {
+  color: var(--wedding-purple, #b291ff);
+}
+
+.contentGrid {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 1.5rem;
+  height: 100%;
+}
+
+.sidebar {
+  border: 1px solid var(--wedding-pink);
+  border-radius: 6px;
+  padding: 1rem;
+  overflow-y: auto;
+  height: calc(100vh - 290px);
+}
+
+.canvas {
+  position: relative;
+  width: 100%;
+  height: calc(100vh - 290);
+  flex: 1;
+  overflow: hidden;
+  border: 1px solid var(--wedding-pink);
+  display: flex;
+  flex-direction: column;
+  border-radius: 6px;
+     
+}
+
+.canvas::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url("/src/assets/images/floor.png");
+  background-size: cover;   
+  background-position: center;
+  background-repeat: no-repeat;
+
+  opacity: 0.4;  
+  z-index: 0;   
+}
+
+.table {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background-color: #ff85a2;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  cursor: grab;
+  user-select: none;
+}
+
+

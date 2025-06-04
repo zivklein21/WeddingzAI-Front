@@ -1,0 +1,118 @@
+
+.icon {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-size: 30px;
+  display: flex;
+  flex-direction: column;
+  size: 48px;
+  align-items: center;
+  cursor: pointer;
+  color: var(--wedding-black);
+  transition: color 0.2s, opacity 0.2s;
+}
+
+.icon:hover {
+  color: var(--wedding-pink);
+}
+
+.iconClose {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 30px;
+  display: flex;
+  flex-direction: column;
+  size: 48px;
+  align-items: center;
+  cursor: pointer;
+  color: var(--wedding-purple);
+  transition: color 0.2s, opacity 0.2s;
+}
+
+.iconClose:hover {
+  color: var(--wedding-pink);
+}
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  width: 400px;
+  max-width: 90%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.formTitle {
+  color: #333;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
+
+.label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #555;
+  margin-bottom: 0.5rem;
+}
+
+.input,
+.select,
+.number {
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 0.95rem;
+}
+
+.input:focus,
+.select:focus,
+.number:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}
+
+.row {
+  display: flex;
+  gap: 1rem;
+}
+
+.row .formGroup {
+  flex: 1;
+}

@@ -12,6 +12,7 @@ import DetailsMatterPage from "./pages/DetailsMatterPage";
 import ProfilePage from "./pages/ProfilePage";
 import { AuthProvider } from "./hooks/useAuth/AuthContext";
 import GuestPage from "./pages/GuestListPage";
+import SeatingPage from "./pages/SeatingPage";
 import UserVendorsPage from "./pages/UserVEndorsPage";
 import AllVendors from "./components/Vendors/AllVendors";
 import InvitationPage from "./pages/InvitationPage";
@@ -34,6 +35,7 @@ export default function App() {
           <Route path="/weddash" element={<WeddingDashboardPage />} />
           <Route path="/details-matter" element={<DetailsMatterPage />} />
           <Route path="/guests" element={<GuestPage />} />
+          <Route path="/seating" element={<SeatingPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/myVendors" element={<UserVendorsPage /> } />
           <Route path="/vendors" element={<AllVendors /> } />

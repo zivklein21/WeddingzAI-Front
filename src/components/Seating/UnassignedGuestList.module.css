@@ -1,0 +1,85 @@
+
+
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+}
+
+.list li {
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  background-color: var(--wedding-pink);
+  border-radius: 6px;
+  font-size: 18px;
+  color: #333;
+  transition: background-color 0.3s, box-shadow 0.3s;
+  cursor: pointer;
+  user-select: none;
+}
+
+.list li:hover {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.list li.selected {
+  border-color: #b0a5ff;
+}
+
+.tableSelection {
+  margin-top: 1rem;
+  padding: 0.5rem;
+  background-color: #f1f0ff;
+  border-radius: 6px;
+}
+
+.tableSelection h4 {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 0.5rem;
+}
+
+.tableSelection ul {
+  list-style: none;
+  padding: 0;
+}
+
+.tableSelection li {
+  margin-bottom: 0.5rem;
+}
+
+.tableSelection button {
+  background-color: #d0caff;
+  border: none;
+  border-radius: 4px;
+  padding: 0.4rem 0.7rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.tableSelection button:hover {
+  background-color: #b8adff;
+}
+
+h3 {
+  font-size: 16px;
+  margin-bottom: 1rem;
+  color: #555;
+}
+
+
+.tablesList {
+  list-style: none; 
+  margin: 0;       
+  padding: 0;      
+  text-align: left;
+}
+
+.tablesList li {
+  margin-bottom: 0.25rem;   /* רווח אנכי קטן בין טבלה לטבלה */
+}
+
+.guest {
+  font-size: 15px;
+}

@@ -2,16 +2,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700&display=swap');
 
 :root {
-   --wedding-pink: #f9e6f0;
+    --wedding-pink: #f9e6f0;
+    --wedding-black: #000000;
+    --wedding-white: #ffffff;
+    --wedding-purple: #d2b1e5e1;
+    --wedding-gray: #888888;
+    --wedding-brown:#5a3e1b;
+    --wedding-green:#a5e5b5;
+    --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    --font-rubik: 'Rubik', sans-serif;
    --wedding-pink-06: rgba(249, 230, 240, 0.6);
-   --wedding-black: #000000;
-   --wedding-white: #ffffff;
-   --wedding-purple: #d2b1e5e1;
-   --wedding-dark-purple: #8a57a7e1;
-   --wedding-gray: #888888;
-   --wedding-green: #a5e5b5;
-   --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-   --font-rubik: 'Rubik', sans-serif;
+    --wedding-dark-purple: #8a57a7e1;
  }
 
  p {
