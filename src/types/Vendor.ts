@@ -37,5 +37,10 @@ export interface Vendor {
   website?:         string;
   hour_limits?:     string;
   sourceUrl?:       string;
-  vendorType:      string;
+  vendorType:       string;
+  vendor?: {
+    _id: string;
+    name: string;
+    email: string;
+  }
 }

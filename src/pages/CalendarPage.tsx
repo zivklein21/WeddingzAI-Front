@@ -1,7 +1,7 @@
 import { NavBar } from "../components/NavBar/NavBar";
 import { useAuth } from "../hooks/useAuth/AuthContext";
 import { Navigate } from 'react-router-dom';
-import DetailsMatters from "../components/DetailsMatters/DetailsMatters";
+import Calendar from "../components/Calendar/Calendar";
 
 const ProfilePage: React.FC = () => {
 
@@ -18,7 +18,7 @@ const ProfilePage: React.FC = () => {
   return (
     <>
       <NavBar title=""/>
-      <DetailsMatters />
+      <Calendar />
     </>
   );
 };

@@ -10,12 +10,6 @@ export interface SongSuggestion {
   link: string;
 }
 
-// Remove SongResponse interface since backend returns array directly
-// export interface SongResponse {
-//   message: string;
-//   data: SongSuggestion[];
-// }
-
 const getSongSuggestions = (prompt: string) => {
   const controller = new AbortController();
   

@@ -315,7 +315,7 @@ export default function PrefForm() {
                 >
                   <option value="">Select an option</option>
                   <option value="Photo Booth 📸">Photo Booth 📸</option>
-                  <option value="Live Band 🎶">Live Band 🎶</option>
+                  <option value="Live Band 🎶">DJ 🎶</option>
                   <option value="Fireworks 🎆">Fireworks 🎆</option>
                   <option value="Special Dance 💃">Special Dance 💃</option>
                   <option value="Unique Cake 🍰">Unique Cake 🍰</option>

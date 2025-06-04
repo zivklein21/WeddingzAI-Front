@@ -14,6 +14,7 @@ export interface User {
     weddingVenue?: string;
     accessToken?: string;
     refreshToken?: string;
+    bookedVendors: any[];
 }
 
 export interface UpdatedUser {
@@ -45,6 +46,7 @@ const googleSignIn = (credentialsResponse: CredentialResponse) => {
         avatar: string;
         weddingDate: string;
         weddingVenue: string;
+        bookedVendors: any[];
     }>(
         '/auth/google',
         payload,
@@ -73,6 +75,7 @@ const login = (credentials: { email: string; password: string }) => {
         avatar: string;
         weddingDate: string;
         weddingVenue: string;
+        bookedVendors: any[];
     }>('/auth/login', credentials, { signal: abortController.signal });
 
     request

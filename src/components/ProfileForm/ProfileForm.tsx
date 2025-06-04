@@ -1,17 +1,24 @@
 import React, { useEffect, useRef, useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
 import styles from "./ProfileForm.module.css";
 import { useAuth } from "../../hooks/useAuth/AuthContext";
 import defaultAvatar from "../../assets/images/user-icon.svg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faImage } from "@fortawesome/free-solid-svg-icons";
+import { faImage, faTrash } from "@fortawesome/free-solid-svg-icons";
 import fileService from "../../services/file-service";
 import authService from "../../services/auth-service";
+import tdlService from "../../services/tdl-service";
+import { Vendor } from "../../types/Vendor";
+import vendorService from "../../services/vendor-service";
+
 
 interface UserDetails {
   email: string;
   firstPartner: string;
   secondPartner: string;
   avatar: string;
+  weddingDate: string;
+  weddingVenue: string;
 }
 
 const Profile = () => {
@@ -20,6 +27,8 @@ const Profile = () => {
     firstPartner: "",
     secondPartner: "",
     avatar: defaultAvatar,
+    weddingDate: "",
+    weddingVenue: "",
   });
 
   const [newAvatarFile, setNewAvatarFile] = useState<File | null>(null);
@@ -36,43 +45,34 @@ const Profile = () => {
 
   const [isPremium, setIsPremium] = useState<boolean | null>(null);
 
-  useEffect(() => {
-    if (user) {
-      setUserDetails({
-        email: user.email || "",
-        firstPartner: user.firstPartner || "",
-        secondPartner: user.secondPartner || "",
-        avatar:
-          user.avatar && user.avatar.trim() !== ""
-            ? user.avatar.startsWith("/uploads/")
-              ? user.avatar
-              : user.avatar
-            : defaultAvatar,
-      });
-    }
+  const [bookedVendors, setBookedVendors] = useState<Vendor[]>([]);
 
-    // Fetch Premium Status
-    const abortController = new AbortController();
-    const fetchPremiumStatus = async () => {
-      try {
-        const { request: getPremiumStatusRequest } = await authService.getUserPremiumStatus();
-        const response = await getPremiumStatusRequest;
-        if (response.status === 200) {
-          console.log("User Premium Status:", response.data.is_premium);
-          setIsPremium(response.data.is_premium);
-        }
-      } catch (error) {
-        console.error("Error fetching premium status:", error);
+  // Functions
+  // Fetch booked vendors from the service
+  const fetchVendors = async () => {
+    try {
+      const bookedVendors = await vendorService.fetchBookedVendors();
+      setBookedVendors(bookedVendors);
+    } catch (error) {
+      console.error("Error fetching vendors:", error);
+    }
+  };
+
+  // Fetch user premium status from the service
+  const fetchPremiumStatus = async () => {
+    try {
+      const { request: getPremiumStatusRequest } = await authService.getUserPremiumStatus();
+      const response = await getPremiumStatusRequest;
+      if (response.status === 200) {
+        console.log("User Premium Status:", response.data.is_premium);
+        setIsPremium(response.data.is_premium);
       }
+    } catch (error) {
+      console.error("Error fetching premium status:", error);
     }
-    fetchPremiumStatus();
+  };
 
-    return () => {
-      abortController.abort();
-    };
-
-  }, [user]);
-
+  // Handle file input change
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -82,10 +82,24 @@ const Profile = () => {
     }
   };
 
+  // Handle input changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUserDetails({ ...userDetails, [e.target.name]: e.target.value });
   };
 
+  // Handle cancel booking for a vendor
+  const handleCancelBooking = async (vendorId: string, vendorName: string) => {
+    try {
+      await vendorService.cancelBookedVendor(vendorId);
+      fetchVendors();
+      toast.success("Successfully canceled booking for " + vendorName);
+    } catch (error) {
+      toast.error("Failed to cancel booking for " + vendorName);
+      console.error("Error canceling vendor booking:", error);
+    }
+  };
+
+  // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     setServerError(null);
     setSuccessMessage(null);
@@ -130,6 +144,16 @@ const Profile = () => {
         setNewAvatarFile(null);
         setSuccessMessage("Profile updated successfully!");
 
+        // ✅ Update TDL wedding date if changed
+        if (user?.weddingDate !== updatedDetails.weddingDate) {
+          try {
+            await tdlService.updateWeddingDate(updatedDetails.weddingDate);
+          } catch (err) {
+            console.error("Failed to update TDL wedding date:", err);
+            setServerError("Profile updated, but failed to sync wedding date.");
+          }
+        }
+
       } else {
         setServerError("Failed to update profile.");
       }
@@ -139,6 +163,7 @@ const Profile = () => {
     }
   };
 
+  // Handle password reset
   const handlePasswordReset = async (e: React.FormEvent) => {
     e.preventDefault();
     if (password !== confirmPassword) {
@@ -169,12 +194,41 @@ const Profile = () => {
     setPassSuccessMessage(`Password reset successfully!`);
   }
 
+  // Fetch user details and premium status on mount
+  useEffect(() => {
+    if (user) {
+      setUserDetails({
+        email: user.email || "",
+        firstPartner: user.firstPartner || "",
+        secondPartner: user.secondPartner || "",
+        weddingDate: user.weddingDate || "",
+        weddingVenue: user.weddingVenue || "",
+        avatar:
+          user.avatar && user.avatar.trim() !== ""
+            ? user.avatar.startsWith("/uploads/")
+              ? user.avatar
+              : user.avatar
+            : defaultAvatar,
+      });
+    }
+
+    const abortController = new AbortController();
+
+    fetchPremiumStatus();
+    fetchVendors();
+
+    return () => {
+      abortController.abort();
+    };
+  }, [user]);
+
   return (
     <div className={styles.main}>
       <div className={styles.profileContainer}>
         <h2 className={styles.profileTitle}>Your Profile</h2>
         <p className={styles.profileSubtitle}>Edit your personal info</p>
 
+        {/* Profile Card */}
         <div className={styles.card}>
           <div className={styles.avatarSection}
             style={{
@@ -231,6 +285,28 @@ const Profile = () => {
               />
             </div>
 
+            <div className={styles.infoItem}>
+              <label>Wedding Date</label>
+              <input
+                type="text"
+                name="weddingDate"
+                value={userDetails.weddingDate}
+                onChange={handleChange}
+                className={styles.input}
+              />
+            </div>
+
+            <div className={styles.infoItem}>
+              <label>Wedding Venue</label>
+              <input
+                type="text"
+                name="weddingVenue"
+                value={userDetails.weddingVenue}
+                onChange={handleChange}
+                className={styles.input}
+              />
+            </div>
+
             {serverError && <div className={`${styles["alert-profile"]} ${styles["alert-danger-profile"]}`}>{serverError}</div>}
             {successMessage && <div className={`${styles["alert-profile"]} ${styles["alert-success-profile"]}`}>{successMessage}</div>}
 
@@ -239,7 +315,42 @@ const Profile = () => {
             </button>
           </form>
         </div>
+
         <br />
+
+        {/* Booked Vendors Section */}
+        <div className={`${styles.card} ${styles.bookedVendorsTableWrapper}`}>
+          {bookedVendors.length === 0 ? (
+            <p className={styles.noVendorsMsg}>No vendors booked yet.</p>
+          ) : (
+            <table className={styles.bookedVendorsTable}>
+              <thead>
+                <tr>
+                  <th>Vendor Name</th>
+                  <th>Vendor Type</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {bookedVendors.map((item, index) => (
+                  <tr key={index}>
+                    <td>{item.vendor?.name || "Unnamed Vendor"}</td>
+                    <td>{item.vendorType}</td>
+                    <td style={{ textAlign: "right" }}>
+                      <button
+                        className={styles.cancelBtn}
+                        onClick={() => handleCancelBooking(item.vendor?._id || "", item.vendor?.name || "Unnamed Vendor")}
+                      >
+                        <FontAwesomeIcon icon={faTrash} />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+
         <br />
 
         {/* Password Reset Section */}
@@ -290,7 +401,9 @@ const Profile = () => {
           </form>
         </div>
       </div>
+      <ToastContainer position="bottom-right" />
     </div>
+    
   );
 };
 

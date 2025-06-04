@@ -1,0 +1,74 @@
+.miniDetailsWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin-top: 0.2rem;
+  margin-bottom: 20px;
+}
+
+.miniGrid {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  width: 100%;
+  max-width: 98%; /* שומר מרווח */
+  box-sizing: border-box;
+}
+
+.miniCard {
+  background: rgba(249, 230, 240, 0.32);
+  border-radius: 12px;
+  padding: 0.6rem 0.8rem;
+  min-width: 110px;
+  max-width: 320px;
+  width: 46%;
+  font-size: 13px;
+  box-sizing: border-box;
+  flex: 1 1 0;
+}
+
+.miniTitle {
+  font-size: 15px;
+  font-weight: 700;
+  color: #271c38;
+  margin-bottom: 0.25rem;
+  text-align: center;
+  letter-spacing: 0.01em;
+}
+
+.miniList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.18rem;
+  align-items: center;
+}
+
+.bold {
+  font-weight: 600;
+  font-size: 0.97em;
+  color: #2a183b;
+}
+.sep {
+  color: #baafbf;
+  font-weight: 400;
+  margin: 0 2px;
+}
+
+.miniManageLink {
+  width: 100%;
+  text-align: right;
+  margin-top: 0.15rem;
+}
+.manageLink {
+  color: #af7bc2;
+  font-size: 1.15em;
+  text-decoration: none;
+  font-weight: 500;
+}
+.manageLink:hover { text-decoration: underline; }
+
+@media (max-width: 700px) {
+  .miniGrid { flex-direction: column; gap: 8px; }
+  .miniCard { width: 95%; margin: 0 auto; }
+}

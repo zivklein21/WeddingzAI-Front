@@ -2,9 +2,6 @@
 
 import apiClient from "./api-client";
 
-/**
- * The shape of the raw to-do list JSON your UI expects.
- */
 export interface TdlData {
   weddingTodoListName: string;
   firstPartner: string;
@@ -14,17 +11,16 @@ export interface TdlData {
   sections: {
     sectionName: string;
     todos: {
+      _id: string;
       task: string;
       dueDate: string;
-      priority: string;
+      priority?: "Low" | "Medium" | "High";
       aiSent: boolean;
+      done: boolean;
     }[];
   }[];
 }
 
-/**
- * The full document as stored in Mongo.
- */
 interface TdlDocument {
   _id: string;
   userId: string;
@@ -32,15 +28,11 @@ interface TdlDocument {
   createdAt: string;
 }
 
-/**
- * Response shape when you upload a new TDL.
- */
 interface UploadResponse {
   message: string;
   data: TdlDocument;
 }
 
-// Upload PrefFormn to generate TDL
 export async function uploadFormJson(file: File): Promise<UploadResponse> {
   const formData = new FormData();
   formData.append("file", file);
@@ -53,7 +45,6 @@ export async function uploadFormJson(file: File): Promise<UploadResponse> {
   return resp.data;
 }
 
-// Get Current User TDL
 export async function fetchMyTdl(): Promise<TdlData> {
   const resp = await apiClient.get<{ message: string; data: TdlDocument[] }>(
     "/tdl/mine"
@@ -65,10 +56,71 @@ export async function fetchMyTdl(): Promise<TdlData> {
   return docs[0].tdl;
 }
 
-// Get TDL by user id
 export async function getByUserId(userId: string): Promise<TdlDocument[]> {
   const resp = await apiClient.get<{ message: string; data: TdlDocument[] }>(
-    `/tdl/user/${userId}`
+    `/tdl/mine`
+  );
+  return resp.data.data;
+}
+
+export async function addTask(
+  task: string,
+  dueDate?: string,
+  priority?: "Low" | "Medium" | "High"
+): Promise<TdlDocument> {
+  const resp = await apiClient.post<{ message: string; data: TdlDocument }>(
+    "/tdl/task",
+    { task, dueDate, priority }
+  );
+  return resp.data.data;
+}
+
+export async function updateTask(
+  sectionName: string,
+  todoId: string,
+  updates: {
+    task?: string;
+    dueDate?: string;
+    priority?: "Low" | "Medium" | "High";
+    done?: boolean;
+  }
+): Promise<TdlDocument> {
+  const resp = await apiClient.put<{ message: string; data: TdlDocument }>(
+    "/tdl/task",
+    { sectionName, todoId, updates }
+  );
+  return resp.data.data;
+}
+
+export async function deleteTask(
+  sectionName: string,
+  todoId: string
+): Promise<TdlDocument> {
+  const resp = await apiClient.delete<{ message: string; data: TdlDocument }>(
+    "/tdl/task",
+    { data: { sectionName, todoId } }
+  );
+  return resp.data.data;
+}
+
+export async function updateWeddingDate(
+  newWeddingDate: string
+): Promise<TdlDocument> {
+  const resp = await apiClient.put<{ message: string; data: TdlDocument }>(
+    "/tdl/date",
+    { newWeddingDate }
+  );
+  return resp.data.data;
+}
+
+export async function setTaskDone(
+  sectionName: string,
+  todoId: string,
+  done: boolean
+): Promise<TdlDocument> {
+  const resp = await apiClient.patch<{ message: string; data: TdlDocument }>(
+    "/tdl/done",
+    { sectionName, todoId, done }
   );
   return resp.data.data;
 }
@@ -76,5 +128,9 @@ export async function getByUserId(userId: string): Promise<TdlDocument[]> {
 export default {
   uploadFormJson,
   fetchMyTdl,
-  getByUserId
+  addTask,
+  updateTask,
+  deleteTask,
+  updateWeddingDate,
+  setTaskDone
 };

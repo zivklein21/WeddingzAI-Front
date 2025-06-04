@@ -7,6 +7,8 @@ import GuestListOverview from "./Overviews/GuestList/GuestListOverview";
 import VendorOverview from "./Overviews/Vendors/VendorsOverview";
 import TDLOverview from "./Overviews/TDL/TDLOverview";
 import SeatOverview from "./Overviews/SeatOverview/SeatOverview";
+import DetailsOverview from "./Overviews/Details/DetailsOverview"
+import CalendarOverview from "./Overviews/Calendar/CalendarOverview";
 
 export default function WeddingDashboard() {
 
@@ -43,7 +45,8 @@ export default function WeddingDashboard() {
         <div className={`${styles.card} ${styles.calendar}`}>
           Calendar
           <hr className={styles.divider} />
-          <Link to="/guests">
+          <CalendarOverview />
+          <Link to="/calendar">
             <div className={styles.manageLink}>Manage Calendar</div>
           </Link>
         </div>
@@ -51,7 +54,7 @@ export default function WeddingDashboard() {
         <div className={`${styles.card} ${styles.menu}`}>
           Menu
           <hr className={styles.divider} />
-          <Link to="/guests">
+          <Link to="/menu">
             <div className={styles.manageLink}>Manage Menu</div>
           </Link>
         </div>
@@ -77,7 +80,8 @@ export default function WeddingDashboard() {
         <div className={`${styles.card} ${styles.detailsMatter}`}>
           Details matter
           <hr className={styles.divider} />
-          <Link to="/guests">
+          <DetailsOverview />
+          <Link to="/details-matter">
             <div className={styles.manageLink}>Manage Details</div>
           </Link>
         </div>
@@ -86,7 +90,7 @@ export default function WeddingDashboard() {
         <div className={`${styles.card} ${styles.invitation}`}>
           Invitation
           <hr className={styles.divider} />
-          <Link to="/guests">
+          <Link to="/invitation">
             <div className={styles.manageLink}>Manage Invitation</div>
           </Link>
         </div>
