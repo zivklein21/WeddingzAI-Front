@@ -1,11 +1,24 @@
-import React, { useState, useRef } from "react";
-import { Stage, Layer, Image as KonvaImage, Text as KonvaText, Group } from "react-konva";
+// src/components/Menu/DesignSection.tsx
+import React, { useState, useRef,  } from "react";
+import {
+  Stage,
+  Layer,
+  Image as KonvaImage,
+  Text as KonvaText,
+  Group,
+} from "react-konva";
 import useImage from "use-image";
 import styles from "./Menu.module.css";
 import { BsFiletypePdf, BsFiletypePng } from "react-icons/bs";
 import { IoCheckmarkOutline } from "react-icons/io5";
+import  { Dish as DishType } from "../../services/menu-service";
 
-// עזר להורדת תמונה
+interface Props {
+  backgroundUrl: string;
+  dishes: DishType[];
+}
+
+// ---- LOGIC FUNCTIONS AND CONSTANTS ----
 function downloadURI(uri: string, name: string) {
   const link = document.createElement("a");
   link.download = name;
@@ -15,27 +28,9 @@ function downloadURI(uri: string, name: string) {
   document.body.removeChild(link);
 }
 
-const FONTS = [
-  "Rubik",
-  "Cormorant Garamond",
-  "Playfair Display",
-  "Arial",
-  "Georgia",
-  "serif",
-];
-
-export interface Dish {
-  id: string;
-  name: string;
-  description: string;
-  category: string;
-  isVegetarian?: boolean;
-}
-
-interface Props {
-  backgroundUrl: string;
-  dishes: Dish[];
-}
+export const FONTS = ["Rubik", "Arial", "Georgia", "serif"];
+export const STAGE_W = 450;
+export const STAGE_H = 550;
 
 type TextItem = {
   id: string;
@@ -55,15 +50,14 @@ type TextItem = {
 const CATEGORY_COLOR = "#7e46c1";
 const DISH_COLOR = "#301b41";
 const DESC_COLOR = "#9e7fc3";
-const STAGE_W = 450;
-const STAGE_H = 550;
 
-function getDefaultTextItems(dishes: Dish[]) {
-  const catsWithDishes = [...new Set(dishes.map((d) => d.category))];
-  return catsWithDishes.map((cat, idx) => ({
+// Generate default text items for categories
+function getDefaultTextItems(dishes: DishType[]): TextItem[] {
+  const uniqueCategories = Array.from(new Set(dishes.map((d) => d.category)));
+  return uniqueCategories.map((cat, idx) => ({
     id: `cat-${cat}`,
     text: cat,
-    x: 185,
+    x: STAGE_W / 2,
     y: 70 + idx * 70,
     fontSize: 18,
     fontFamily: "Rubik",
@@ -73,148 +67,167 @@ function getDefaultTextItems(dishes: Dish[]) {
   }));
 }
 
-export default function DesignSection({ backgroundUrl, dishes }: Props) {
+// Add dish to menu canvasTexts
+function addDishToMenu(canvasTexts: TextItem[], dish: DishType): TextItem[] {
+  const dishId = dish._id!;
+  if (canvasTexts.some((t) => t.groupId === dishId && t.isName)) return canvasTexts;
+
+  const catIdx = canvasTexts.findIndex((t) => t.isCategory && t.text === dish.category);
+  const baseY = catIdx >= 0 ? canvasTexts[catIdx].y : 100;
+
+  const groupCount = canvasTexts.filter((t, idx) => {
+    if (idx <= catIdx) return false;
+    return t.groupId === dishId && t.isName;
+  }).length;
+
+  const dy = 40 + groupCount * 45;
+
+  const nameItem: TextItem = {
+    id: `name-${dishId}`,
+    text: dish.name + (dish.isVegetarian ? " 🍃" : ""),
+    x: STAGE_W / 2,
+    y: baseY + dy,
+    fontSize: 15,
+    fontFamily: "Rubik",
+    fill: DISH_COLOR,
+    align: "center",
+    isName: true,
+    groupId: dishId,
+    isVegetarian: dish.isVegetarian,
+  };
+  const descItem: TextItem = {
+    id: `desc-${dishId}`,
+    text: dish.description,
+    x: STAGE_W / 2,
+    y: baseY + dy + 18,
+    fontSize: 12,
+    fontFamily: "Rubik",
+    fill: DESC_COLOR,
+    align: "center",
+    isName: false,
+    groupId: dishId,
+  };
+  return [...canvasTexts, nameItem, descItem];
+}
+
+// Handle drag for a single or group
+function handleDrag(canvasTexts: TextItem[], id: string, newX: number, newY: number): TextItem[] {
+  const dragged = canvasTexts.find((t) => t.id === id);
+  if (!dragged) return canvasTexts;
+  const dx = newX - dragged.x;
+  const dy = newY - dragged.y;
+  if (!dragged.groupId) {
+    return canvasTexts.map((t) => (t.id === id ? { ...t, x: newX, y: newY } : t));
+  } else {
+    return canvasTexts.map((t) =>
+      t.groupId === dragged.groupId ? { ...t, x: t.x + dx, y: t.y + dy } : t
+    );
+  }
+}
+
+// Update a single text item
+function updateText(canvasTexts: TextItem[], id: string, newProps: Partial<TextItem>): TextItem[] {
+  return canvasTexts.map((t) => (t.id === id ? { ...t, ...newProps } : t));
+}
+
+// Update a group of items
+function updateGroup(canvasTexts: TextItem[], id: string, newProps: Partial<TextItem>): TextItem[] {
+  const groupId = canvasTexts.find((t) => t.id === id)?.groupId;
+  if (!groupId) return canvasTexts;
+  return canvasTexts.map((t) => (t.groupId === groupId ? { ...t, ...newProps } : t));
+}
+
+// ---- COMPONENT ----
+
+export default function DesignSection({ backgroundUrl, dishes}: Props) {
   const [image] = useImage(backgroundUrl);
-  const [canvasTexts, setCanvasTexts] = useState<TextItem[]>(getDefaultTextItems(dishes));
+  const [canvasTexts, setCanvasTexts] = useState<TextItem[]>(() => getDefaultTextItems(dishes));
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const stageRef = useRef<any>(null);
 
-  const categories = [...new Set(dishes.map((d) => d.category))];
+
+  // Prepare dishes by category
+  const categories = Array.from(new Set(dishes.map((d) => d.category)));
   const dishesByCategory = categories.map((cat) => ({
     category: cat,
     dishes: dishes.filter((d) => d.category === cat),
   }));
 
-  function addDishToMenu(dish: Dish) {
-    if (canvasTexts.find((t) => t.groupId === dish.id && t.isName)) return;
-    const catIdx = canvasTexts.findIndex(
-      (t) => t.isCategory && t.text === dish.category
-    );
-    const baseY = canvasTexts[catIdx]?.y ?? 110;
-    const groupCount = canvasTexts.filter(
-      (t, idx) =>
-        idx > catIdx &&
-        t.groupId &&
-        dishes.find((d) => d.id === t.groupId)?.category === dish.category &&
-        t.isName
-    ).length;
-    const dy = 40 + groupCount * 45;
-
-    setCanvasTexts((prev) => [
-      ...prev,
-      {
-        id: `name-${dish.id}`,
-        text: `${dish.name}${dish.isVegetarian ? " 🍃" : ""}`,
-        x: 190,
-        y: baseY + dy,
-        fontSize: 15,
-        fontFamily: "Rubik",
-        fill: DISH_COLOR,
-        align: "center",
-        isName: true,
-        groupId: dish.id,
-        isVegetarian: dish.isVegetarian,
-      },
-      {
-        id: `desc-${dish.id}`,
-        text: dish.description,
-        x: 190,
-        y: baseY + dy + 18,
-        fontSize: 12,
-        fontFamily: "Rubik",
-        fill: DESC_COLOR,
-        align: "center",
-        isName: false,
-        groupId: dish.id,
-      },
-    ]);
-  }
-
-  function handleDrag(id: string, x: number, y: number) {
-    const item = canvasTexts.find((t) => t.id === id);
-    if (!item?.groupId) {
-      setCanvasTexts((prev) => prev.map((t) => (t.id === id ? { ...t, x, y } : t)));
-      return;
-    }
-    const group = canvasTexts.filter((t) => t.groupId === item.groupId);
-    const [nameItem, descItem] = group[0].isName ? [group[0], group[1]] : [group[1], group[0]];
-    const dyName = y - nameItem.y;
-    const dxName = x - nameItem.x;
-    setCanvasTexts((prev) =>
-      prev.map((t) =>
-        t.groupId === item.groupId
-          ? { ...t, x: t.x + dxName, y: t.y + dyName }
-          : t
-      )
-    );
-  }
-
-  function updateText(id: string, newProps: Partial<TextItem>) {
-    setCanvasTexts((prev) => prev.map((t) => (t.id === id ? { ...t, ...newProps } : t)));
-  }
-  function updateGroup(id: string, newProps: Partial<TextItem>) {
-    const groupId = canvasTexts.find((t) => t.id === id)?.groupId;
-    setCanvasTexts((prev) =>
-      prev.map((t) =>
-        t.groupId === groupId
-          ? { ...t, ...newProps }
-          : t
-      )
-    );
-  }
-
-  // --- הורדה כתמונה ---
+  // Download PNG
   function handleDownloadImage() {
+    if (!stageRef.current) return;
     const uri = stageRef.current.toDataURL({ pixelRatio: 2 });
     downloadURI(uri, "menu.png");
   }
 
-  // --- הורדה כ-PDF ---
-  function handleDownloadPDF() {
-    import("jspdf").then(jsPDF => {
-      const pdf = new jsPDF.jsPDF({
-        orientation: "portrait",
-        unit: "px",
-        format: [STAGE_W, STAGE_H],
-      });
-      const uri = stageRef.current.toDataURL({ pixelRatio: 2 });
-      pdf.addImage(uri, "PNG", 0, 0, STAGE_W, STAGE_H);
-      pdf.save("menu.pdf");
+  // Download PDF
+  async function handleDownloadPDF() {
+    if (!stageRef.current) return;
+    const pngBase64 = stageRef.current.toDataURL({ pixelRatio: 2 });
+    const { jsPDF } = await import("jspdf");
+    const pdf = new jsPDF({
+      orientation: "portrait",
+      unit: "px",
+      format: [STAGE_W, STAGE_H],
     });
+    pdf.addImage(pngBase64, "PNG", 0, 0, STAGE_W, STAGE_H);
+    pdf.save("menu.pdf");
   }
 
-  // --- שמירה לDB (כדוג') ---
-  function handleDone() {
-    const uri = stageRef.current.toDataURL({ pixelRatio: 2 });
-    // כאן תשלחי לשרת...
-    alert("Menu saved to DB (הדגמה בלבד)");
+  // Save to DB
+  async function handleDone() {
+    if (!stageRef.current) {
+      alert("Menu not ready");
+      return;
+    }
+    const pngBase64 = stageRef.current.toDataURL({ pixelRatio: 2 });
+    const { jsPDF } = await import("jspdf");
+    const pdf = new jsPDF({
+      orientation: "portrait",
+      unit: "px",
+      format: [STAGE_W, STAGE_H],
+    });
+    pdf.addImage(pngBase64, "PNG", 0, 0, STAGE_W, STAGE_H);
+    pdf.save("menu.pdf");
+    // אתה יכול להוריד גם את ה-PNG
+    downloadURI(pngBase64, "menu.png");
+    alert("Menu exported!"); // תן פידבק למשתמש
   }
 
+  // UI logic
   const selected = canvasTexts.find((t) => t.id === selectedId);
   const selectedGroup = selected?.groupId
     ? canvasTexts.filter((t) => t.groupId === selected.groupId)
     : null;
 
+  // ---- RENDER ----
   return (
     <div className={styles.menuMain}>
       {/* Edit Zone */}
       <div className={styles.editZone}>
         <div className={styles.editTitle}>Edit Zone</div>
-        {!selected && <div className={styles.editPlaceholder}>Select a text on the image to edit</div>}
+        {!selected && (
+          <div className={styles.editPlaceholder}>Select a text on the image to edit</div>
+        )}
         {(selected || selectedGroup) && (
           <div className={styles.editControls}>
             <div className={styles.editRow}>
               <label>Font:</label>
               <select
-                value={selected?.fontFamily}
-                onChange={(e) =>
-                  selected?.groupId
-                    ? updateGroup(selected.id, { fontFamily: e.target.value })
-                    : updateText(selected.id, { fontFamily: e.target.value })
-                }
+                value={selected?.fontFamily || ""}
+                onChange={e => {
+                  if (!selected) return;
+                  if (selected.groupId) {
+                    setCanvasTexts(ct => updateGroup(ct, selected.id, { fontFamily: e.target.value }));
+                  } else {
+                    setCanvasTexts(ct => updateText(ct, selected.id, { fontFamily: e.target.value }));
+                  }
+                }}
               >
                 {FONTS.map((font) => (
-                  <option key={font} value={font}>{font}</option>
+                  <option key={font} value={font}>
+                    {font}
+                  </option>
                 ))}
               </select>
             </div>
@@ -224,12 +237,15 @@ export default function DesignSection({ backgroundUrl, dishes }: Props) {
                 type="range"
                 min={10}
                 max={30}
-                value={selected?.fontSize}
-                onChange={(e) =>
-                  selected?.groupId
-                    ? updateGroup(selected.id, { fontSize: +e.target.value })
-                    : updateText(selected.id, { fontSize: +e.target.value })
-                }
+                value={selected?.fontSize || 12}
+                onChange={e => {
+                  if (!selected) return;
+                  if (selected.groupId) {
+                    setCanvasTexts(ct => updateGroup(ct, selected.id, { fontFamily: e.target.value }));
+                  } else {
+                    setCanvasTexts(ct => updateText(ct, selected.id, { fontFamily: e.target.value }));
+                  }
+                }}
               />
               <span>{selected?.fontSize}px</span>
             </div>
@@ -237,23 +253,30 @@ export default function DesignSection({ backgroundUrl, dishes }: Props) {
               <label>Color:</label>
               <input
                 type="color"
-                value={selected?.fill}
-                onChange={(e) =>
-                  selected?.groupId
-                    ? updateGroup(selected.id, { fill: e.target.value })
-                    : updateText(selected.id, { fill: e.target.value })
-                }
+                value={selected?.fill || "#000000"}
+                onChange={e => {
+                  if (!selected) return;
+                  if (selected.groupId) {
+                    setCanvasTexts(ct => updateGroup(ct, selected.id, { fontFamily: e.target.value }));
+                  } else {
+                    setCanvasTexts(ct => updateText(ct, selected.id, { fontFamily: e.target.value }));
+                  }
+                }}
               />
             </div>
             <div className={styles.editRow}>
               <label>Align:</label>
               <select
-                value={selected?.align}
-                onChange={(e) =>
-                  selected?.groupId
-                    ? updateGroup(selected.id, { align: e.target.value as any })
-                    : updateText(selected.id, { align: e.target.value as any })
-                }
+                value={selected?.align || "center"}
+                onChange={e => {
+                  if (!selected) return;
+                  const alignValue = e.target.value as "left" | "center" | "right";
+                  if (selected.groupId) {
+                    setCanvasTexts(ct => updateGroup(ct, selected.id, { align: alignValue }));
+                  } else {
+                    setCanvasTexts(ct => updateText(ct, selected.id, { align: alignValue }));
+                  }
+                }}
               >
                 <option value="left">Left</option>
                 <option value="center">Center</option>
@@ -262,49 +285,64 @@ export default function DesignSection({ backgroundUrl, dishes }: Props) {
             </div>
           </div>
         )}
-        {/* הורדה ושמירה */}
         <div className={styles.downloadRow}>
-          <span className={styles.icon} onClick={handleDownloadImage}><BsFiletypePng /></span>
-          <span className={styles.icon} onClick={handleDownloadPDF}><BsFiletypePdf /></span>
-          <span className={styles.icon} onClick={handleDone}><IoCheckmarkOutline /></span>
+          <span className={styles.icon} onClick={handleDownloadImage} title="Download PNG">
+            <BsFiletypePng />
+          </span>
+          <span className={styles.icon} onClick={handleDownloadPDF} title="Download PDF">
+            <BsFiletypePdf />
+          </span>
+          <span className={styles.icon} onClick={handleDone} title="Save to DB">
+            <IoCheckmarkOutline />
+          </span>
         </div>
       </div>
-
       {/* Dishes List */}
       <div className={styles.dishListZone}>
         <div className={styles.dishesTitle}>Dishes</div>
         {dishesByCategory.map(({ category, dishes }) => (
           <div key={category} className={styles.dishCategory}>
             <div className={styles.catLabel}>{category}</div>
-            {dishes.map((dish) => (
-              <div className={styles.dishRow} key={dish.id}>
-                <span className={styles.dishName}>{dish.name}</span>
-                {dish.isVegetarian && <span title="Vegetarian" className={styles.vegLeaf}>🍃</span>}
-                <span
-                  className={styles.icon}
-                  onClick={() => addDishToMenu(dish)}
-                  title="Add to menu"
-                >+</span>
-              </div>
-            ))}
+            {dishes.map((dish) => {
+              const dishId = dish._id!;
+              const already = !!canvasTexts.find((t) => t.groupId === dishId && t.isName);
+              return (
+                <div className={styles.dishRow} key={dishId}>
+                  <span className={styles.dishName}>{dish.name}</span>
+                  {dish.isVegetarian && (
+                    <span title="Vegetarian" className={styles.vegLeaf}>
+                      🍃
+                    </span>
+                  )}
+                  <span
+                    className={styles.icon}
+                    onClick={() => setCanvasTexts((ct) => addDishToMenu(ct, dish))}
+                    style={{
+                      opacity: already ? 0.3 : 1,
+                      pointerEvents: already ? "none" : "auto",
+                    }}
+                    title={already ? "Already added" : "Add to menu"}
+                  >
+                    +
+                  </span>
+                </div>
+              );
+            })}
           </div>
         ))}
       </div>
-
-      {/* Menu Image Zone */}
+      {/* Konva Canvas */}
       <div className={styles.imageZone}>
         <Stage
           ref={stageRef}
           width={STAGE_W}
           height={STAGE_H}
           style={{ borderRadius: 14, background: "#fff" }}
-          onMouseDown={e => {
-            const clickedOnEmpty = e.target === e.target.getStage();
-            if (clickedOnEmpty) setSelectedId(null);
+          onMouseDown={(e) => {
+            if (e.target === e.target.getStage()) setSelectedId(null);
           }}
-          onTouchStart={e => {
-            const clickedOnEmpty = e.target === e.target.getStage();
-            if (clickedOnEmpty) setSelectedId(null);
+          onTouchStart={(e) => {
+            if (e.target === e.target.getStage()) setSelectedId(null);
           }}
         >
           <Layer>
@@ -322,16 +360,16 @@ export default function DesignSection({ backgroundUrl, dishes }: Props) {
                   width={320}
                   draggable
                   onDragStart={() => setSelectedId(t.id)}
-                  onDragEnd={e => handleDrag(t.id, e.target.x(), e.target.y())}
-                  onClick={ev => {
+                  onDragEnd={(e) =>
+                    setCanvasTexts((ct) =>
+                      handleDrag(ct, t.id, e.target.x(), e.target.y())
+                    )
+                  }
+                  onClick={(ev) => {
                     ev.cancelBubble = true;
                     setSelectedId(t.id);
                   }}
-                  onTap={ev => {
-                    ev.cancelBubble = true;
-                    setSelectedId(t.id);
-                  }}
-                  lineHeight={t.isName ? 1.1 : 1.1}
+                  lineHeight={1.1}
                   stroke={selectedId === t.id ? "#b291ff" : ""}
                   strokeWidth={selectedId === t.id ? 1 : 0}
                 />

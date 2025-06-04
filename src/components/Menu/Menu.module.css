@@ -349,26 +349,22 @@
   display: flex;
   flex-direction: column;
 }
-
 .editTitle {
   font-weight: 600;
   font-size: 20px;
   text-align: center;
   margin-bottom: 15px;
 }
-
 .editPlaceholder {
   color: #b2a8b5;
   text-align: center;
   margin-top: 45%;
   font-size: 17px;
 }
-
 .editControls {
   margin-top: 18px;
   width: 100%;
 }
-
 .editRow {
   display: flex;
   align-items: center;
@@ -376,16 +372,18 @@
   gap: 6px;
   font-size: 15px;
 }
-
-.editRow input[type="range"] {
-  width: 90px;   /* Adjust to the desired width */
-  height: 3px;
-  margin-right: 8px; /* space from the value */
+.downloadRow {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
 }
-
-.editRow span {
-  font-size: 14px; /* or smaller */
-  margin-left: 4px;
+.downloadRow .icon {
+  font-size: 1.5rem;
+  color: #301b41;
+  cursor: pointer;
+}
+.downloadRow .icon:hover {
+  color: #7e46c1;
 }
 
 .dishListZone {
@@ -399,41 +397,44 @@
   box-sizing: border-box;
   overflow-y: auto;
 }
-
 .dishesTitle {
   font-weight: 600;
   font-size: 20px;
   text-align: center;
   margin-bottom: 30px;
 }
-
 .dishCategory {
   margin-bottom: 10px;
 }
-
 .catLabel {
   font-weight: 500;
   font-size: 18px;
-  color: var(--wedding-dark-purple);
+  color: #301b41;
   margin-bottom: 2px;
 }
-
 .dishRow {
   display: flex;
   align-items: center;
-  margin-bottom: 2px;
+  margin-bottom: 4px;
   gap: 4px;
 }
-
 .dishName {
   font-weight: 400;
   font-size: 14px;
+  flex: 1;
 }
-
 .vegLeaf {
   font-size: 15px;
   margin-left: 3px;
   margin-right: 0px;
+}
+.dishRow .icon {
+  font-size: 1.2rem;
+  color: #7e46c1;
+  cursor: pointer;
+}
+.dishRow .icon:hover {
+  color: #301b41;
 }
 
 .imageZone {
@@ -451,25 +452,4 @@
   border-radius: 16px;
   margin: 0 auto;
   background: #fff;
-}
-
-.downloadRow {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 36px;
-  margin-top: 30px;
-  margin-bottom: 10px;
-}
-.downloadRow .icon {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  cursor: pointer;
-  color: var(--wedding-dark-purple, #7e46c1);
-  font-size: 1.6rem;
-  transition: color 0.15s;
-}
-.downloadRow .icon:hover {
-  color: var(--wedding-pink, #be80ff);
 }

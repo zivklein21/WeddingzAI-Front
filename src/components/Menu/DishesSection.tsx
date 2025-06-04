@@ -1,79 +1,90 @@
-import React, { useState } from "react";
-import styles from "./Menu.module.css";
-import { FiPlus, FiTrash2, FiEdit2 , FiX} from "react-icons/fi";
-import { IoCheckmarkOutline } from "react-icons/io5";
-
-export interface Dish {
-  name: string;
-  description: string;
-  category: string;
-  isVegetarian: boolean;
-}
+import React, { useState, useEffect } from "react";
+import menuService, { Dish as DishType } from "../../services/menu-service";
+import { IoCheckmarkOutline, IoTrashOutline } from "react-icons/io5";
 
 interface Props {
-  dishes: Dish[];
-  setDishes: (d: Dish[]) => void;
+  userId: string;
+  dishes: DishType[] | null;
+  setDishes: (d: DishType[]) => void;
   onDone: () => void;
 }
 
-const emptyDish: Dish = {
+const emptyDish: DishType = {
   name: "",
   description: "",
   category: "On the table",
   isVegetarian: false,
+  _id: ""
 };
 
-export default function DishesSection({ dishes, setDishes, onDone }: Props) {
-  const [editIndex, setEditIndex] = useState<number | null>(null);
-  const [editDish, setEditDish] = useState<Dish>(emptyDish);
+export default function DishesSection({ userId, dishes, setDishes, onDone }: Props) {
+  const [form, setForm] = useState<DishType>(emptyDish);
+  const [loading, setLoading] = useState(false);
 
-  const [form, setForm] = useState<Dish>(emptyDish);
+    useEffect(() => {
+      if (userId && dishes.length === 0) {
+        const fetch = async () => {
+          setLoading(true);
+          try {
+            const res = await menuService.getMenu(userId); // פונקציה חדשה
+            setDishes(res.data.dishes);
+          } catch (err) {
+            console.error("Failed to get dishes", err);
+            alert("Failed to get dishes");
+          } finally {
+            setLoading(false);
+          }
+        };
+        fetch();
+      }
+    }, [userId]);
 
-  // Handle add new dish
+  // Add new dish locally
   const handleAdd = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.name.trim()) return;
+    if (!form.name.trim() || !form.description.trim()) return;
     setDishes([...dishes, form]);
     setForm(emptyDish);
   };
 
-  // Handle edit
-  const handleEdit = (i: number) => {
-    setEditIndex(i);
-    setEditDish(dishes[i]);
-  };
-  const handleEditSave = (i: number) => {
-    const updated = [...dishes];
-    updated[i] = editDish;
-    setDishes(updated);
-    setEditIndex(null);
+  // Remove dish from local array
+  const handleRemove = (idx: number) => {
+    setDishes(dishes.filter((_, i) => i !== idx));
   };
 
-  // Remove dish
-  const handleRemove = (i: number) => {
-    setDishes(dishes.filter((_, idx) => idx !== i));
-    if (editIndex === i) setEditIndex(null);
-  };
+  // Save all dishes to DB
+  const handleSaveAll = async () => {
+  if (loading) return;
+  setLoading(true);
+  try {
+    await menuService.updateDishes(userId, dishes); // פונקציה חדשה
+    onDone();
+  } catch (err) {
+    console.error("Failed to save dishes", err);
+    alert("Failed to save dishes");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
-    <div className={styles.section}>
-      <h3>Menu Items</h3>
-      <form className={styles.dishInputs} onSubmit={handleAdd} autoComplete="off">
+    <div>
+      <form onSubmit={handleAdd} style={{ marginBottom: 16, display: "flex", gap: 8 }}>
         <input
-          type="text"
-          placeholder="Dish name"
           value={form.name}
           onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
+          placeholder="Dish name"
+          required
         />
         <input
-          type="text"
-          placeholder="Dish description"
           value={form.description}
           onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
+          placeholder="Description"
+          required
         />
         <select
           value={form.category}
-          onChange={e => setForm(f => ({ ...f, category: e.target.value }))}
+          onChange={e => setForm(f => ({ ...f, category: e.target.value as DishType["category"] }))}
         >
           <option value="On the table">On the table</option>
           <option value="Starters">Starters</option>
@@ -81,101 +92,53 @@ export default function DishesSection({ dishes, setDishes, onDone }: Props) {
           <option value="Mains">Mains</option>
           <option value="Desserts">Desserts</option>
         </select>
-        <label className={styles.vegBox}>
+        <label style={{ display: "flex", alignItems: "center", gap: 4 }}>
           <input
             type="checkbox"
             checked={form.isVegetarian}
             onChange={e => setForm(f => ({ ...f, isVegetarian: e.target.checked }))}
-          />
-          <span>Vegetarian</span>
+          /> Vegetarian
         </label>
-        <span className={styles.icon} title="Add">
-          <FiPlus type="submit" onClick={handleAdd}/>
-        </span>
+        <button type="submit" disabled={loading}>Add</button>
       </form>
-
-      {dishes.length > 0  &&
-      <table className={styles.menuTable}>
+      <table style={{ width: "100%", marginBottom: 16 }}>
         <thead>
           <tr>
-            <th>Dish</th>
+            <th>Name</th>
             <th>Description</th>
             <th>Category</th>
             <th>Vegetarian</th>
-            <th></th> {/* Icons */}
+            <th></th>
           </tr>
         </thead>
         <tbody>
-          {dishes.map((dish, i) =>
-            editIndex === i ? (
-              <tr key={i} className={styles.editRow}>
-                <td>
-                  <input
-                    type="text"
-                    value={editDish.name}
-                    onChange={e => setEditDish(d => ({ ...d, name: e.target.value }))}
-                    placeholder="Dish name"
-                  />
-                </td>
-                <td>
-                  <input
-                    type="text"
-                    value={editDish.description}
-                    onChange={e => setEditDish(d => ({ ...d, description: e.target.value }))}
-                    placeholder="Description"
-                  />
-                </td>
-                <td>
-                  <select
-                    value={editDish.category}
-                    onChange={e => setEditDish(d => ({ ...d, category: e.target.value }))}
-                  >
-                    <option value="On the table">On the table</option>
-                    <option value="Starters">Starters</option>
-                    <option value="Intermediates">Intermediates</option>
-                    <option value="Mains">Mains</option>
-                    <option value="Desserts">Desserts</option>
-                  </select>
-                </td>
-                <td>
-                  <input
-                    type="checkbox"
-                    checked={editDish.isVegetarian}
-                    onChange={e => setEditDish(d => ({ ...d, isVegetarian: e.target.checked }))}
-                  />
-                </td>
-                <td>
-                  <span className={styles.icon} onClick={() => handleEditSave(i)} title="Save">
-                    <IoCheckmarkOutline />
-                  </span>
-                  <span className={styles.icon} onClick={() => setEditIndex(null)} title="Cancel">
-                    <FiX />
-                  </span>
-                </td>
-              </tr>
-            ) : (
-              <tr key={i}>
-                <td>{dish.name}</td>
-                <td>{dish.description}</td>
-                <td>{dish.category}</td>
-                <td>{dish.isVegetarian ? "Yes" : "No"}</td>
-                <td>
-                  <span className={styles.icon} onClick={() => handleEdit(i)} title="Edit">
-                    <FiEdit2 />
-                  </span>
-                  <span className={styles.icon} onClick={() => handleRemove(i)} title="Delete">
-                    <FiTrash2 />
-                  </span>
-                </td>
-              </tr>
-            )
-          )}
+          {dishes.map((dish, i) => (
+            <tr key={i}>
+              <td>{dish.name}</td>
+              <td>{dish.description}</td>
+              <td>{dish.category}</td>
+              <td>{dish.isVegetarian ? "Yes" : "No"}</td>
+              <td>
+                <span style={{ cursor: "pointer" }} onClick={() => handleRemove(i)} title="Remove">
+                  <IoTrashOutline />
+                </span>
+              </td>
+            </tr>
+          ))}
         </tbody>
-      </table>}
-      <span className={styles.icon} onClick={onDone}>
+      </table>
+      <span
+        onClick={handleSaveAll}
+        title="Save All"
+        style={{
+          cursor: loading ? "not-allowed" : "pointer",
+          opacity: loading ? 0.5 : 1,
+          fontSize: 28
+        }}
+      >
         <IoCheckmarkOutline />
       </span>
+      {loading && <div>Saving...</div>}
     </div>
-    
   );
 }

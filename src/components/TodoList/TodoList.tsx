@@ -67,8 +67,7 @@ export default function TodoList() {
     }
     try {
       await vendorService.startAIResearchBackground(task, user._id);
-      toast.success("Sent to AI for vendor research");
-      window.location.reload();
+      toast.success("Task Send to AI");
     } catch (err) {
       console.error(err);
       toast.error("Failed to send to AI");
