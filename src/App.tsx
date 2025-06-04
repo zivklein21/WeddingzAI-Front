@@ -12,7 +12,7 @@ import DetailsMatterPage from "./pages/DetailsMatterPage";
 import ProfilePage from "./pages/ProfilePage";
 import { AuthProvider } from "./hooks/useAuth/AuthContext";
 import GuestPage from "./pages/GuestListPage";
-import SeatingPage from "./pages/SeatingPage/SeatingPage";
+import SeatingPage from "./pages/SeatingPage";
 import UserVendorsPage from "./pages/UserVEndorsPage";
 import AllVendors from "./components/Vendors/AllVendors";
 

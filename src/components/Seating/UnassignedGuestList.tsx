@@ -63,15 +63,16 @@ export default function UnassignedGuestList({
                     <li>No available tables</li>
                   ) : (
                     availableTables.map((table) => (
-                      <li key={table._id}>
-                        <button
+                      <li key={table._id} className={styles.table}>
+                        <span
+                          className={styles.guest}
                           onClick={() =>
                             handleTableSelection(guest._id, table._id)
                           }
                         >
                           {table.name} (Seats:{" "}
                           {table.freeSeats ?? table.capacity})
-                        </button>
+                        </span>
                       </li>
                     ))
                   )}

@@ -30,6 +30,6 @@
 
 .progressFill {
   height: 100%;
-  background-color: #a5e5b5;
+  background-color: var(--wedding-green);
   transition: width 0.4s ease;
 }

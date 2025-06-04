@@ -3,6 +3,7 @@ import { useDraggable } from "@dnd-kit/core";
 import TableShape from "./Table";
 import styles from "./DraggableTable.module.css";
 import { unassignGuest } from "../../services/guest-service";
+import { FiTrash2 } from "react-icons/fi";
 
 export type DraggableTableProps = {
   id: string;
@@ -100,37 +101,32 @@ export default function DraggableTable({
         />
         {showGuests && (
           <div className={styles.guestPopup}>
-            <button
-              className={styles.closeButton}
+            <span
+              className={styles.iconClose}
               onClick={() => setShowGuests(false)}
             >
               ✕
-            </button>
-            <h4 style={{ margin: "0 0 6px 0" }}>Guests for {name}:</h4>
+            </span>
+            
+            <h4>Guests for {name}:</h4>
             <ul className={styles.guestList}>
               {guestList.length > 0 ? (
                 guestList.map((guest, index) => (
                   <li key={guest._id ?? index}>
                     <span style={{ fontWeight: "bold" }}>{guest.fullName}</span>
-                    {guest.numberOfGuests && guest.numberOfGuests > 1
+                    {guest.numberOfGuests && guest.numberOfGuests >= 1
                       ? ` ${guest.numberOfGuests}`
                       : ""}
-                    <button
-                      style={{
-                        marginLeft: "8px",
-                        background: "transparent",
-                        border: "none",
-                        color: "red",
-                        cursor: "pointer",
-                      }}
+                    <span
+                      className={styles.iconRemove}
                       title="Remove guest"
                       onMouseDown={(e) => {
                         e.stopPropagation();
                         handleRemoveGuest(guest._id);
                       }}
                     >
-                      🗑️
-                    </button>
+                      <FiTrash2/>
+                    </span>
                   </li>
                 ))
               ) : (

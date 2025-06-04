@@ -32,21 +32,19 @@ export default function AddTableForm({ onTableCreated }: Props) {
 
   return (
     <div>
-      <button className={styles.openButton} onClick={() => setShowForm(true)}>
-        <span className={styles.openIcon}>＋</span> Add New Table
-      </button>
+      <span className={styles.icon} onClick={() => setShowForm(true)}>＋</span>
 
       {showForm && (
         <div className={styles.modalOverlay}>
           <div className={styles.modalContent}>
             <div className={styles.header}>
               <h3 className={styles.formTitle}>Create New Table</h3>
-              <button
-                className={styles.closeButton}
+              <span
+                className={styles.iconClose}
                 onClick={() => setShowForm(false)}
               >
                 ✕
-              </button>
+              </span>
             </div>
             <form onSubmit={handleSubmit} className={styles.form}>
               <div className={styles.formGroup}>
@@ -96,7 +94,7 @@ export default function AddTableForm({ onTableCreated }: Props) {
                 </div>
               </div>
 
-              <button type="submit" className={styles.button}>
+              <button type="submit">
                 Create Table
               </button>
             </form>

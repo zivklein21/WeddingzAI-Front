@@ -6,7 +6,7 @@ import BudgetOverview from "./Overviews/Budget/BudgetOverview";
 import GuestListOverview from "./Overviews/GuestList/GuestListOverview";
 import VendorOverview from "./Overviews/Vendors/VendorsOverview";
 import TDLOverview from "./Overviews/TDL/TDLOverview";
-
+import SeatOverview from "./Overviews/SeatOverview/SeatOverview";
 
 export default function WeddingDashboard() {
 
@@ -34,7 +34,8 @@ export default function WeddingDashboard() {
         <div className={`${styles.card} ${styles.seating}`}>
           Seating Chart
           <hr className={styles.divider} />
-          <Link to="/guests">
+          <SeatOverview/>
+          <Link to="/seating">
             <div className={styles.manageLink}>Manage Seats</div>
           </Link>
         </div>

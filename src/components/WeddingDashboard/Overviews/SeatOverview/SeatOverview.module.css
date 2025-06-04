@@ -1,0 +1,83 @@
+/* src/components/Seating/SeatOverview.module.css */
+
+.overviewContainer {
+  position: relative;  
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 16px 24px;
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 24px;
+  min-height: 140px;  
+}
+
+.statsSection {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+}
+
+.statLine {
+  display: flex;
+  align-items: baseline;
+  margin-bottom: 6px;
+}
+
+.statLabel {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--wedding-black);
+  margin-right: 8px;
+}
+
+.statValue {
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--wedding-black);
+}
+
+.noTables {
+  font-style: italic;
+  color: #888;
+  text-align: center;
+}
+
+/* ───────────── העיגולים בצד הימני־עלי של הקונטיינר ───────────── */
+.circleGrid {
+  /* מיקום אבסולוטי בתוך ה־overviewContainer */
+  position: absolute;
+  top: 16px;    /* מרחק מהקצה העליון—תתאימי לפי העיצוב */
+  right: 24px;  /* מרחק מהקצה הימני—תתאימי לפי padding של .overviewContainer */
+
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;    /* רווח בין העיגולים */
+  /* אם תרצי שהעיגולים יתיישרו ממש לפינה, אפשר להוריד את ה־gap או לשנות ל־gap קטן יותר */
+}
+
+.circle {
+  width: 32px;           /* הגדלנו ל-32px */
+  height: 32px;
+  border-radius: 50%;
+  background-color: #c8e6c9; /* ברירת מחדל – ירוק בהיר */
+  flex-shrink: 0;
+}
+
+.green {
+  background-color: #a5e5b5;
+}
+
+.yellow {
+  background-color: #f9e79f;
+}
+
+.red {
+  background-color: #f5a895;
+}
+
+.loader {
+  font-size: 1rem;
+  color: #666;
+  text-align: center;
+  padding: 16px 0;
+}

@@ -1,33 +1,38 @@
-.openButton {
+
+.icon {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-size: 30px;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  size: 48px;
   align-items: center;
-  gap: 0.5rem;
-  width: max-content;
-  margin: 1.5rem auto;
-  background-color: #ff85b3;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  padding: 0.75rem 1.5rem;
-  font-size: 1rem;
-  font-weight: 500;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+  color: var(--wedding-black);
+  transition: color 0.2s, opacity 0.2s;
 }
 
-.openButton:hover {
-  background-color: #e66787;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+.icon:hover {
+  color: var(--wedding-pink);
 }
 
-.openButton:focus {
-  outline: none;
-  box-shadow: 0 0 0 4px rgba(255, 133, 179, 0.4);
+.iconClose {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 30px;
+  display: flex;
+  flex-direction: column;
+  size: 48px;
+  align-items: center;
+  cursor: pointer;
+  color: var(--wedding-purple);
+  transition: color 0.2s, opacity 0.2s;
 }
 
-.openIcon {
-  font-size: 1.1rem;
+.iconClose:hover {
+  color: var(--wedding-pink);
 }
 
 .modalOverlay {
@@ -65,20 +70,6 @@
   font-size: 1.5rem;
   font-weight: 600;
   margin: 0;
-}
-
-.closeButton {
-  background: transparent;
-  border: none;
-  color: #555;
-  font-size: 1.5rem;
-  cursor: pointer;
-  padding: 0.5rem;
-  border-radius: 50%;
-}
-.closeButton:hover {
-  color: #111;
-  background: rgba(0, 123, 255, 0.1);
 }
 
 .form {
@@ -124,20 +115,4 @@
 
 .row .formGroup {
   flex: 1;
-}
-
-.button {
-  background-color: #444;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  padding: 0.6rem 1.2rem;
-  font-size: 0.95rem;
-  cursor: pointer;
-  align-self: flex-end;
-  transition: background-color 0.3s ease;
-}
-
-.button:hover {
-  background-color: #222;
 }

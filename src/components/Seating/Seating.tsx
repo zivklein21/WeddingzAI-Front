@@ -1,13 +1,20 @@
+// src/components/Seating/SeatingPage.tsx
+
 import { useState, useEffect } from "react";
 import { DndContext, DragEndEvent } from "@dnd-kit/core";
-import DraggableTable from "../../components/Seating/DraggableTable";
-import styles from "./SeatingPage.module.css";
-import AddTableForm from "../../components/Seating/AddTableForm";
+
+import DraggableTable from "./DraggableTable";
+import AddTableForm from "./AddTableForm";
+import UnassignedGuestList from "./UnassignedGuestList";
+
 import { getMyTables, updateTable } from "../../services/seating-service";
-import { NavBar } from "../../components/NavBar/NavBar";
-import UnassignedGuestList from "../../components/Seating/UnassignedGuestList";
 import { fetchMyGuests } from "../../services/guest-service";
 import { Guest } from "../../types/guest";
+
+import styles from "./Seating.module.css";
+import { FiArrowLeft } from "react-icons/fi";
+
+import { useNavigate } from 'react-router-dom';
 
 export type Table = {
   _id: string;
@@ -18,11 +25,13 @@ export type Table = {
   guests: { _id?: string; fullName: string; numberOfGuests?: number }[];
 };
 
-export default function SeatingPage() {
+export default function Seating() {
   const [tables, setTables] = useState<Table[]>([]);
   const [unassignedGuests, setUnassignedGuests] = useState<Guest[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
+    // on component mount, load both tables and unassigned guests
     const fetchTables = async () => {
       try {
         const data = await getMyTables();
@@ -35,6 +44,7 @@ export default function SeatingPage() {
     const fetchGuests = async () => {
       try {
         const data = await fetchMyGuests();
+        // filter out those already assigned to a table
         const unassigned = data.filter((g) => !g.tableId);
         setUnassignedGuests(unassigned);
       } catch (err) {
@@ -46,6 +56,7 @@ export default function SeatingPage() {
     fetchGuests();
   }, []);
 
+  // Refresh the “unassignedGuests” list after any guest is moved back
   const refreshUnassignedGuests = async () => {
     try {
       const data = await fetchMyGuests();
@@ -56,8 +67,10 @@ export default function SeatingPage() {
     }
   };
 
+  // When a table is dragged, update its position both locally and via API
   const handleDragEnd = (event: DragEndEvent) => {
     const { delta, active } = event;
+
     setTables((prev) => {
       const updated = prev.map((table) =>
         table._id === active.id
@@ -79,10 +92,12 @@ export default function SeatingPage() {
           console.error("Error saving table position:", err);
         });
       }
+
       return updated;
     });
   };
 
+  // Reload all tables from the server
   const refreshTables = async () => {
     try {
       const data = await getMyTables();
@@ -92,7 +107,6 @@ export default function SeatingPage() {
     }
   };
 
-  // Add updateLocalTableGuests function to update local table guests array
   const updateLocalTableGuests = (tableId: string, guest: Guest) => {
     setTables((prevTables) =>
       prevTables.map((table) =>
@@ -104,32 +118,46 @@ export default function SeatingPage() {
   };
 
   return (
-    <div className={styles.canvas}>
-      <NavBar />
-      <UnassignedGuestList
-        guests={unassignedGuests}
-        refreshGuests={refreshUnassignedGuests}
-        refreshTables={refreshTables}
-        updateLocalTableGuests={updateLocalTableGuests}
-      />
-      <DndContext onDragEnd={handleDragEnd}>
-        {tables.map((table) => (
-          <DraggableTable
-            key={table._id}
-            id={table._id}
-            name={table.name}
-            shape={table.shape}
-            capacity={table.capacity}
-            x={table.position.x}
-            y={table.position.y}
-            guests={table.guests}
-            onGuestRemoved={refreshUnassignedGuests}
+    <div className={styles.seatPage}>
+      <div className={styles.seatContainer}>
+        <FiArrowLeft className={styles.backIcon} onClick={() => navigate(-1)} title="Go Back" />
+        <h2 className={styles.seatHeader}>Seat Chart</h2>
+        <div className={styles.contentGrid}>
+          <div className={styles.sidebar}>
+            <UnassignedGuestList
+            guests={unassignedGuests}
+            refreshGuests={refreshUnassignedGuests}
+            refreshTables={refreshTables}
+            updateLocalTableGuests={updateLocalTableGuests}
           />
-        ))}
-      </DndContext>
-      <AddTableForm
-        onTableCreated={(newTable) => setTables((prev) => [...prev, newTable])}
-      />
+          </div>
+          
+          <div className={styles.canvas}>
+            <DndContext onDragEnd={handleDragEnd}>
+              {tables.map((table) => (
+                <DraggableTable
+                  key={table._id}
+                  id={table._id}
+                  name={table.name}
+                  shape={table.shape}
+                  capacity={table.capacity}
+                  x={table.position.x}
+                  y={table.position.y}
+                  guests={table.guests}
+                  onGuestRemoved={refreshUnassignedGuests}
+                />
+              ))}
+            </DndContext>
+
+            <AddTableForm
+              onTableCreated={(newTable) =>
+                setTables((prev) => [...prev, newTable])
+              }
+            />
+          </div>
+        </div>
+      {/* <ToastContainer position="bottom-right"/> */}
+      </div>
     </div>
   );
 }

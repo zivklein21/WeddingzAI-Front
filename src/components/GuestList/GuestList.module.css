@@ -221,6 +221,7 @@ html, body {
 .iconAction:hover {
   color: var(--wedding-pink);
 }
+
 .iconAction.disabled {
   opacity: 0.5;
   pointer-events: none;
