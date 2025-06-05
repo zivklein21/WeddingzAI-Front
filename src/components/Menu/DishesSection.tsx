@@ -3,8 +3,8 @@ import menuService, { Dish as DishType } from "../../services/menu-service";
 import { IoCheckmarkOutline, IoTrashOutline } from "react-icons/io5";
 
 interface Props {
-  userId: string;
-  dishes: DishType[] | null;
+  menuId: string;
+  dishes: DishType[];
   setDishes: (d: DishType[]) => void;
   onDone: () => void;
 }
@@ -14,30 +14,30 @@ const emptyDish: DishType = {
   description: "",
   category: "On the table",
   isVegetarian: false,
-  _id: ""
 };
 
-export default function DishesSection({ userId, dishes, setDishes, onDone }: Props) {
+export default function DishesSection({ menuId, dishes, setDishes, onDone }: Props) {
   const [form, setForm] = useState<DishType>(emptyDish);
   const [loading, setLoading] = useState(false);
 
-    useEffect(() => {
-      if (userId && dishes.length === 0) {
-        const fetch = async () => {
-          setLoading(true);
-          try {
-            const res = await menuService.getMenu(userId); // פונקציה חדשה
-            setDishes(res.data.dishes);
-          } catch (err) {
-            console.error("Failed to get dishes", err);
-            alert("Failed to get dishes");
-          } finally {
-            setLoading(false);
-          }
-        };
-        fetch();
+  useEffect(() => {
+  if (menuId && dishes.length === 0) {
+    const fetch = async () => {
+      setLoading(true);
+      try {
+        const res = await menuService.getMenu(menuId);
+        setDishes(res.data.dishes);
+      } catch (err) {
+          console.error("Failed to save dishes", err);
+  alert("Failed to save dishes");
+
+      } finally {
+        setLoading(false);
       }
-    }, [userId]);
+    };
+    fetch();
+  }
+}, [menuId]);
 
   // Add new dish locally
   const handleAdd = (e: React.FormEvent) => {
@@ -54,18 +54,16 @@ export default function DishesSection({ userId, dishes, setDishes, onDone }: Pro
 
   // Save all dishes to DB
   const handleSaveAll = async () => {
-  if (loading) return;
-  setLoading(true);
-  try {
-    await menuService.updateDishes(userId, dishes); // פונקציה חדשה
-    onDone();
-  } catch (err) {
-    console.error("Failed to save dishes", err);
-    alert("Failed to save dishes");
-  } finally {
-    setLoading(false);
-  }
-};
+    if (loading) return;
+    setLoading(true);
+    try {
+      onDone();
+    } catch (err) {
+      alert("Failed to save dishes");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div>
