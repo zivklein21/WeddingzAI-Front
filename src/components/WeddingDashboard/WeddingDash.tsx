@@ -36,7 +36,10 @@ export default function WeddingDashboard() {
         <div className={`${styles.card} ${styles.seating}`}>
           Seating Chart
           <hr className={styles.divider} />
+<<<<<<< Updated upstream
           <SeatOverview/>
+=======
+>>>>>>> Stashed changes
           <Link to="/seating">
             <div className={styles.manageLink}>Manage Seats</div>
           </Link>
