@@ -2,7 +2,6 @@
 import apiClient from "./api-client";
 
 export type Dish = {
-  _id: string;
   name: string;
   description: string;
   isVegetarian?: boolean;
@@ -34,6 +33,16 @@ const menuService = {
   // 2. Create menu with background
   createMenuWithBackground: (payload: CreateMenuPayload) => {
     return apiClient.post<Menu>("/menu/create-menu", payload);
+  },
+
+  // לקבלת תפריט לפי userId
+  getMenuByUserId: (userId: string) => {
+    return apiClient.get<Menu>(`/menu/user/${userId}`);
+  },
+
+// לעדכן מנות לפי userId
+  updateDishesByUserId: (userId: string, dishes: Dish[]) => {
+    return apiClient.put<Menu>(`/menu/user/${userId}/dishes`, { dishes });
   },
 };
 

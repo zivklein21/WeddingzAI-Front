@@ -9,6 +9,9 @@ import {
 import useImage from "use-image";
 
 import { BsFiletypePdf, BsFiletypePng } from "react-icons/bs";
+import styles from "./Menu.module.css";
+import { IoCheckmarkOutline } from "react-icons/io5";
+
 interface TextItem {
   id: string;
   text: string;
@@ -18,6 +21,7 @@ interface TextItem {
   fontFamily: string;
   fill: string;
   align: "center" | "left" | "right";
+  width?: number;
   isCategory?: boolean;
   isName?: boolean;
   groupId?: string;
@@ -37,6 +41,9 @@ interface Props {
 
 const STAGE_W = 500;
 const STAGE_H = 600;
+
+const WHITE_BOX_X = 110;   // מיקום המלבן הלבן בתוך הקנבס (שוליים שמאליים)
+const WHITE_BOX_WIDTH = 280; // רוחב המלבן הלבן
 
 const CATEGORY_COLOR = "#7e46c1";
 const DISH_COLOR = "#301b41";
@@ -58,75 +65,80 @@ export default function DesignSection({ backgroundUrl, dishes }: Props) {
   // בונים את רשימת הטקסטים לפי קטגוריות ומנות
   const canvasTexts: TextItem[] = [];
   const categories = Array.from(new Set(dishes.map((d) => d.category)));
+  let runningY = 40;  // מתחילים מלמעלה
+
   categories.forEach((cat, catIdx) => {
-    const catY = 40 + catIdx * 120;
-    // קטגוריה
+    // Category
     canvasTexts.push({
       id: `cat-${cat}-${catIdx}`,
       text: cat,
-      x: STAGE_W / 2,
-      y: catY,
-      fontSize: 22,
+      x: WHITE_BOX_X,
+      y: runningY,
+      fontSize: 16,
       fontFamily: "Rubik",
       fill: CATEGORY_COLOR,
       align: "center",
+      width: WHITE_BOX_WIDTH,
       isCategory: true,
     });
 
-    // מנות תחת קטגוריה זו
+    runningY += 40; 
+
     const dishesInCat = dishes.filter((d) => d.category === cat);
     dishesInCat.forEach((dish, dishIdx) => {
-      const baseY = catY + 30 + dishIdx * 50;
-      // שם מנה
+      // Dish Name
       canvasTexts.push({
         id: `name-${dish._id}-${dishIdx}`,
         text: dish.name + (dish.isVegetarian ? " 🍃" : ""),
-        x: STAGE_W / 2,
-        y: baseY,
-        fontSize: 16,
+        x: WHITE_BOX_X,
+        y: runningY,
+        fontSize: 14,
         fontFamily: "Rubik",
         fill: DISH_COLOR,
         align: "center",
+        width: WHITE_BOX_WIDTH,
         groupId: dish._id,
         isName: true,
       });
-      // תיאור מנה
+
+      runningY += 20;
+
+      // Dish Desc
       canvasTexts.push({
         id: `desc-${dish._id}-${dishIdx}`,
         text: dish.description,
-        x: STAGE_W / 2,
-        y: baseY + 20,
+        x: WHITE_BOX_X,
+        y: runningY,
         fontSize: 12,
         fontFamily: "Rubik",
         fill: DESC_COLOR,
         align: "center",
+        width: WHITE_BOX_WIDTH,
         groupId: dish._id,
         isName: false,
       });
+
+      runningY += 40;
     });
   });
 
   const [textsState, setTextsState] = useState<TextItem[]>(canvasTexts);
   const stageRef = useRef<any>(null);
 
-  // עדכון מיקום של טקסט גרירה
   function handleDrag(id: string, x: number, y: number) {
     setTextsState((prev) =>
       prev.map((t) => (t.id === id ? { ...t, x, y } : t))
     );
   }
 
-  // עדכון מאפיינים (גודל גופן, צבע)
   function handleUpdate(id: string, newProps: Partial<TextItem>) {
     setTextsState((prev) =>
       prev.map((t) => (t.id === id ? { ...t, ...newProps } : t))
     );
   }
 
-  // מציאת הטקסט שנבחר (לעריכה)
   const selected = textsState.find((t) => t.id === selectedId);
 
-  // הורדת PNG + PDF - קוד דומה למה שהיה לך
   function handleDownloadImage() {
     if (!stageRef.current) return;
     const uri = stageRef.current.toDataURL({ pixelRatio: 2 });
@@ -173,7 +185,7 @@ export default function DesignSection({ backgroundUrl, dishes }: Props) {
               <label>Font size: </label>
               <input
                 type="range"
-                min={10}
+                min={1}
                 max={40}
                 value={selected.fontSize}
                 onChange={(e) =>
@@ -195,12 +207,18 @@ export default function DesignSection({ backgroundUrl, dishes }: Props) {
           </>
         )}
         <div style={{ marginTop: 20 }}>
-          <button onClick={handleDownloadImage} style={{ marginRight: 10 }}>
-            <BsFiletypePng /> Download PNG
-          </button>
-          <button onClick={handleDownloadPDF}>
-            <BsFiletypePdf /> Download PDF
-          </button>
+          <span onClick={handleDownloadImage} className={styles.icon} style={{ fontSize: 30 }}>
+            <BsFiletypePng />
+          </span>
+          <span className={styles.icon} style={{ fontSize: 30 }} onClick={handleDownloadPDF}>
+            <BsFiletypePdf />
+          </span>
+          <span
+            title="Save menu"
+            style={{ fontSize: 30 }}
+          >
+            <IoCheckmarkOutline/>
+          </span>
         </div>
       </div>
 
@@ -236,11 +254,11 @@ export default function DesignSection({ backgroundUrl, dishes }: Props) {
                   text={t.text}
                   x={t.x}
                   y={t.y}
+                  width={t.width}
                   fontSize={t.fontSize}
                   fontFamily={t.fontFamily}
                   fill={t.fill}
                   align={t.align}
-                  width={320}
                   draggable
                   onDragEnd={(e) => {
                     setSelectedId(t.id);
