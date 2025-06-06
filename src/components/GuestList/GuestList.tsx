@@ -170,7 +170,7 @@ const GuestList: React.FC = () => {
   };
 
   const handleExportExcel = () => {
-    const exclude = new Set(['_id', 'userId', '__v', 'rsvpToken']);
+    const exclude = new Set(['_id', 'userId', '__v', 'rsvpToken', 'tableId']);
     const data = guests.map(g =>
       Object.fromEntries(
         Object.entries(g).filter(([k]) => !exclude.has(k))
