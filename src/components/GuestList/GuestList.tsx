@@ -46,8 +46,8 @@ const GuestList: React.FC = () => {
       secondPartner = p.secondPartner || '';
       weddingDate = p.weddingDate || 'TBD';
       weddingVenue = p.weddingVenue || 'TBD';
-    } catch { 
-      console.error('Error parsing user cookie:', userCookie);
+    } catch (err) {
+      console.error('Error parsing user cookie:', userCookie, err);
     }
   }
 
@@ -71,7 +71,8 @@ const GuestList: React.FC = () => {
     try {
       const data = await fetchMyGuests();
       setGuests(data);
-    } catch {
+    } catch (err) {
+      console.error('Failed to fetch guests:', err);
       toast.error('Failed to fetch guests');
     } finally {
       setLoading(false);
@@ -107,7 +108,8 @@ const GuestList: React.FC = () => {
       setForm({ fullName:'', email:'', phone:'', rsvp:'maybe', numberOfGuests: 1 });
       await fetchGuests();
       toast.success('Guest added');
-    } catch {
+    } catch (err) {
+      console.error('Error adding guest:', err);
       toast.error('Error adding guest');
     }
   };
@@ -134,7 +136,8 @@ const GuestList: React.FC = () => {
         guests: valid
       });
       toast.success('Invitations sent');
-    } catch {
+    } catch (err) {
+      console.error('Error sending invites:', err);
       toast.error('Error sending invites');
     } finally {
       setSending(false);
@@ -157,14 +160,16 @@ const GuestList: React.FC = () => {
             rsvp: r.rsvp || 'maybe',
             numberOfGuests: parseInt(r.numberOfGuests) || 1
           });
-        } catch {
+        } catch (err) {
+          console.error('Failed to import row:', r, err);
           failed.push(r);
         }
       }
       await fetchGuests();
       if (failed.length) toast.error(`${failed.length} failed to import`);
       else toast.success('Imported');
-    } catch {
+    } catch (err) {
+      console.error('Import error:', err);
       toast.error('Import error');
     }
   };
@@ -188,7 +193,8 @@ const GuestList: React.FC = () => {
       await deleteGuest(id);
       await fetchGuests();
       toast.success('Deleted');
-    } catch {
+    } catch (err) {
+      console.error('Delete error:', err);
       toast.error('Delete error');
     }
   };
@@ -215,7 +221,8 @@ const GuestList: React.FC = () => {
       setEditingGuests(prev=>{ const c={...prev}; delete c[g._id]; return c; });
       await fetchGuests();
       toast.success('Saved');
-    } catch {
+    } catch (err) {
+      console.error('Save error:', err);
       toast.error('Save error');
     }
   };
@@ -226,40 +233,40 @@ const GuestList: React.FC = () => {
         <FiArrowLeft className={styles.backIcon} onClick={() => navigate(-1)} title="Go Back" />
         <h2 className={styles.guestHeader}>Guest List</h2>
 
-          <form className={styles.guestForm} onSubmit={handleAddGuest}>
-            <input
-              name="fullName"
-              value={form.fullName}
-              onChange={handleInputChange}
-              placeholder="Full Name"
-              required
-            />
-            <input
-              name="email"
-              type="email"
-              value={form.email}
-              onChange={handleInputChange}
-              placeholder="Email"
-              required
-            />
-            <input
-              name="phone"
-              value={form.phone}
-              onChange={handleInputChange}
-              placeholder="Phone"
-            />
-            <input
-              name="numberOfGuests"
-              type="number"
-              min={1}
-              value={form.numberOfGuests}
-              onChange={handleInputChange}
-              placeholder="# Guests"
-            />
-            <button type="submit" >
-              + Add Guest
-            </button>
-          </form>
+        <form className={styles.guestForm} onSubmit={handleAddGuest}>
+          <input
+            name="fullName"
+            value={form.fullName}
+            onChange={handleInputChange}
+            placeholder="Full Name"
+            required
+          />
+          <input
+            name="email"
+            type="email"
+            value={form.email}
+            onChange={handleInputChange}
+            placeholder="Email"
+            required
+          />
+          <input
+            name="phone"
+            value={form.phone}
+            onChange={handleInputChange}
+            placeholder="Phone"
+          />
+          <input
+            name="numberOfGuests"
+            type="number"
+            min={1}
+            value={form.numberOfGuests}
+            onChange={handleInputChange}
+            placeholder="# Guests"
+          />
+          <button type="submit" >
+            + Add Guest
+          </button>
+        </form>
 
         <div className={styles.toolbar}>
           <div className={styles.actionsContainer}>
