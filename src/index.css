@@ -1,6 +1,10 @@
 /* index.css - Global wedding-themed styles */
 @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Send+Flowers');
+@import url('https://fonts.googleapis.com/css2?family=Alumni+Sans+SC');
+@import url('https://fonts.googleapis.com/css2?family=Karla:wght@400;700&');
+@import url('https://fonts.googleapis.com/css2?family=Caveat&');
+@import url('https://fonts.googleapis.com/css2?family=Delius&');
 :root {
     --wedding-pink: #f9e6f0;
     --wedding-black: #000000;
@@ -106,3 +110,4 @@
  .no-scroll {
   overflow: hidden;
 }
+

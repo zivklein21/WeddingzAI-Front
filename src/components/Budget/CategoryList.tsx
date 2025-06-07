@@ -6,7 +6,6 @@ import {
   FiCheck,
   FiX,
   FiEdit2,
-  FiSave,
   FiTrash2
 } from 'react-icons/fi';
 

@@ -1,49 +1,54 @@
-import apiClient, { CanceledError } from './api-client';
+// src/services/menu-service.ts
+import apiClient from "./api-client";
 
-export { CanceledError };
-
-export interface Dish {
+export type Dish = {
   name: string;
   description: string;
-}
+  isVegetarian?: boolean;
+  category: "Starters" | "Intermediates" | "Mains" | "Desserts" | "On the table";
+};
 
 export interface Menu {
-  _id: string;
   userId: string;
   coupleNames: string;
   designPrompt: string;
+  backgroundUrl: string;
   dishes: Dish[];
-  imageUrl: string;
-  createdAt: string;
-  updatedAt: string;
+  finalPng?: string;
+  finalPdf?: string;
 }
 
-export interface MenuResponse {
-  message: string;
-  data: Menu;
+interface CreateMenuPayload {
+  userId: string;
+  coupleNames: string;
+  designPrompt: string;
+  backgroundUrl: string; 
 }
-
-const createMenu = (coupleNames: string, designPrompt: string, dishes: Dish[]) => {
-  const controller = new AbortController();
-  
-  const request = apiClient.post<MenuResponse>(
-    '/menu/create',
-    { coupleNames, designPrompt, dishes },
-    {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    }
-  );
-
-  return {
-    request,
-    abort: () => controller.abort()
-  };
-};
 
 const menuService = {
-  createMenu
+  // 1. Generate menu background image with AI (returns {backgroundUrl})
+  generateBackground: (prompt: string) =>
+    apiClient.post<{ backgroundUrl: string }>("/menu/background", { prompt }),
+
+  // 2. Create menu with background
+  createMenuWithBackground: (payload: CreateMenuPayload) => {
+    return apiClient.post<Menu>("/menu/create-menu", payload);
+  },
+
+  // לקבלת תפריט לפי userId
+  getMenuByUserId: (userId: string) => {
+    return apiClient.get<Menu>(`/menu/${userId}`);
+  },
+
+// לעדכן מנות לפי userId
+  updateDishesByUserId: (userId: string, dishes: Dish[]) => {
+    return apiClient.put<Menu>(`/menu/${userId}/dishes`, { dishes });
+  },
+
+  updateFinals: (userId: string, finals: {finalPng: string, finalCanvasJson: string}) => {
+    console.log(userId);
+    return apiClient.put<Menu>(`/menu/${userId}/finals`, {finals});
+  }
 };
 
-export default menuService; 
+export default menuService;

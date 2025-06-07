@@ -9,6 +9,7 @@ import TDLOverview from "./Overviews/TDL/TDLOverview";
 import SeatOverview from "./Overviews/SeatOverview/SeatOverview";
 import DetailsOverview from "./Overviews/Details/DetailsOverview"
 import CalendarOverview from "./Overviews/Calendar/CalendarOverview";
+import MenuOverview from "./Overviews/Menu/MenuOverview";
 
 export default function WeddingDashboard() {
 
@@ -54,6 +55,7 @@ export default function WeddingDashboard() {
         <div className={`${styles.card} ${styles.menu}`}>
           Menu
           <hr className={styles.divider} />
+          <MenuOverview/>
           <Link to="/menu">
             <div className={styles.manageLink}>Manage Menu</div>
           </Link>

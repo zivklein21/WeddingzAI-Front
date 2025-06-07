@@ -29,11 +29,10 @@ const VendorOverview: React.FC = () => {
   }
 
   return (
-    <div className={styles.card}>
+    <div>
       <p className={styles.total}>Total Vendors: {total}</p>
-      <hr />
       <ul className={styles.vendorList}>
-        {Object.entries(counts).map(([type, count]) => (
+        {Object.entries(counts).slice(0, 2).map(([type, count]) => (
           <li key={type}>
             - {type}: {count} proposals
           </li>

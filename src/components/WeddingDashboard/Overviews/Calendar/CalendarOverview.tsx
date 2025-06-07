@@ -73,8 +73,8 @@ export default function CalendarOverview() {
   return (
     <div className={styles.miniCalBox}>
       <div className={styles.weekdays}>
-        {weekdays.map((wd) => (
-          <div key={wd} className={styles.weekday}>{wd}</div>
+        {weekdays.map((wd, idx) => (
+          <div key={`${wd}-${idx}`} className={styles.weekday}>{wd}</div>
         ))}
       </div>
       <div>

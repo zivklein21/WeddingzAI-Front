@@ -1,235 +1,93 @@
-import React, { useState } from 'react';
-import styles from './Menu.module.css';
-import { FaImage, FaSpinner, FaExternalLinkAlt, FaDownload, FaPlus, FaTrash } from 'react-icons/fa';
-import menuService, { CanceledError } from '../../services/menu-service';
-import type { Menu, Dish } from '../../services/menu-service';
+import React, { useState, useEffect } from "react";
+import { useAuth } from "../../hooks/useAuth/AuthContext";
+import { useNavigate } from "react-router-dom";
+import styles from "./Menu.module.css";
+import MenuFlowStepper from "./MenuFlowStepper";
+import BackgroundSection from "./BackgroundSection";
+import DishesSection from "./DishesSection";
+import DesignSection from "./DesignSection";
+import menuService, { Dish } from "../../services/menu-service";
+import { FiArrowLeft } from "react-icons/fi";
 
-const Menu: React.FC = () => {
-  const [coupleNames, setCoupleNames] = useState('');
-  const [designPrompt, setDesignPrompt] = useState('');
-  const [dishes, setDishes] = useState<Dish[]>([
-    { name: '', description: '' }
-  ]);
-  const [menu, setMenu] = useState<Menu | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+export default function Menu() {
+  const [step, setStep] = useState(0);
+  const [menuData, setMenuData] = useState({
+    coupleNames: "",
+    designPrompt: "",
+    backgroundUrl: "",
+    dishes: [] as Dish[],
+    finalCanvasJson: undefined as string | undefined,
+  });
 
-  const handleAddDish = () => {
-    setDishes([...dishes, { name: '', description: '' }]);
-  };
+  const user = useAuth();
+  const userId = user.user?._id ?? "";
+  const navigate = useNavigate();
 
-  const handleRemoveDish = (index: number) => {
-    setDishes(dishes.filter((_, i) => i !== index));
-  };
+  // לקיחת התפריט מהשרת כאשר userId זמין
+  useEffect(() => {
+    if (!userId) return;
 
-  const handleDishChange = (index: number, field: keyof Dish, value: string) => {
-    const newDishes = [...dishes];
-    newDishes[index] = { ...newDishes[index], [field]: value };
-    setDishes(newDishes);
-  };
+    menuService.getMenuByUserId(userId)
+      .then(res => {
+        console.log("Menu data from server:", res.data);
+        setMenuData(res.data);
+      })
+      .catch(err => {
+        console.error("Failed to fetch menu:", err);
+      });
+  }, [userId]);
 
-  const handleDownload = () => {
-    if (menu?.imageUrl) {
-      const link = document.createElement('a');
-      link.href = menu.imageUrl;
-      link.download = `wedding-menu-${new Date().getTime()}.png`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
-  };
-
-  const handleCreateMenu = async () => {
-    if (!coupleNames.trim()) {
-      setError('Please enter the couple names');
-      return;
-    }
-    if (!designPrompt.trim()) {
-      setError('Please enter a design prompt');
-      return;
-    }
-    if (dishes.some(dish => !dish.name.trim() || !dish.description.trim())) {
-      setError('Please fill in all dish details');
-      return;
-    }
-    
-    setIsLoading(true);
-    setError(null);
-    try {
-      const request = menuService.createMenu(coupleNames, designPrompt, dishes);
-      const response = await request.request;
-      
-      if (response.data && response.data.data) {
-        setMenu(response.data.data);
-      } else {
-        setError('Invalid response format from server');
-      }
-    } catch (error) {
-      if (error instanceof CanceledError) {
-        console.log('Request was canceled');
-        return;
-      }
-      
-      console.error('Failed to create menu:', error);
-      
-      if (error && typeof error === 'object' && 'response' in error) {
-        const axiosError = error as { response?: { status: number; data?: { message?: string } } };
-        if (axiosError.response) {
-          switch (axiosError.response.status) {
-            case 400:
-              setError('Invalid request. Please check your input.');
-              break;
-            case 401:
-              setError('Please log in again to continue.');
-              break;
-            case 500:
-              setError('Server error. Please try again later.');
-              break;
-            default:
-              setError(`Error: ${axiosError.response.data?.message || 'Unknown error'}`);
-          }
-        } else {
-          setError('No response from server. Please check your connection.');
-        }
-      } else {
-        setError('An unexpected error occurred. Please try again.');
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  // אם יש שם בני הזוג, נעדכן את השדה בצורה נקייה
+  const coupleNames = `${user.user?.firstPartner ?? ""} & ${user.user?.secondPartner ?? ""}`;
 
   return (
-    <div className={styles.container}>
-      <section className={styles.section}>
-        <h2 className={styles.sectionTitle}>
-          <FaImage className={styles.icon} /> Design Your Wedding Menu
-        </h2>
+    <div className={styles.menuPage}>
+      <div className={styles.menuContainer}>
         
-        <div className={styles.formSection}>
-          <div className={styles.inputGroup}>
-            <label htmlFor="coupleNames">Couple Names</label>
-            <input
-              id="coupleNames"
-              type="text"
-              value={coupleNames}
-              onChange={(e) => setCoupleNames(e.target.value)}
-              placeholder="e.g., John & Jane"
-              className={styles.input}
-            />
-          </div>
+        <FiArrowLeft className={styles.backIcon} onClick={() => navigate(-1)} title="Go Back" />
+        <h2 className={styles.menuHeader}>Menu</h2>
 
-          <div className={styles.inputGroup}>
-            <label htmlFor="designPrompt">Design Style</label>
-            <textarea
-              id="designPrompt"
-              value={designPrompt}
-              onChange={(e) => setDesignPrompt(e.target.value)}
-              placeholder="Describe your menu design style... (e.g., 'Elegant menu with gold accents and floral elements')"
-              className={styles.textarea}
-            />
-          </div>
+        <MenuFlowStepper step={step} />
 
-          <div className={styles.dishesSection}>
-            <h3>Menu Items</h3>
-            {dishes.map((dish, index) => (
-              <div key={index} className={styles.dishItem}>
-                <div className={styles.dishInputs}>
-                  <input
-                    type="text"
-                    value={dish.name}
-                    onChange={(e) => handleDishChange(index, 'name', e.target.value)}
-                    placeholder="Dish name (e.g., Appetizer)"
-                    className={styles.input}
-                  />
-                  <input
-                    type="text"
-                    value={dish.description}
-                    onChange={(e) => handleDishChange(index, 'description', e.target.value)}
-                    placeholder="Dish description"
-                    className={styles.input}
-                  />
-                </div>
-                {dishes.length > 1 && (
-                  <button
-                    onClick={() => handleRemoveDish(index)}
-                    className={styles.removeButton}
-                  >
-                    <FaTrash />
-                  </button>
-                )}
-              </div>
-            ))}
-            <button
-              onClick={handleAddDish}
-              className={styles.addButton}
-            >
-              <FaPlus /> Add Another Dish
-            </button>
-          </div>
-
-          <button 
-            onClick={handleCreateMenu}
-            disabled={isLoading}
-            className={styles.createButton}
-          >
-            {isLoading ? (
-              <>
-                <FaSpinner className={styles.spinner} /> Creating...
-              </>
-            ) : (
-              'Create Menu'
-            )}
-          </button>
-        </div>
-        
-        {error && (
-          <div className={styles.error}>
-            {error}
-          </div>
-        )}
-        
-        {menu && (
-          <div className={styles.result}>
-            <div className={styles.resultHeader}>
-              <h3>Your Menu</h3>
-              <button 
-                onClick={handleDownload}
-                className={styles.downloadButton}
-              >
-                <FaDownload /> Download
-              </button>
-            </div>
-            <div className={styles.imageContainer}>
-              <img 
-                src={menu.imageUrl} 
-                alt="Generated wedding menu" 
-                className={styles.menuImage}
-              />
-            </div>
-          </div>
+        {step === 0 && (
+          <BackgroundSection
+            userId={userId}
+            coupleNames={coupleNames}
+            designPrompt={menuData.designPrompt}
+            setDesignPrompt={(prompt) => setMenuData(d => ({ ...d, designPrompt: prompt }))}
+            backgroundUrl={menuData.backgroundUrl}
+            setBackgroundUrl={(url) => setMenuData(d => ({ ...d, backgroundUrl: url }))}
+            onDone={() => setStep(1)}
+          />
         )}
 
-        <div className={styles.linksContainer}>
-          <div className={styles.linkCategory}>
-            <h3>Menu Design Inspiration</h3>
-            <ul className={styles.linkList}>
-              <li>
-                <a href="https://www.pinterest.com/search/pins/?q=wedding%20menu%20design" target="_blank" rel="noopener noreferrer">
-                  Pinterest Wedding Menus <FaExternalLinkAlt />
-                </a>
-              </li>
-              <li>
-                <a href="https://www.minted.com/wedding/menus" target="_blank" rel="noopener noreferrer">
-                  Minted Wedding Menus <FaExternalLinkAlt />
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </section>
+        {step === 1 && (
+          <DishesSection
+            dishes={menuData.dishes}
+            setDishes={(dishes) => setMenuData(d => ({ ...d, dishes }))}
+            onDone={() => setStep(2)}
+            userId={userId}
+          />
+        )}
+
+        {step === 2 && (
+          <DesignSection
+            userId={userId}
+            backgroundUrl={menuData.backgroundUrl}
+            dishes={menuData.dishes}
+            coupleNames={menuData.coupleNames || coupleNames}
+            existingDesignJson={
+              (() => {
+                try {
+                  return menuData.finalCanvasJson ? JSON.parse(menuData.finalCanvasJson) : undefined;
+                } catch {
+                  return undefined;
+                }
+              })()
+            }
+          />
+        )}
+      </div>
     </div>
   );
-};
-
-export default Menu; 
+}

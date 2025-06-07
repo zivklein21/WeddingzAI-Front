@@ -151,7 +151,7 @@ export default function CalendarPage() {
         
     <div className={styles.calendarContainer}>
         <FiArrowLeft className={styles.backIcon} onClick={() => navigate(-1)} title="Go Back" />
-        <h2 className={styles.calendarHeader}>Guest List</h2>
+        <h2 className={styles.calendarHeader}>Calendar</h2>
         <div className={styles.calendarSection}>
             <FullCalendar
             plugins={[dayGridPlugin, interactionPlugin]}
