@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import menuService, { Dish as DishType } from "../../services/menu-service";
 import { IoCheckmarkOutline } from "react-icons/io5";
 import styles from "./Menu.module.css";
+
+import { CiCircleRemove, CiSaveDown2, CiEdit, CiTrash, CiCirclePlus} from "react-icons/ci";
+
 interface Props {
   userId: string;
   dishes: DishType[];
@@ -19,6 +22,8 @@ const emptyDish: DishType = {
 export default function DishesSection({ userId, dishes, setDishes, onDone }: Props) {
   const [form, setForm] = useState<DishType>(emptyDish);
   const [loading, setLoading] = useState(false);
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [editedDish, setEditedDish] = useState<DishType | null>(null);
 
   useEffect(() => {
     if (userId && dishes.length === 0) {
@@ -45,13 +50,36 @@ export default function DishesSection({ userId, dishes, setDishes, onDone }: Pro
   const handleAdd = (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.name.trim() || !form.description.trim()) return;
-    const newDish = { ...form };
-    setDishes([...dishes, newDish]);
+    setDishes([...dishes, { ...form }]);
     setForm(emptyDish);
   };
 
   const handleRemove = (idx: number) => {
+    if (editingIndex === idx) {
+      setEditingIndex(null);
+      setEditedDish(null);
+    }
     setDishes(dishes.filter((_, i) => i !== idx));
+  };
+
+  const startEdit = (idx: number) => {
+    setEditingIndex(idx);
+    setEditedDish({ ...dishes[idx] });
+  };
+
+  const cancelEdit = () => {
+    setEditingIndex(null);
+    setEditedDish(null);
+  };
+
+  const saveEdit = () => {
+    if (editedDish) {
+      const newDishes = [...dishes];
+      newDishes[editingIndex!] = editedDish;
+      setDishes(newDishes);
+      setEditingIndex(null);
+      setEditedDish(null);
+    }
   };
 
   const handleSaveAll = async () => {
@@ -61,7 +89,6 @@ export default function DishesSection({ userId, dishes, setDishes, onDone }: Pro
     }
     setLoading(true);
     try {
-      console.log(dishes);
       await menuService.updateDishesByUserId(userId, dishes);
       alert("Dishes saved successfully");
       onDone();
@@ -77,21 +104,21 @@ export default function DishesSection({ userId, dishes, setDishes, onDone }: Pro
     <div>
       <form
         onSubmit={handleAdd}
-        style={{ marginBottom: 16, display: "flex", gap: 8 }}
+        className={styles.formRow}
       >
         <input
           value={form.name}
           onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
           placeholder="Dish name"
           required
+          className={styles.input}
         />
         <input
           value={form.description}
-          onChange={(e) =>
-            setForm((f) => ({ ...f, description: e.target.value }))
-          }
+          onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
           placeholder="Description"
           required
+          className={styles.input}
         />
         <select
           value={form.category}
@@ -101,6 +128,7 @@ export default function DishesSection({ userId, dishes, setDishes, onDone }: Pro
               category: e.target.value as DishType["category"],
             }))
           }
+          className={styles.select}
         >
           <option value="On the table">On the table</option>
           <option value="Starters">Starters</option>
@@ -108,54 +136,127 @@ export default function DishesSection({ userId, dishes, setDishes, onDone }: Pro
           <option value="Mains">Mains</option>
           <option value="Desserts">Desserts</option>
         </select>
-        <label style={{ display: "flex", alignItems: "center", gap: 4 }}>
+        <label className={styles.checkboxLabel}>
           <input
             type="checkbox"
             checked={form.isVegetarian}
             onChange={(e) =>
               setForm((f) => ({ ...f, isVegetarian: e.target.checked }))
             }
-          />{" "}
+          />
           Vegetarian
         </label>
-        <button type="submit" disabled={loading}>
-          Add
-        </button>
+        <span className={styles.icon} onClick={handleAdd}>
+          <CiCirclePlus />
+        </span>
       </form>
+
       {dishes.length === 0 ? (
         <div>No dishes added yet</div>
       ) : (
-        <table style={{ width: "100%", marginBottom: 16 }}>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Description</th>
-              <th>Category</th>
-              <th>Vegetarian</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {dishes.map((dish, i) => (
-              <tr key={i}>
-                <td>{dish.name}</td>
-                <td>{dish.description}</td>
-                <td>{dish.category}</td>
-                <td>{dish.isVegetarian ? "Yes" : "No"}</td>
-                <td>
-                  <span
-                    style={{ cursor: "pointer" }}
-                    onClick={() => handleRemove(i)}
-                    title="Remove"
-                  >
-                    🗑️
-                  </span>
-                </td>
+        <div className={styles.tableWrapper}>
+          <table className={styles.menuTable}>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Category</th>
+                <th>Vegetarian</th>
+                <th>Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {dishes.map((dish, i) => (
+                <tr key={i}>
+                  <td>
+                    {editingIndex === i ? (
+                      <input
+                        className={styles.editInput}
+                        value={editedDish?.name || ""}
+                        onChange={(e) =>
+                          setEditedDish((d) => d && { ...d, name: e.target.value })
+                        }
+                      />
+                    ) : (
+                      dish.name
+                    )}
+                  </td>
+                  <td>
+                    {editingIndex === i ? (
+                      <input
+                        className={styles.editInput}
+                        value={editedDish?.description || ""}
+                        onChange={(e) =>
+                          setEditedDish((d) => d && { ...d, description: e.target.value })
+                        }
+                      />
+                    ) : (
+                      dish.description
+                    )}
+                  </td>
+                  <td>
+                    {editingIndex === i ? (
+                      <select
+                        className={styles.editSelect}
+                        value={editedDish?.category || "On the table"}
+                        onChange={(e) => {
+                          const value = e.target.value as "On the table" | "Starters" | "Intermediates" | "Mains" | "Desserts";
+                          setEditedDish((d) => d && { ...d, category: value });
+                        }}
+                      >
+                        <option value="On the table">On the table</option>
+                        <option value="Starters">Starters</option>
+                        <option value="Intermediates">Intermediates</option>
+                        <option value="Mains">Mains</option>
+                        <option value="Desserts">Desserts</option>
+                      </select>
+                    ) : (
+                      dish.category
+                    )}
+                  </td>
+                  <td style={{ textAlign: "center" }}>
+                    {editingIndex === i ? (
+                      <input
+                        type="checkbox"
+                        checked={editedDish?.isVegetarian || false}
+                        onChange={(e) =>
+                          setEditedDish((d) => d && { ...d, isVegetarian: e.target.checked })
+                        }
+                      />
+                    ) : dish.isVegetarian ? (
+                      "Yes"
+                    ) : (
+                      "No"
+                    )}
+                  </td>
+                  <td>
+                    {editingIndex === i ? (
+                      <>
+                        <span onClick={saveEdit} className={styles.icon} title="Save" style={{ marginRight: 6 }}>
+                          <CiSaveDown2 />
+                        </span>
+                        <span onClick={cancelEdit} className={styles.icon} title="Cancel">
+                          <CiCircleRemove />
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <span onClick={() => startEdit(i)} className={styles.icon} title="Edit" style={{ marginRight: 6 }}>
+                          <CiEdit />
+                        </span>
+                        <span onClick={() => handleRemove(i)} className={styles.icon} title="Delete">
+                          <CiTrash />
+                        </span>
+                      </>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
+
       <span
         onClick={handleSaveAll}
         title="Save All"
@@ -163,11 +264,13 @@ export default function DishesSection({ userId, dishes, setDishes, onDone }: Pro
           cursor: loading ? "not-allowed" : "pointer",
           opacity: loading ? 0.5 : 1,
           fontSize: 28,
+          marginTop: 10,
         }}
         className={styles.icon}
       >
-        <IoCheckmarkOutline/>
+        <IoCheckmarkOutline />
       </span>
+
       {loading && <div>Saving...</div>}
     </div>
   );

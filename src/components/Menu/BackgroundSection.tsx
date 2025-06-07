@@ -3,38 +3,49 @@ import styles from "./Menu.module.css";
 import menuService from "../../services/menu-service";
 import { ImMagicWand } from "react-icons/im";
 import { FiLoader } from "react-icons/fi";
-import { CiImageOn } from "react-icons/ci";
 import { IoCheckmarkOutline } from "react-icons/io5";
-import { useAuth } from "../../hooks/useAuth/AuthContext";
 
 interface Props {
+  userId: string;
   designPrompt: string;
   setDesignPrompt: (v: string) => void;
-  backgroundUrl: string;
+  coupleNames: string;
+  backgroundUrl: string; // הנתיב היחסי או URL מלא מה-db
   setBackgroundUrl: (v: string) => void;
   onDone: () => void;
 }
 
 export default function BackgroundSection({
+  userId,
   designPrompt,
   setDesignPrompt,
-  backgroundUrl,
-  setBackgroundUrl,
+  coupleNames,
+  backgroundUrl: initialBackgroundUrl,
+  setBackgroundUrl: setParentBackgroundUrl,
   onDone,
 }: Props) {
-  const { user } = useAuth();
-  const userId = user?._id || "";
-  const coupleNames = `${user?.firstPartner || ""} & ${user?.secondPartner || ""}`;
   const [isLoading, setIsLoading] = useState(false);
-  const [saving, setSaving] = useState(false);
+  const [generatedImageUrl, setGeneratedImageUrl] = useState<string | null>(null);
+  const [selectedImage, setSelectedImage] = useState<"existing" | "generated" | null>(null);
 
-  // Generate AI background
+  const baseUrl = import.meta.env.VITE_BASE_URL || "";
+
+  // בניית ה-URL לתמונה הקיימת (אם יש)
+  const existingFullUrl = initialBackgroundUrl
+    ? (initialBackgroundUrl.startsWith("http")
+        ? initialBackgroundUrl
+        : `${baseUrl}/${initialBackgroundUrl.replace(/^\/+/, "")}?t=${Date.now()}`)
+    : null;
+
+  // Generate new image from AI
   const handleGenerate = async () => {
     if (!designPrompt.trim()) return;
     setIsLoading(true);
     try {
       const response = await menuService.generateBackground(designPrompt);
-      setBackgroundUrl(response.data.backgroundUrl);
+      const genUrl = response.data.backgroundUrl;
+      setGeneratedImageUrl(genUrl);
+      setSelectedImage("generated"); // כבר בחרנו את התמונה המגונרטת
     } catch (err) {
       console.error("generateBackground failed:", err);
       alert("Error generating background");
@@ -43,35 +54,40 @@ export default function BackgroundSection({
     }
   };
 
-  const handleUseDefault = () => {
-    setBackgroundUrl("/images/def-bg.png");
+  // כשמשתמש בוחר להמשיך עם תמונה קיימת
+  const handleContinueWithExisting = () => {
+    if (!existingFullUrl) {
+      alert("No existing background to use");
+      return;
+    }
+    setParentBackgroundUrl(existingFullUrl);
+    setSelectedImage("existing");
+    onDone();
   };
 
-  const handleCreateMenu = async () => {
-    console.log({ userId, coupleNames, designPrompt, backgroundUrl });
-    if(!designPrompt) {
-      designPrompt = "generic";
+  // כשמשתמש בוחר להמשיך עם תמונה חדשה
+  const handleContinueWithGenerated = async () => {
+    if (!generatedImageUrl) {
+      alert("No generated image to save");
+      return;
     }
-    // if (!userId || !coupleNames.trim() || !designPrompt.trim() || !backgroundUrl.trim()) {
     if (!userId || !coupleNames.trim() || !designPrompt.trim()) {
       alert("Missing required fields");
       return;
     }
-    setSaving(true);
-    backgroundUrl = "https://oaidalleapiprodscus.blob.core.windows.net/private/org-D9CwkcHJJw81xe0R8WtjE3jB/user-VpsbB7hOOGeE1QBUPbcvs0gg/img-7v56xfQ8Mx7dD8Scv9gLNP6D.png?st=2025-06-05T10%3A20%3A50Z&se=2025-06-05T12%3A20%3A50Z&sp=r&sv=2024-08-04&sr=b&rscd=inline&rsct=image/png&skoid=cc612491-d948-4d2e-9821-2683df3719f5&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-06-04T20%3A56%3A14Z&ske=2025-06-05T20%3A56%3A14Z&sks=b&skv=2024-08-04&sig=rTjsMGVMGCaiSiip5IMSwLtCvMC1mTZfURpiiX4QTL0%3D";
     try {
       await menuService.createMenuWithBackground({
         userId,
         coupleNames,
         designPrompt,
-        backgroundUrl,
+        backgroundUrl: generatedImageUrl,
       });
+      setParentBackgroundUrl(generatedImageUrl);
+      setSelectedImage("generated");
       onDone();
     } catch (error) {
-      alert("Error creating menu");
       console.error(error);
-    } finally {
-      setSaving(false);
+      alert("Error creating menu");
     }
   };
 
@@ -84,40 +100,75 @@ export default function BackgroundSection({
           placeholder="Describe your menu background style..."
           className={styles.promptInput}
         />
-        <div className={styles.actions}>
-          <span onClick={handleGenerate} className={styles.icon}>
-            {isLoading ? <FiLoader className={styles.spinner} /> : <ImMagicWand />}
-          </span>
-          <span className={styles.icon} onClick={handleUseDefault}>
-            <CiImageOn />
-          </span>
-        </div>
+        <span
+          onClick={handleGenerate}
+          className={styles.icon}
+          title="Generate AI Background"
+        >
+          {isLoading ? <FiLoader className={styles.spinner} /> : <ImMagicWand />}
+        </span>
       </div>
 
-      {backgroundUrl && (
-        <div className={styles.previewContainer}>
-          <img
-            src={backgroundUrl}
-            alt="Menu background"
-            className={styles.menuImage}
-            onError={() => {
-              alert("Failed to load background image.");
-              setBackgroundUrl("");
-            }}
-          />
-          <span
-            onClick={handleCreateMenu}
-            className={styles.icon}
+      <div
+        style={{
+          display: "flex",
+          gap: 24,
+          marginTop: 24,
+          justifyContent: "center",
+        }}
+      >
+        {/* Existing Image Section */}
+        {existingFullUrl && (
+          <div
             style={{
-              opacity: saving ? 0.5 : 1,
-              pointerEvents: saving ? "none" : "auto",
+              border: selectedImage === "existing" ? "3px solid #d2b1e5e1" : "1px solid #ccc",
+              borderRadius: 12,
+              padding: 8,
+              textAlign: "center",
+              maxWidth: 250,
             }}
-            title="Create menu and continue"
           >
-            <IoCheckmarkOutline />
-          </span>
-        </div>
-      )}
+            <img
+              src={existingFullUrl}
+              alt="Existing background"
+              style={{ maxWidth: "100%", borderRadius: 8 }}
+            />
+            <span
+              onClick={handleContinueWithExisting}
+              className={styles.icon}
+              style={{ marginTop: 8 }}
+            >
+              <IoCheckmarkOutline/>
+            </span>
+          </div>
+        )}
+
+        {/* Generated Image Section */}
+        {generatedImageUrl && (
+          <div
+            style={{
+              border: selectedImage === "generated" ? "3px solid #d2b1e5e1" : "1px solid #ccc",
+              borderRadius: 12,
+              padding: 8,
+              textAlign: "center",
+              maxWidth: 250,
+            }}
+          >
+            <img
+              src={generatedImageUrl}
+              alt="Generated background"
+              style={{ maxWidth: "100%", borderRadius: 8 }}
+            />
+            <span
+              onClick={handleContinueWithGenerated}
+              style={{ marginTop: 8 }}
+              className={styles.icon}
+            >
+              <IoCheckmarkOutline/>
+            </span>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

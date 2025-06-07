@@ -37,13 +37,18 @@ const menuService = {
 
   // לקבלת תפריט לפי userId
   getMenuByUserId: (userId: string) => {
-    return apiClient.get<Menu>(`/menu/user/${userId}`);
+    return apiClient.get<Menu>(`/menu/${userId}`);
   },
 
 // לעדכן מנות לפי userId
   updateDishesByUserId: (userId: string, dishes: Dish[]) => {
-    return apiClient.put<Menu>(`/menu/user/${userId}/dishes`, { dishes });
+    return apiClient.put<Menu>(`/menu/${userId}/dishes`, { dishes });
   },
+
+  updateFinals: (userId: string, finals: {finalPng: string, finalCanvasJson: string}) => {
+    console.log(userId);
+    return apiClient.put<Menu>(`/menu/${userId}/finals`, {finals});
+  }
 };
 
 export default menuService;

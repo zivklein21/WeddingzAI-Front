@@ -25,7 +25,6 @@
   margin-bottom: 20px;
   box-sizing: border-box;
   overflow-y: auto;
-  scrollbar-width: none;
 }
 
 
@@ -215,104 +214,121 @@
 
 
 /* Dish Section */
-.dishInputs {
-  padding-top: 2rem;
+.formRow {
   display: flex;
-  flex-wrap: wrap;
-  gap:5px;
-  margin-bottom: 25px;
+  flex-wrap: nowrap;
+  gap: 8px;
+  margin-bottom: 16px;
+  align-items: center;
+  justify-content: center;
 }
 
-.dishInputs input[type="text"],
-.dishInputs select {
+.input {
+  flex-grow: 1;
+  min-width: 150px;
   height: 35px;
+  padding: 0 12px;
   font-size: 15px;
-  padding: 0 16px;
   border-radius: 6px;
+  border: 1px solid #ccc;
   box-sizing: border-box;
-  min-width: 180px;
-  max-width: 330px;
-  display: flex;
-  align-items: center;
-  line-height: 1.1;  
-  vertical-align: middle;
 }
 
-.dishInputs select {
-  min-width: 135px;
-  max-width: 160px;
+.select {
+  min-width: 130px;
   height: 35px;
-  padding-right: 28px;
-  padding-left: 16px;
-}
-
-.vegBox {
-  display: flex;
-  align-items: center;
-  gap: 3px;
+  padding: 0 12px;
   font-size: 15px;
-  font-weight: 400;
-  height: 35px;
-  margin: 0;
-  line-height: 1.1;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
 }
 
-.vegBox input[type="checkbox"] {
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 15px;
+  font-weight: 500;
+  height: 35px;
+}
+
+.checkboxLabel input[type="checkbox"] {
   width: 22px;
   height: 22px;
   accent-color: var(--wedding-purple);
-  margin: 0 4px 0 0;
+  margin: 0;
   vertical-align: middle;
   position: relative;
-  top: 1px; 
+  top: 1px;
+}
+
+.addButton {
+  background-color: var(--wedding-purple);
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 22px;
+  padding: 0;
+}
+
+.addButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.tableWrapper {
+  max-width: 100%;
+  overflow-x: auto;
 }
 
 .menuTable {
   width: 100%;
   border-collapse: collapse;
   margin: 0 auto 14px auto;
+  min-width: 700px;
 }
 
-.menuTable th, .menuTable td {
+.menuTable th,
+.menuTable td {
   padding: 10px 12px;
   text-align: center;
   border-bottom: 1.5px solid #eee;
   font-size: 15px;
   font-weight: 400;
   color: #393939;
+  vertical-align: middle;
 }
 
 .menuTable th {
   background: #faf7ff;
-  font-weight: 500;
+  font-weight: 600;
   color: #222;
   font-size: 15px;
-  text-align: center;
 }
 
-.menuTable td:last-child, .menuTable th:last-child {
-  text-align: center;
-  min-width: 90px;
+.menuTable td:last-child,
+.menuTable th:last-child {
+  min-width: 110px;
 }
 
-.menuTable tr:last-child td {
-  border-bottom: none;
-}
-
-.editRow input[type="text"],
-.editRow select {
+.editInput,
+.editSelect {
   width: 100%;
-  padding: 5px 8px;
+  padding: 6px 12px;
   font-size: 1rem;
-  border: none;
   border-radius: 6px;
-  background: #fff;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
   text-align: center;
 }
-.editRow input[type="checkbox"] {
-  transform: scale(1.2);
-  accent-color: #b291ff;
-}
+
 
 .divider {
   width: 100%;
@@ -438,12 +454,8 @@
 }
 
 .imageZone {
-  width: 450px;
-  height: 550px;
-  min-width: 450px;
-  min-height: 550px;
-  max-width: 450px;
-  max-height: 550px;
+  width: 500px;
+  height: 600px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -452,4 +464,77 @@
   border-radius: 16px;
   margin: 0 auto;
   background: #fff;
+}
+
+
+/* edit zone */
+.editZone {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+  font-family: 'Rubik', sans-serif;
+}
+
+.editZone h3 {
+  font-weight: 700;
+  font-size: 1.4rem;
+  margin-bottom: 20px;
+  color: #3a3a3a;
+}
+
+.editRow {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 18px;
+}
+
+.editRow label {
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 6px;
+  color: #5c4d7d;
+}
+
+.editRow input[type="range"] {
+  width: 100%;
+  cursor: pointer;
+}
+
+.editRow input[type="color"],
+.editRow select {
+  padding: 8px 12px;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1.5px solid #ccc;
+  outline: none;
+  transition: border-color 0.3s ease;
+  cursor: pointer;
+}
+
+.editRow input[type="color"]:focus,
+.editRow select:focus {
+  border-color: #7e46c1;
+  box-shadow: 0 0 5px rgba(126, 70, 193, 0.5);
+}
+
+.editRow span {
+  margin-top: 6px;
+  font-size: 1rem;
+  color: #3a3a3a;
+}
+
+.iconRow {
+  margin-top: 25px;
+  display: flex;
+  gap: 20px;
+  font-size: 2rem;
+  cursor: pointer;
+  color: #7e46c1;
+  transition: color 0.3s ease;
+}
+
+.iconRow:hover {
+  color: #b291ff;
 }
