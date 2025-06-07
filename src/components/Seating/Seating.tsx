@@ -121,7 +121,7 @@ export default function Seating() {
     <div className={styles.seatPage}>
       <div className={styles.seatContainer}>
         <FiArrowLeft className={styles.backIcon} onClick={() => navigate(-1)} title="Go Back" />
-        <h2 className={styles.seatHeader}>Seat Chart</h2>
+        <h2 className={styles.seatHeader}>Seating Chart</h2>
         <div className={styles.contentGrid}>
           <div className={styles.sidebar}>
             <UnassignedGuestList

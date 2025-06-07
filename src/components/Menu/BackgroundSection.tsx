@@ -34,7 +34,7 @@ export default function BackgroundSection({
   const existingFullUrl = initialBackgroundUrl
     ? (initialBackgroundUrl.startsWith("http")
         ? initialBackgroundUrl
-        : `${baseUrl}/${initialBackgroundUrl.replace(/^\/+/, "")}?t=${Date.now()}`)
+        : `${baseUrl}/${initialBackgroundUrl.replace(/^\/+/, "")}`)
     : null;
 
   // Generate new image from AI

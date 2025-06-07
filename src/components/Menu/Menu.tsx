@@ -45,7 +45,7 @@ export default function Menu() {
       <div className={styles.menuContainer}>
         
         <FiArrowLeft className={styles.backIcon} onClick={() => navigate(-1)} title="Go Back" />
-        <h2 className={styles.menuHeader}>Guest List</h2>
+        <h2 className={styles.menuHeader}>Menu</h2>
 
         <MenuFlowStepper step={step} />
 

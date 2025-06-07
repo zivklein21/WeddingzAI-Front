@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect } from "react";
 import {
   Stage,
   Layer,
+  Rect,
+  Transformer,
   Image as KonvaImage,
   Text as KonvaText,
   Group,
@@ -39,8 +41,7 @@ interface Props {
   backgroundUrl: string;
   coupleNames: string;
   dishes: Dish[];
-  existingDesignJson?: TextItem[]; // JSON לעריכה חוזרת
-  // onSave: (pngDataUrl: string, designJson: TextItem[]) => Promise<void>;
+  existingDesignJson?: TextItem[];
 }
 
 const STAGE_W = 500;
@@ -70,19 +71,35 @@ export default function DesignSection({
   coupleNames,
   dishes,
   existingDesignJson,
-  // onSave,
 }: Props) {
   const [image] = useImage(backgroundUrl, "anonymous");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [textsState, setTextsState] = useState<TextItem[]>([]);
+  const [rectangle, setRectangle] = useState<{
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  } | null>(null);
   const [saving, setSaving] = useState(false);
 
   const stageRef = useRef<any>(null);
+  const rectRef = useRef<any>(null);
+  const trRef = useRef<any>(null);
 
-  // טעינת נתונים לעריכה חוזרת או יצירת טקסטים חדשים
+  // Sync transformer to selected rectangle
+  useEffect(() => {
+    if (selectedId === "rectangle" && rectRef.current && trRef.current) {
+      trRef.current.nodes([rectRef.current]);
+      trRef.current.getLayer().batchDraw();
+    } else if (trRef.current) {
+      trRef.current.nodes([]);
+      trRef.current.getLayer().batchDraw();
+    }
+  }, [selectedId]);
+
   useEffect(() => {
     if (existingDesignJson && existingDesignJson.length > 0) {
-      // מוודא ש־x הוא תחילת הקופסה ושכל הטקסטים מיושרים ומוגדרים עם רוחב נכון
       const fixedTexts = existingDesignJson.map((t) => ({
         ...t,
         x: WHITE_BOX_X,
@@ -160,11 +177,23 @@ export default function DesignSection({
     }
   }, [existingDesignJson, coupleNames, dishes]);
 
-  function handleUpdate(id: string, newProps: Partial<TextItem>) {
+  const handleAddRectangle = () => {
+    if (!rectangle) {
+      setRectangle({
+        x: WHITE_BOX_X + 10,
+        y: WHITE_BOX_Y + 10,
+        width: 100,
+        height: 200,
+      });
+      setSelectedId("rectangle");
+    }
+  };
+
+  const handleUpdate = (id: string, newProps: Partial<TextItem>) => {
     setTextsState((prev) =>
       prev.map((t) => (t.id === id ? { ...t, ...newProps } : t))
     );
-  }
+  };
 
   async function handleSave() {
     if (!stageRef.current) {
@@ -173,17 +202,13 @@ export default function DesignSection({
     }
     setSaving(true);
     try {
-      // שמירת תמונת PNG מהקנבס
       const pngDataUrl = stageRef.current.toDataURL({ pixelRatio: 2 });
-      // שמירת JSON של הטקסטים (העיצוב)
       const designJson = textsState;
 
-      // קריאה לפונקציה חיצונית לשמירת התמונה והעיצוב
-            await menuService.updateFinals(userId, {
+      await menuService.updateFinals(userId, {
         finalPng: pngDataUrl,
         finalCanvasJson: JSON.stringify(designJson),
       });
-
 
       alert("Menu saved successfully");
     } catch (error) {
@@ -194,7 +219,7 @@ export default function DesignSection({
     }
   }
 
-  function handleDownloadImage() {
+  const handleDownloadImage = () => {
     if (!stageRef.current) return;
     const uri = stageRef.current.toDataURL({ pixelRatio: 2 });
     const link = document.createElement("a");
@@ -203,7 +228,7 @@ export default function DesignSection({
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-  }
+  };
 
   async function handleDownloadPDF() {
     if (!stageRef.current) return;
@@ -217,7 +242,17 @@ export default function DesignSection({
     pdf.save("menu.pdf");
   }
 
-  const selected = textsState.find((t) => t.id === selectedId);
+  const handleStageMouseDown = (e) => {
+    if (e.target === e.target.getStage()) {
+      setSelectedId(null);
+      return;
+    }
+    if (rectangle && e.target === rectRef.current) {
+      setSelectedId("rectangle");
+      return;
+    }
+    setSelectedId(null);
+  };
 
   return (
     <div
@@ -232,8 +267,25 @@ export default function DesignSection({
       {/* Edit Zone */}
       <div className="editZone">
         <h3>Edit Zone</h3>
-        {!selected && <div>Select a text on the image to edit</div>}
-        {selected && (
+
+        <button
+          onClick={handleAddRectangle}
+          style={{
+            cursor: "pointer",
+            padding: "8px 12px",
+            borderRadius: 6,
+            border: "1px solid #7e46c1",
+            background: "#fff",
+            color: "#7e46c1",
+            marginBottom: 12,
+          }}
+          title="Add Rectangle"
+        >
+          Add Rectangle
+        </button>
+
+        {!selectedId && <div>Select a text on the image to edit</div>}
+        {selectedId && selectedId !== "rectangle" && (
           <>
             <div className="editRow">
               <label>Font size:</label>
@@ -241,21 +293,24 @@ export default function DesignSection({
                 type="range"
                 min={1}
                 max={40}
-                value={selected.fontSize}
-                onChange={(e) =>
-                  handleUpdate(selected.id, { fontSize: +e.target.value })
-                }
+                value={textsState.find((t) => t.id === selectedId)?.fontSize ?? 14}
+                onChange={(e) => {
+                  handleUpdate(selectedId, { fontSize: +e.target.value });
+                }}
               />
-              <span>{selected.fontSize}px</span>
+              <span>{textsState.find((t) => t.id === selectedId)?.fontSize}px</span>
             </div>
 
             <div className="editRow">
               <label>Font family:</label>
               <select
-                value={selected.fontFamily}
-                onChange={(e) =>
-                  handleUpdate(selected.id, { fontFamily: e.target.value })
+                value={
+                  textsState.find((t) => t.id === selectedId)?.fontFamily ??
+                  AVAILABLE_FONTS[0]
                 }
+                onChange={(e) => {
+                  handleUpdate(selectedId, { fontFamily: e.target.value });
+                }}
               >
                 {AVAILABLE_FONTS.map((font) => (
                   <option key={font} value={font}>
@@ -269,23 +324,42 @@ export default function DesignSection({
               <label>Color:</label>
               <input
                 type="color"
-                value={selected.fill}
-                onChange={(e) => handleUpdate(selected.id, { fill: e.target.value })}
+                value={textsState.find((t) => t.id === selectedId)?.fill ?? CATEGORY_COLOR}
+                onChange={(e) => {
+                  handleUpdate(selectedId, { fill: e.target.value });
+                }}
               />
             </div>
           </>
         )}
 
-        <div className="iconRow" style={{ marginTop: 20 }}>
-          <span onClick={handleSave} className={styles.icon} style={{ fontSize: 30, marginLeft: 12 }}>
+        <div
+          className="iconRow"
+          style={{ marginTop: 20, display: "flex", alignItems: "center", gap: 16 }}
+        >
+          <span
+            onClick={handleSave}
+            className={styles.icon}
+            style={{ fontSize: 30, cursor: "pointer" }}
+          >
             {saving ? <FiLoader className={styles.spinner} /> : <IoCheckmarkOutline />}
           </span>
 
-          <span onClick={handleDownloadImage} className={styles.icon} title="Download PNG" style={{ fontSize: 30, marginLeft: 12}}>
+          <span
+            onClick={handleDownloadImage}
+            className={styles.icon}
+            title="Download PNG"
+            style={{ fontSize: 30, cursor: "pointer" }}
+          >
             <BsFiletypePng />
           </span>
 
-          <span onClick={handleDownloadPDF} className={styles.icon} title="Download PDF" style={{ fontSize: 30, marginLeft: 12 }}>
+          <span
+            onClick={handleDownloadPDF}
+            className={styles.icon}
+            title="Download PDF"
+            style={{ fontSize: 30, cursor: "pointer" }}
+          >
             <BsFiletypePdf />
           </span>
         </div>
@@ -308,15 +382,79 @@ export default function DesignSection({
           width={STAGE_W}
           height={STAGE_H}
           style={{ borderRadius: 14, background: "#fff" }}
-          onMouseDown={(e) => {
-            if (e.target === e.target.getStage()) setSelectedId(null);
-          }}
-          onTouchStart={(e) => {
-            if (e.target === e.target.getStage()) setSelectedId(null);
-          }}
+          onMouseDown={handleStageMouseDown}
+          onTouchStart={handleStageMouseDown}
         >
           <Layer>
-            <KonvaImage image={image} width={STAGE_W} height={STAGE_H} crossOrigin="anonymous" />
+            <KonvaImage
+              image={image}
+              width={STAGE_W}
+              height={STAGE_H}
+              crossOrigin="anonymous"
+            />
+
+            {rectangle && (
+              <Rect
+                ref={rectRef}
+                x={rectangle.x}
+                y={rectangle.y}
+                width={rectangle.width}
+                height={rectangle.height}
+                fill="white"
+                draggable
+                onDragMove={(e) => {
+                  const newX = Math.min(
+                    Math.max(e.target.x(), WHITE_BOX_X),
+                    WHITE_BOX_X + WHITE_BOX_WIDTH - rectangle.width
+                  );
+                  const newY = Math.min(
+                    Math.max(e.target.y(), WHITE_BOX_Y),
+                    WHITE_BOX_Y + WHITE_BOX_HEIGHT - rectangle.height
+                  );
+                  setRectangle({ ...rectangle, x: newX, y: newY });
+                }}
+                onTransformEnd={(e) => {
+                  const node = rectRef.current;
+                  if (node) {
+                    const scaleX = node.scaleX();
+                    const scaleY = node.scaleY();
+
+                    node.scaleX(1);
+                    node.scaleY(1);
+
+                    const newWidth = Math.max(50, node.width() * scaleX);
+                    const newHeight = Math.max(50, node.height() * scaleY);
+
+                    setRectangle({ ...rectangle, width: newWidth, height: newHeight });
+                  }
+                }}
+                dragBoundFunc={(pos) => {
+                  const newX = Math.min(
+                    Math.max(pos.x, WHITE_BOX_X),
+                    WHITE_BOX_X + WHITE_BOX_WIDTH - rectangle.width
+                  );
+                  const newY = Math.min(
+                    Math.max(pos.y, WHITE_BOX_Y),
+                    WHITE_BOX_Y + WHITE_BOX_HEIGHT - rectangle.height
+                  );
+                  return { x: newX, y: newY };
+                }}
+              />
+            )}
+
+            {selectedId === "rectangle" && (
+              <Transformer
+                ref={trRef}
+                rotateEnabled={false}
+                anchorSize={10}
+                borderStrokeWidth={0}
+                boundBoxFunc={(oldBox, newBox) => {
+                  if (newBox.width < 50 || newBox.height < 50) return oldBox;
+                  return newBox;
+                }}
+              />
+            )}
+
             {textsState.map((t) => (
               <Group key={t.id}>
                 <KonvaText
@@ -330,10 +468,15 @@ export default function DesignSection({
                   align={t.align}
                   draggable
                   dragBoundFunc={(pos) => {
-                    // אפשר להגביל רק אם הטקסט הוא מהעיצוב החדש
                     return {
-                      x: Math.min(Math.max(pos.x, WHITE_BOX_X), WHITE_BOX_X + WHITE_BOX_WIDTH - (t.width || 0)),
-                      y: Math.min(Math.max(pos.y, WHITE_BOX_Y), WHITE_BOX_Y + WHITE_BOX_HEIGHT - t.fontSize),
+                      x: Math.min(
+                        Math.max(pos.x, WHITE_BOX_X),
+                        WHITE_BOX_X + WHITE_BOX_WIDTH - (t.width || 0)
+                      ),
+                      y: Math.min(
+                        Math.max(pos.y, WHITE_BOX_Y),
+                        WHITE_BOX_Y + WHITE_BOX_HEIGHT - t.fontSize
+                      ),
                     };
                   }}
                   onDragMove={(e) => {
