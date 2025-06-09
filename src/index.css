@@ -1,113 +1,180 @@
 /* index.css - Global wedding-themed styles */
+
+/* Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Send+Flowers');
 @import url('https://fonts.googleapis.com/css2?family=Alumni+Sans+SC');
 @import url('https://fonts.googleapis.com/css2?family=Karla:wght@400;700&');
 @import url('https://fonts.googleapis.com/css2?family=Caveat&');
 @import url('https://fonts.googleapis.com/css2?family=Delius&');
-:root {
-    --wedding-pink: #f9e6f0;
-    --wedding-black: #000000;
-    --wedding-white: #ffffff;
-    --wedding-purple: #d2b1e5e1;
-    --wedding-gray: #888888;
-    --wedding-brown:#5a3e1b;
-    --wedding-green:#a5e5b5;
-    --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    --font-rubik: 'Rubik', sans-serif;
-   --wedding-pink-06: rgba(249, 230, 240, 0.6);
-    --wedding-dark-purple: #8a57a7e1;
- }
 
- p {
+/* Colors */
+:root {
+  --wedding-pink: #f9e6f0;
+  --wedding-black: #000000;
+  --wedding-white: #ffffff;
+  --wedding-purple: #d2b1e5e1;
+  --wedding-gray: #888888;
+  --wedding-brown:#5a3e1b;
+  --wedding-green:#a5e5b5;
+  --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  --font-rubik: 'Rubik', sans-serif;
+  --wedding-pink-06: rgba(249, 230, 240, 0.6);
+  --wedding-dark-purple: #8a57a7e1;
+}
+
+
+p {
   font-family: var(--font-rubik);
- }
+}
  
  
  /* Reset & base */
- html, body {
+html, body {
   min-height: 100vh;
   height: auto;
-   margin: 0;
-   padding: 0;
-   font-family: var(--font-rubik);
-   background: linear-gradient(to bottom right, var(--wedding-pink), var(--wedding-white));
-   color: #333;
-   scroll-behavior: smooth;
-  overflow-x: hidden; /* חשוב מאוד למנוע גלילה לרוחב */
- }
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-rubik);
+  background: linear-gradient(to bottom right, var(--wedding-pink), var(--wedding-white));
+  color: #333;
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
  
  /* HEADERS: black by default, pink on hover */
- h1, h2, h3, h4 {
-   color: var(--wedding-purple);  
-   font-weight: 600;
-   letter-spacing: 0.5px;
-   transition: color 0.2s ease;
-   font-family: var(--font-rubik);
- }
+h1, h2, h3, h4 {
+  color: var(--wedding-purple);  
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  transition: color 0.2s ease;
+  font-family: var(--font-rubik);
+}
 
- a {
-   text-decoration: none;
-   color: var(--wedding-black);
-   transition: color 0.2s ease;
-   font-family: var(--font-rubik);
- }
+a {
+  text-decoration: none;
+  color: var(--wedding-black);
+  transition: color 0.2s ease;
+  font-family: var(--font-rubik);
+}
 
- a:hover {
-   color: var(--wedding-purple);
- }
+a:hover {
+  color: var(--wedding-purple);
+}
  
  /* BUTTONS: purple bg default, pink on hover */
- button {
-   font-family: var(--font-rubik);
-   font-weight: 700;
-   padding: 0.6em 1.4em;
-   border: none;
-   border-radius: 10px;
-   background-color:var(--wedding-purple);         /* black background */
-   color: white;
-   font-weight: bold;
-   letter-spacing: 0.5px;
-   font-size: 1rem;
-   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-   cursor: pointer;
-   transition: background-color 0.3s ease, transform 0.2s ease;
- }
+button {
+  font-family: var(--font-rubik);
+  font-weight: 700;
+  padding: 0.6em 1.4em;
+  border: none;
+  border-radius: 10px;
+  background-color:var(--wedding-purple);   
+  color: white;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  font-size: 1rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
 
- button:hover {
-   background-color: var(--wedding-pink); /* pink on hover */
-   transform: translateY(-2px);
-   color: black;
- }
+button:hover {
+  background-color: var(--wedding-pink); 
+  color: black;
+}
 
- button:active {
-   transform: scale(0.98);
- }
+button:active {
+  transform: scale(0.98);
+}
  
- /* FORMS */
- input, select {
-   border-radius: 6px;
-   padding: 0.5em;
-   border: 1px solid #ccc;
-   transition: border-color 0.2s ease;
- }
- 
- input:focus, select:focus {
-   border-color: var(--wedding-black);
-   outline: none;
- }
- 
- /* HORIZONTAL RULE */
- hr {
-   border: none;
-   height: 1px;
-   background-color: #e0e0e0;
-   margin: 1rem 0;
- }
- 
- /* Any other base button hover opacity rule is overridden above */
+/* FORMS */
+input, select {
+  border-radius: 6px;
+  padding: 0.5em;
+  border: 1px solid #ccc;
+  transition: border-color 0.2s ease;
+}
 
- .no-scroll {
+input:focus, select:focus {
+  border-color: var(--wedding-black);
+  outline: none;
+}
+ 
+/* HORIZONTAL RULE */
+hr {
+  border: none;
+  height: 1px;
+  background-color: #e0e0e0;
+  margin: 1rem 0;
+}
+ 
+/* Basic for all pages */
+.pageMain {
+  padding-top: 90px;  
+  width: 100%;
+  height: 100vh;
+  background: url('../../assets/images/main-bg.png') no-repeat center center;
+  background-size: cover;
+  background-color: #fff0f5;
+  position: relative;
   overflow: hidden;
 }
 
+.pageContainer {
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  max-width: 1000px;
+  margin: 0 auto;
+  height: calc(100vh - 100px); 
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  padding: 40px 50px;
+  margin-bottom: 20px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.pageHeader {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid #ddd;
+  padding-bottom: 0.5rem;
+}
+
+.backIcon {
+  position: absolute;
+  top: 20px;        
+  right: 20px;      
+  font-size: 1.5rem;
+  color: var(--wedding-gray, #888);
+  cursor: pointer;
+  transition: color 0.2s;
+  z-index: 10;     
+}
+.backIcon:hover {
+  color: var(--wedding-purple, #b291ff);
+}
+
+.icon {
+  font-size: 1.5rem;
+  color: var(--wedding-dark-purple);
+  cursor: pointer;
+}
+
+.icon:hover {
+  color: var(--wedding-pink);
+}
+
+hr.divider {
+  border: none;
+  border-top: 1.5px solid #e0e0e0;
+  width: 100%;
+  margin: 2.5rem 0 2rem 0;
+  background: transparent;
+}

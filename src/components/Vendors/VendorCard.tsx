@@ -15,7 +15,7 @@ const VendorCard: React.FC<Props> = ({ vendor, onClick }) => {
         <div className={styles.overlay}>
           <h4>{vendor.name}</h4>
         </div>
-      </div>
+      </div>  
 </div>
   );
 };

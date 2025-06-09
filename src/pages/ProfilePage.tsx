@@ -1,7 +1,7 @@
 import { NavBar } from "../components/NavBar/NavBar";
 import { useAuth } from "../hooks/useAuth/AuthContext";
 import { Navigate } from 'react-router-dom';
-import Profile from "../components/ProfileForm/ProfileForm";
+import Profile from "../components/Profile/Profile";
 
 const ProfilePage: React.FC = () => {
 
