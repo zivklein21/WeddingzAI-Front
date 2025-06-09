@@ -101,16 +101,18 @@ const GuestList: React.FC = () => {
     });
   };
 
-  const handleAddGuest = async (e:React.FormEvent) => {
+  const handleAddGuest = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       await createGuest(form);
-      setForm({ fullName:'', email:'', phone:'', rsvp:'maybe', numberOfGuests: 1 });
+      setForm({ fullName: '', email: '', phone: '', rsvp: 'maybe', numberOfGuests: 1 });
       await fetchGuests();
       toast.success('Guest added');
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error adding guest:', err);
-      toast.error('Error adding guest');
+      // Extract backend message
+      const message = err?.response?.data?.message || 'Error adding guest';
+      toast.error(message);
     }
   };
 
@@ -160,14 +162,19 @@ const GuestList: React.FC = () => {
             rsvp: r.rsvp || 'maybe',
             numberOfGuests: parseInt(r.numberOfGuests) || 1
           });
-        } catch (err) {
+        } catch (err: any) {
           console.error('Failed to import row:', r, err);
-          failed.push(r);
+          const message = err?.response?.data?.message || 'Unknown error';
+          failed.push({ ...r, error: message });
         }
       }
       await fetchGuests();
-      if (failed.length) toast.error(`${failed.length} failed to import`);
-      else toast.success('Imported');
+      if (failed.length) {
+        toast.error(`${failed.length} failed to import`);
+        console.table(failed); // Optional: log to console for debugging
+      } else {
+        toast.success('Imported');
+      }
     } catch (err) {
       console.error('Import error:', err);
       toast.error('Import error');
@@ -221,9 +228,10 @@ const GuestList: React.FC = () => {
       setEditingGuests(prev=>{ const c={...prev}; delete c[g._id]; return c; });
       await fetchGuests();
       toast.success('Saved');
-    } catch (err) {
+    } catch (err: any) {
       console.error('Save error:', err);
-      toast.error('Save error');
+      const message = err?.response?.data?.message || 'Save error';
+      toast.error(message);
     }
   };
 
