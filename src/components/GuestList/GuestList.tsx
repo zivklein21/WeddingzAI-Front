@@ -254,10 +254,37 @@ const GuestList: React.FC = () => {
         <h2 className={styles.guestHeader}>Guest List</h2>
 
         <form className={styles.guestForm} onSubmit={handleAddGuest}>
-          <input name="fullName" value={form.fullName} onChange={handleInputChange} placeholder="Full Name" required />
-          <input name="email" type="email" value={form.email} onChange={handleInputChange} placeholder="Email" required />
-          <input name="phone" value={form.phone} onChange={handleInputChange} placeholder="Phone" />
-          <input name="numberOfGuests" type="number" min={1} value={form.numberOfGuests} onChange={handleInputChange} placeholder="# Guests" />
+          <input
+            name="fullName"
+            value={form.fullName}
+            onChange={handleInputChange}
+            placeholder="Full Name"
+            required
+          />
+          <input
+            name="email"
+            type="email"
+            value={form.email}
+            onChange={handleInputChange}
+            placeholder="Email"
+            required
+            pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$"
+            title="Please enter a valid email address (e.g. name@example.com)"
+          />
+          <input
+            name="phone"
+            value={form.phone}
+            onChange={handleInputChange}
+            placeholder="Phone"
+          />
+          <input
+            name="numberOfGuests"
+            type="number"
+            min={1}
+            value={form.numberOfGuests}
+            onChange={handleInputChange}
+            placeholder="# Guests"
+          />
           <button type="submit">+ Add Guest</button>
         </form>
 
