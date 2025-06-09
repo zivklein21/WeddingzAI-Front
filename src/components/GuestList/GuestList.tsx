@@ -254,7 +254,7 @@ const GuestList: React.FC = () => {
       setEditingGuestId(null);
       setEditingGuests(prev => { const c = { ...prev }; delete c[g._id]; return c; });
       await fetchGuests();
-      toast.success('Saved');
+      toast.success('Guest updated');
     } catch (err: unknown) {
       const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Save error';
       toast.error(message);
