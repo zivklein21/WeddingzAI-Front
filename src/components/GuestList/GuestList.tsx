@@ -113,10 +113,14 @@ const GuestList: React.FC = () => {
       setForm({ fullName: '', email: '', phone: '', rsvp: 'maybe', numberOfGuests: 1 });
       await fetchGuests();
       toast.success('Guest added');
-    } catch (err: any) {
-      console.error('Error adding guest:', err);
-      const message = err?.response?.data?.message || 'Error adding guest';
-      toast.error(message);
+    } catch (err: unknown) {
+      if (err && typeof err === 'object' && 'response' in err) {
+        const axiosErr = err as { response?: { data?: { message?: string } } };
+        const message = axiosErr?.response?.data?.message || 'Error adding guest';
+        toast.error(message);
+      } else {
+        toast.error('Error adding guest');
+      }
     }
   };
 
@@ -155,8 +159,15 @@ const GuestList: React.FC = () => {
     try {
       const buf = await file.arrayBuffer();
       const wb = XLSX.read(buf);
-      const rows: any[] = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
-      const failed: any[] = [];
+      type ExcelGuestRow = {
+        fullName: string;
+        email: string;
+        phone?: string;
+        rsvp?: 'yes' | 'no' | 'maybe';
+        numberOfGuests?: number;
+      };
+      const rows: ExcelGuestRow[] = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+      const failed: (ExcelGuestRow & { error: string })[] = [];
       for (const r of rows.filter(r => r.fullName && r.email)) {
         try {
           await createGuest({
@@ -164,11 +175,10 @@ const GuestList: React.FC = () => {
             email: r.email,
             phone: r.phone || '',
             rsvp: r.rsvp || 'maybe',
-            numberOfGuests: parseInt(r.numberOfGuests) || 1
+            numberOfGuests: parseInt(String(r.numberOfGuests)) || 1
           });
-        } catch (err: any) {
-          console.error('Failed to import row:', r, err);
-          const message = err?.response?.data?.message || 'Unknown error';
+        } catch (err: unknown) {
+          const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Unknown error';
           failed.push({ ...r, error: message });
         }
       }
@@ -240,9 +250,8 @@ const GuestList: React.FC = () => {
       setEditingGuests(prev => { const c = { ...prev }; delete c[g._id]; return c; });
       await fetchGuests();
       toast.success('Saved');
-    } catch (err: any) {
-      console.error('Save error:', err);
-      const message = err?.response?.data?.message || 'Save error';
+    } catch (err: unknown) {
+      const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Save error';
       toast.error(message);
     }
   };
