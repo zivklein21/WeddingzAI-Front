@@ -325,7 +325,7 @@ const GuestList: React.FC = () => {
               const label = ['Total', 'Yes', 'No', 'Maybe'][index];
               const count = [guestStats.total, guestStats.yes, guestStats.no, guestStats.maybe][index];
               return (
-                <div key={key} className={`${styles.iconAction} ${filter === key ? styles.activeFilter : ''}`} onClick={() => setFilter(key as any)}>
+                <div key={key} className={`${styles.iconAction} ${filter === key ? styles.activeFilter : ''}`} onClick={() => setFilter(key as 'all' | 'yes' | 'no' | 'maybe')}>
                   <Icon className={styles.actionIcon} />
                   <span className={styles.iconLabel}>{label}: {count}</span>
                 </div>
