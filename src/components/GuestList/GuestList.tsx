@@ -130,8 +130,13 @@ const GuestList: React.FC = () => {
       return;
     }
     const valid = guests
-      .filter(g => g.fullName && g.email)
-      .map(g => ({ fullName: g.fullName, email: g.email }));
+      .filter(g => g.fullName && g.email && g._id && g.rsvpToken)
+      .map(g => ({
+        fullName: g.fullName,
+        email: g.email,
+        guestId: g._id,
+        rsvpToken: g.rsvpToken
+      }));
     if (!valid.length) {
       toast.error('No guests to invite');
       return;
