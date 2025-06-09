@@ -379,3 +379,72 @@
   color: var(--wedding-black);
 }
 
+/* Modal overlay and container */
+.overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  max-width: 600px;
+  width: 450px;
+  margin: auto;
+}
+
+/* Modal header and body */
+.modalTitle {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.modalBody {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Blockquote for guest name */
+blockquote {
+  margin: 0.5rem 0;
+  padding: 0.5rem 1rem;
+  background: #f3f4f6;
+  border-left: 4px solid #ccc;
+  font-style: italic;
+}
+
+/* Button container and styles */
+.buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.cancelBtn,
+.deleteBtn {
+  padding: 0.5rem 1.5rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.cancelBtn {
+  background-color: #ddd;
+  color: #333;
+}
+
+.deleteBtn {
+  background-color: #e74c3c;
+  color: white;
+}
