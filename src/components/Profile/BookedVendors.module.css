@@ -1,0 +1,51 @@
+.headerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.headerRow h2 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.reloadIcon {
+  font-size: 1.25rem;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.reloadIcon:hover {
+  transform: rotate(90deg);
+}
+
+.content {
+  /* מפנה למרחב שבו VendorCardList תתיישב */
+}
+
+.spinner {
+  display: block;
+  margin: 2rem auto;
+  font-size: 2rem;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.empty {
+  text-align: center;
+  color: #666;
+  padding: 2rem 0;
+}
+
+.vendorList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+  padding: 1rem 0;
+}
+
+/* ... שאר הסגנונות ל-.vendorCard, .imageContainer, .overlay וכו׳ ... */

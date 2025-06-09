@@ -18,9 +18,10 @@ interface Props {
   vendor: Vendor;
   isOpen: boolean;
   onClose: () => void;
+  onUnbook?: (id: string) => void;
 }
 
-const VendorModel: React.FC<Props> = ({ vendor, isOpen, onClose }) => {
+const VendorModel: React.FC<Props> = ({ vendor, isOpen, onClose, onUnbook }) => {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [expandedReview, setExpandedReview] = useState<number | null>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -49,7 +50,7 @@ const VendorModel: React.FC<Props> = ({ vendor, isOpen, onClose }) => {
     <Modal isOpen={isOpen} onRequestClose={onClose} overlayClassName={styles.overlayModel} className={styles.modal}>
       <button className={styles.closeBtn} onClick={onClose}><X size={24} /></button>
       <VendorHeader vendor={vendor} onClose={onClose}/>
-      <VendorNav vendor={vendor} onNavClick={scrollTo} />
+      <VendorNav vendor={vendor} onNavClick={scrollTo} onUnbook={onUnbook}/>
 
       <div className={styles.content} ref={contentRef}>
         {has.about && <VendorAbout vendor={vendor} isOpen={isOpen} />}

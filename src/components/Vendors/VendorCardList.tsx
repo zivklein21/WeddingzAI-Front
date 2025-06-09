@@ -6,9 +6,10 @@ import VendorModel from "./VendorModel";
 
 interface Props {
   vendors: Vendor[];
+  onUnbook?: (id: string) => void;
 }
 
-const VendorCardList: React.FC<Props> = ({ vendors }) => {
+const VendorCardList: React.FC<Props> = ({ vendors , onUnbook}) => {
   const [selectedVendor, setSelectedVendor] = useState<Vendor | null>(null);
 
   return (
@@ -27,6 +28,10 @@ const VendorCardList: React.FC<Props> = ({ vendors }) => {
           vendor={selectedVendor}
           isOpen={!!selectedVendor}
           onClose={() => setSelectedVendor(null)}
+          onUnbook={onUnbook && (() => {
+            onUnbook(selectedVendor._id);
+            setSelectedVendor(null);
+          })}
         />
       )}
     </>
