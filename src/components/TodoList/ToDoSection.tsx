@@ -1,7 +1,7 @@
 import React from "react";
-import { ChevronDown, ChevronRight } from "lucide-react";
 import TodoItem from "./ToDoItem";
 import styles from "./TodoList.module.css";
+import * as Icons from "../../icons/index";
 
 export interface Todo {
   task: string;
@@ -34,7 +34,7 @@ const TodoSection: React.FC<Props> = ({
 }) => (
   <div className={styles.todoSection}>
     <div className={styles.sectionHeader} onClick={onToggle}>
-      {isOpen ? <ChevronDown size={20} /> : <ChevronRight size={20} />}
+      {isOpen ? <Icons.UpArrow className="icon"/> : <Icons.DownArrow className="icon" />}
       <h3 className={styles.sectionTitle}>{sectionName}</h3>
     </div>
 

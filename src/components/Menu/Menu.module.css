@@ -1,57 +1,3 @@
-/* All Page */
-
-.menuPage {
-  padding-top: 90px;  
-  width: 100%;
-  height: 100vh;
-  background: url('../../assets/images/main-bg.png') no-repeat center center;
-  background-size: cover;
-  background-color: #fff0f5;
-  position: relative;
-  overflow: hidden;
-}
-
-.menuContainer {
-  display: flex;
-  position: relative;
-  flex-direction: column;
-  max-width: 1000px;
-  margin: 0 auto;
-  height: calc(100vh - 100px); 
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  padding: 40px 50px;
-  margin-bottom: 20px;
-  box-sizing: border-box;
-  overflow-y: auto;
-}
-
-
-.menuHeader {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #2c3e50;
-  margin-bottom: 1.5rem;
-  border-bottom: 2px solid #ddd;
-  padding-bottom: 0.5rem;
-}
-
-.backIcon {
-  position: absolute;
-  top: 20px;        
-  right: 20px;      
-  font-size: 1.5rem;
-  color: var(--wedding-gray, #888);
-  cursor: pointer;
-  transition: color 0.2s;
-  z-index: 10;     
-}
-
-.backIcon:hover {
-  color: var(--wedding-purple, #b291ff);
-}
-
 .section {
   display: flex;
   flex-direction: column;
@@ -72,25 +18,6 @@
   font-weight: 400;
 }
 
-.icon {
-  font-size: 1.5rem;
-  color: var(--wedding-dark-purple);
-  cursor: pointer;
-}
-
-.icon:hover {
-  color: var(--wedding-pink);
-}
-
-.spinner {
-  font-size: 1.5rem;
-  animation: spin 1s linear infinite;
-  color: var(--wedding-purple);
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
 
 /* Flow section */
 
@@ -216,10 +143,8 @@
 /* Dish Section */
 .formRow {
   display: flex;
-  flex-wrap: nowrap;
   gap: 8px;
   margin-bottom: 16px;
-  align-items: center;
   justify-content: center;
 }
 
@@ -355,16 +280,16 @@
 
 .editZone {
   flex: 1 1 210px;
-  min-width: 210px;
-  max-width: 250px;
+  max-width: 400px;
   background: #fffdfe;
   border-radius: 16px;
   padding: 18px 14px 14px 18px;
-  height: 550px;
+  height: 600px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
 }
+
 .editTitle {
   font-weight: 600;
   font-size: 20px;
@@ -537,4 +462,9 @@
 
 .iconRow:hover {
   color: #b291ff;
+}
+
+.buttonRight {
+  display: flex;
+  justify-content: center;
 }

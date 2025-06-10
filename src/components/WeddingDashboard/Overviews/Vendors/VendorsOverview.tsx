@@ -16,9 +16,11 @@ const VendorOverview: React.FC = () => {
       .then((data) => {
         setTotal(data.total);
         setCounts(data.counts);
+        console.log(data);
       })
       .finally(() => setLoading(false));
   }, []);
+  
 
   if (loading) {
     return (

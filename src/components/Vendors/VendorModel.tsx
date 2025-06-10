@@ -38,8 +38,12 @@ const VendorModel: React.FC<Props> = ({ vendor, isOpen, onClose, onUnbook }) => 
   // Presence checks
   const has = {
     about:    !!vendor.about?.trim(),
-    details:  vendor.price_range || vendor.services || vendor.area || vendor.hour_limits || vendor.genres || vendor.max_companions || vendor.max_guests || vendor.min_guests || vendor.price_include
-    || vendor.seasons || vendor.end_time,
+    details:  vendor.accessorise || vendor.area || vendor.buy_options || vendor.check_in || vendor.check_out
+    || vendor.close_venues || vendor.details || vendor.end_time || vendor.genres || vendor.hour_limits
+    || vendor.location_facilities || vendor.max_companions || vendor.max_guests || vendor.max_vendors
+    || vendor.min_guests || vendor.price_include || vendor.price_range || vendor.seasons 
+    || vendor.serv_location || vendor.services || vendor.shoot_type || vendor.size_range
+    || vendor.weekend,
     photos:   Array.isArray(vendor.eventImages) && vendor.eventImages.length > 0,
     faqs:     Array.isArray(vendor.faqs)        && vendor.faqs!.length > 0,
     reviews:  Array.isArray(vendor.reviews)&& vendor.reviews!.length > 0,

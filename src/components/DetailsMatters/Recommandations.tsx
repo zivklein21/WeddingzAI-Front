@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './detailsMatters.module.css';
-import { FaGift, FaLeaf, FaClipboardList } from 'react-icons/fa';
+import * as Icons from "../../icons/index";
 
 const Recommendations: React.FC = () => (
   <section className={styles.section}>
@@ -9,7 +9,7 @@ const Recommendations: React.FC = () => (
       <div className={styles.category}>
         <div className={styles.recommendHeader}>
             <span className={styles.recommendIcon}>
-                <FaGift className={styles.icon} />
+                <Icons.GiftIcon size={20}/>
             </span>
             <h3>Guest Favors</h3>
         </div>  
@@ -29,7 +29,7 @@ const Recommendations: React.FC = () => (
       <div className={styles.category}>
         <div className={styles.recommendHeader}>
             <span className={styles.recommendIcon}>
-                <FaLeaf className={styles.icon} />
+                <Icons.VeganIcon size={20}/>
             </span>
             <h3>Decoration Ideas</h3>
         </div>
@@ -44,7 +44,7 @@ const Recommendations: React.FC = () => (
       <div className={styles.category}>
         <div className={styles.recommendHeader}>
             <span className={styles.recommendIcon}>
-                <FaClipboardList className={styles.icon} />
+                <Icons.ListIcon size={20}/>
             </span>
             <h3>Wedding Planning Tips</h3>
         </div>

@@ -10,6 +10,7 @@ import SeatOverview from "./Overviews/SeatOverview/SeatOverview";
 import DetailsOverview from "./Overviews/Details/DetailsOverview"
 import CalendarOverview from "./Overviews/Calendar/CalendarOverview";
 import MenuOverview from "./Overviews/Menu/MenuOverview";
+import InvitationOverview from "./Overviews/Invitation/InvitationOverview";
 
 export default function WeddingDashboard() {
 
@@ -92,6 +93,7 @@ export default function WeddingDashboard() {
         <div className={`${styles.card} ${styles.invitation}`}>
           Invitation
           <hr className={styles.divider} />
+          <InvitationOverview/>
           <Link to="/invitation">
             <div className={styles.manageLink}>Manage Invitation</div>
           </Link>

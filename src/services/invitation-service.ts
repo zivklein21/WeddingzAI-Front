@@ -1,42 +1,58 @@
-import apiClient, { CanceledError } from './api-client';
+import apiClient from "./api-client";
 
-export { CanceledError };
+export type Sentence = {
+  title: string;
+};
 
 export interface Invitation {
-  _id: string;
   userId: string;
-  prompt: string;
-  imageUrl: string;
-  createdAt: string;
-  updatedAt: string;
+  coupleNames: string;
+  designPrompt: string;
+  backgroundUrl: string;
+  ceremonyHour?: string;
+  receptionHour?: string;
+  sentences?: Sentence[];
+  date: string;
+  venue: string;
+  finalPng?: string;
+  finalPdf?: string;
 }
 
-export interface InvitationResponse {
-  message: string;
-  data: Invitation;
+interface CreateInvitationPayload {
+  userId: string;
+  coupleNames: string;
+  designPrompt: string;
+  backgroundUrl: string; 
+  date: string;
+  venue: string;
 }
-
-const createInvitation = (prompt: string) => {
-  const controller = new AbortController();
-  
-  const request = apiClient.post<InvitationResponse>(
-    '/invitation/create',
-    { prompt },
-    {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    }
-  );
-
-  return {
-    request,
-    abort: () => controller.abort()
-  };
-};
 
 const invitationService = {
-  createInvitation
+  // 1. Generate invitation background image with AI (returns {backgroundUrl})
+  generateBackground: (prompt: string) =>
+    apiClient.post<{ backgroundUrl: string }>("/invitation/background", { prompt }),
+
+  // 2. Create Invitation with background
+  createInvitationWithBackground: (payload: CreateInvitationPayload) => {
+    return apiClient.post<Invitation>("/invitation/create-invitation", payload);
+  },
+
+  getInvitationByUserId: (userId: string) => {
+    return apiClient.get<Invitation>(`/invitation/${userId}`);
+  },
+
+  updateTextsByUserId: (userId: string, sentences: Sentence[]) => {
+    return apiClient.put<Invitation>(`/invitation/${userId}/sentences`, { sentences });
+  },
+
+  updateHoursByUserId: (userId: string, ceremonyHour: string, receptionHour: string) => {
+    return apiClient.put<Invitation>(`/invitation/${userId}/hours`, { ceremonyHour, receptionHour });
+  },
+
+  updateFinals: (userId: string, finals: {finalPng: string, finalCanvasJson: string}) => {
+    console.log(userId);
+    return apiClient.put<Invitation>(`/invitation/${userId}/finals`, {finals});
+  }
 };
 
-export default invitationService; 
+export default invitationService;

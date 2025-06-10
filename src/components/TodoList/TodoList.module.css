@@ -62,10 +62,10 @@ html, body {
 
 .coupleNames,
 .weddingDate {
-  text-align: center;
   margin: 0.25rem 0;
   font-size: 1.1rem;
   color: var(--wedding-black);;
+  align-items: center !important;
 }
 
 .todoSection {
@@ -110,7 +110,7 @@ html, body {
   grid-template-columns: 1fr auto auto;
   align-items: center;
   gap: 0.75rem;
-  background: var(--wedding-pink);
+  background-color: rgba(128, 128, 128, 0.2);
   padding: 0.5rem;
   border-radius: 6px;
   position: relative;

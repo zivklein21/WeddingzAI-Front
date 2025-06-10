@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import styles from "./TodoList.module.css";
 import tdlService from '../../services/tdl-service';
+import * as Icons from "../../icons/index";
 
 export interface TaskData {
   id?: string;
@@ -51,8 +52,8 @@ export const AddTaskModal: React.FC<AddProps> = ({ isOpen, onSave, onCancel }) =
           </select>
         </div>
         <div className={styles.buttons}>
-          <button onClick={onCancel} className={styles.cancelBtn}>Cancel</button>
-          <button onClick={handleSave} className={styles.saveBtn}>Save</button>
+          <span onClick={onCancel} className="icon"><Icons.CloseIcon title='Close Task'/></span>
+          <span onClick={handleSave} className="icon"><Icons.SaveIcon title='Save Task'/></span>
         </div>
       </div>
     </Modal>
@@ -89,9 +90,9 @@ export const EditTaskModal: React.FC<EditProps> = ({ isOpen, onSave, onCancel, s
             <option>Low</option>
           </select>
         </div>
-        <div className={styles.buttons}>
-          <button onClick={onCancel} className={styles.cancelBtn}>Cancel</button>
-          <button onClick={handleSave} className={styles.saveBtn}>Save</button>
+         <div className={styles.buttons}>
+          <span onClick={onCancel} className="icon"><Icons.CloseIcon title='Close Task'/></span>
+          <span onClick={handleSave} className="icon"><Icons.SaveIcon title='Save Task'/></span>
         </div>
       </div>
     </Modal>

@@ -1,6 +1,8 @@
 import { useState } from "react";
 import styles from "./Budget.module.css";
 import { useBudget } from "./BudgetContext";
+import * as Icons from "../../icons/index";
+import { toast } from "react-toastify";
 
 const AddCategoryForm = () => {
   const [name, setName] = useState("");
@@ -18,14 +20,15 @@ const AddCategoryForm = () => {
     };
 
     const updated = [...categories, newCategory];
-    await saveBudget(updated, totalBudget); // שמירה מדויקת ל-DB
-    setCategories(updated); // עדכון מקומי של state
+    await saveBudget(updated, totalBudget);
+    setCategories(updated);
     setName("");
     setAmount("");
+    toast.success("Category Added")
   };
 
   return (
-    <form className={styles.addCategoryForm} onSubmit={handleSubmit}>
+    <form className={styles.addCategoryForm}>
       <input
         type="text"
         placeholder="Category name"
@@ -38,9 +41,9 @@ const AddCategoryForm = () => {
         value={amount}
         onChange={(e) => setAmount(e.target.value)}        
       />
-      <button type="submit">
-        Add
-      </button>
+      <span onClick={handleSubmit} className="icon" >
+        <Icons.AddIcon title="Add Category"/>
+      </span>
     </form>
   );
 };

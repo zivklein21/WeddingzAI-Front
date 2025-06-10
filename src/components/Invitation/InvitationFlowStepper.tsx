@@ -1,11 +1,11 @@
 import React from "react";
-import styles from "./Menu.module.css";
+import styles from "./Invitation.module.css";
 import * as Icons from "../../icons/index";
 
-export default function MenuFlowStepper({ step }: { step: number }) {
+export default function InvitationFlowStepper({ step }: { step: number }) {
   const steps = [
     { icon: <Icons.ImageIcon />, label: "Background" },
-    { icon: <Icons.ListIcon />, label: "Dishes" },
+    { icon: <Icons.ListIcon />, label: "Details" },
     { icon: <Icons.EditIocn />, label: "Design" },
   ];
   return (

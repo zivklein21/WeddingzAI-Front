@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createTable } from "../../services/seating-service";
 import styles from "./AddTableForm.module.css";
-
+import * as Icons from "../../icons/index";
 type Props = {
   onTableCreated: (table: any) => void;
 };
@@ -32,7 +32,9 @@ export default function AddTableForm({ onTableCreated }: Props) {
 
   return (
     <div>
-      <span className={styles.icon} onClick={() => setShowForm(true)}>＋</span>
+      <span className={styles.icon} onClick={() => setShowForm(true)}>
+        <Icons.AddIcon />
+      </span>
 
       {showForm && (
         <div className={styles.modalOverlay}>
@@ -43,10 +45,10 @@ export default function AddTableForm({ onTableCreated }: Props) {
                 className={styles.iconClose}
                 onClick={() => setShowForm(false)}
               >
-                ✕
+                <Icons.CloseIcon className="icon"/>
               </span>
             </div>
-            <form onSubmit={handleSubmit} className={styles.form}>
+            <form  className={styles.form}>
               <div className={styles.formGroup}>
                 <label htmlFor="tableName" className={styles.label}>
                   Table Name
@@ -94,9 +96,9 @@ export default function AddTableForm({ onTableCreated }: Props) {
                 </div>
               </div>
 
-              <button type="submit">
-                Create Table
-              </button>
+              <span className={styles.buttonRight} onClick={handleSubmit}>
+                <Icons.SaveIcon className="icon"/>
+              </span>
             </form>
           </div>
         </div>

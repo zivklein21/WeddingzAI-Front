@@ -1,8 +1,7 @@
 import React from "react";
-import { FiEdit2, FiTrash2 } from "react-icons/fi";
-import { DiIllustrator } from "react-icons/di";
 import styles from "./TodoList.module.css";
 import { Todo } from "./ToDoSection";
+import * as Icons from "../../icons/index";
 
 interface Props {
   todo: Todo & { priority?: "Low" | "Medium" | "High" };
@@ -32,24 +31,22 @@ const TodoItem: React.FC<Props> = ({ todo, onEdit, onRunAI, onDelete, onToggleDo
         <span className={styles.taskTitle}>{todo.task}</span>
 
         <div className={styles.actions}>
-          <button onClick={onEdit} className={styles.editBtn} aria-label="Edit">
-            <FiEdit2 size={20} />
-          </button>
+          <span onClick={onEdit}>
+            <Icons.EditIocn className="icon" title="Edit Task" />
+          </span>
 
-          <button
+          <span
             onClick={onRunAI}
-            className={styles.aiBtn}
             aria-label="Run AI"
-            disabled={aiSent}
             style={aiSent ? { color: "green", cursor: "not-allowed" } : undefined}
-            title={aiSent ? "Already processed" : "Run AI"}
+            
           >
-            <DiIllustrator size={20} />
-          </button>
+            <Icons.AiIcon className="icon" title={aiSent ? "Already processed" : "Run AI"} />
+          </span>
 
-          <button onClick={onDelete} className={styles.deleteBtn} aria-label="Delete">
-            <FiTrash2 size={20} />
-          </button>
+          <span onClick={onDelete} aria-label="Delete">
+            <Icons.DeleteIcon title="Delete Task" className="icon"/>
+          </span>
         </div>
 
         <input

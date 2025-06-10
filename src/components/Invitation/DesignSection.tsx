@@ -9,9 +9,9 @@ import {
   Group,
 } from "react-konva";
 import useImage from "use-image";
-import styles from "./Menu.module.css";
+import styles from "./Invitation.module.css";
 import { jsPDF } from "jspdf";
-import menuService from "../../services/menu-service";
+import invitationService from "../../services/invitation-service";
 import * as Icons from "../../icons/index";
 
 interface TextItem {
@@ -22,37 +22,35 @@ interface TextItem {
   fontSize: number;
   fontFamily: string;
   fill: string;
-  align: "center" | "left" | "right";
   width?: number;
 }
 
-interface Dish {
+interface Sentence {
   _id?: string;
-  name: string;
-  description: string;
-  category: string;
-  isVegetarian?: boolean;
+  title: string;
 }
 
 interface Props {
   userId: string;
   backgroundUrl: string;
   coupleNames: string;
-  dishes: Dish[];
+  sentences: Sentence[];
   existingDesignJson?: TextItem[];
+  date: string;
+  receptionHour: string;
+  ceremonyHour: string;
+  venue: string;
 }
 
 const STAGE_W = 500;
 const STAGE_H = 600;
 
 const WHITE_BOX_X = 110;
-const WHITE_BOX_WIDTH = 280;
+const WHITE_BOX_WIDTH = 300;
 const WHITE_BOX_Y = 20;
 const WHITE_BOX_HEIGHT = 510;
 
 const CATEGORY_COLOR = "#7e46c1";
-const DISH_COLOR = "#301b41";
-const DESC_COLOR = "#9e7fc3";
 
 const AVAILABLE_FONTS = [
   "Arial",
@@ -67,12 +65,16 @@ export default function DesignSection({
   userId,
   backgroundUrl,
   coupleNames,
-  dishes,
+  sentences,
   existingDesignJson,
+  date,
+  venue,
+  ceremonyHour,
+  receptionHour
 }: Props) {
   const [image] = useImage(backgroundUrl, "anonymous");
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [textsState, setTextsState] = useState<TextItem[]>([]);
+  const [sentencesState, setSentencesState] = useState<TextItem[]>([]);
   const [rectangle, setRectangle] = useState<{
     x: number;
     y: number;
@@ -102,9 +104,8 @@ export default function DesignSection({
         ...t,
         x: WHITE_BOX_X,
         width: WHITE_BOX_WIDTH,
-        align: "center" as const,
       }));
-      setTextsState(fixedTexts);
+      setSentencesState(fixedTexts);
     } else {
       const canvasTexts: TextItem[] = [];
       let runningY = WHITE_BOX_Y + 30;
@@ -118,62 +119,110 @@ export default function DesignSection({
           fontSize: 30,
           fontFamily: "Send Flowers",
           fill: CATEGORY_COLOR,
-          align: "center",
           width: WHITE_BOX_WIDTH,
         });
-        runningY += 60;
+        runningY += 10;
+      }
+      if (date) {
+        canvasTexts.push({
+          id: "date",
+          text: date,
+          x: WHITE_BOX_X,
+          y: runningY,
+          fontSize: 20,
+          fontFamily: "Delius",
+          fill: CATEGORY_COLOR,
+          width: WHITE_BOX_WIDTH,
+        });
+        runningY += 10;
       }
 
-      const categories = Array.from(new Set(dishes.map((d) => d.category)));
-
-      categories.forEach((cat, catIdx) => {
+      if(ceremonyHour) {
         canvasTexts.push({
-          id: `cat-${cat}-${catIdx}`,
-          text: cat,
+          id: "ceremonyHourTitle",
+          text: "Ceremony",
+          x: WHITE_BOX_X,
+          y: runningY,
+          fontSize: 25,
+          fontFamily: "Arial",
+          fill: CATEGORY_COLOR,
+          width: WHITE_BOX_WIDTH,
+        });
+
+        runningY += 10;
+
+        canvasTexts.push({
+          id: "ceremonyHour",
+          text: ceremonyHour,
+          x: WHITE_BOX_X,
+          y: runningY,
+          fontSize: 20,
+          fontFamily: "Delius",
+          fill: CATEGORY_COLOR,
+          width: WHITE_BOX_WIDTH,
+        });
+        runningY += 10;
+      }
+
+      if(receptionHour) {
+        canvasTexts.push({
+          id: "receptionHour",
+          text: receptionHour,
+          x: WHITE_BOX_X,
+          y: runningY,
+          fontSize: 25,
+          fontFamily: "Arial",
+          fill: CATEGORY_COLOR,
+          width: WHITE_BOX_WIDTH,
+        });
+        runningY += 10;
+
+        canvasTexts.push({
+          id: "receptionHourTitle",
+          text: "Reception",
+          x: WHITE_BOX_X,
+          y: runningY,
+          fontSize: 30,
+          fontFamily: "Send Flowers",
+          fill: CATEGORY_COLOR,
+          width: WHITE_BOX_WIDTH,
+        });
+        runningY += 10;
+      }
+
+      if(venue) {
+        canvasTexts.push({
+          id: "venue",
+          text: venue,
+          x: WHITE_BOX_X,
+          y: runningY,
+          fontSize: 20,
+          fontFamily: "Arial",
+          fill: CATEGORY_COLOR,
+          width: WHITE_BOX_WIDTH,
+        });
+        runningY += 10;
+      }
+
+
+
+      sentences.forEach((cat, catIdx) => {
+        canvasTexts.push({
+          id: `name-${cat.title}-${catIdx}`,
+          text: cat.title,
           x: WHITE_BOX_X,
           y: runningY,
           fontSize: 18,
           fontFamily: "Almuni",
           fill: CATEGORY_COLOR,
-          align: "center",
           width: WHITE_BOX_WIDTH,
         });
 
-        runningY += 20;
-
-        const dishesInCat = dishes.filter((d) => d.category === cat);
-        dishesInCat.forEach((dish, dishIdx) => {
-          canvasTexts.push({
-            id: `name-${dish._id}-${dishIdx}`,
-            text: dish.name + (dish.isVegetarian ? " 🍃" : ""),
-            x: WHITE_BOX_X,
-            y: runningY,
-            fontSize: 14,
-            fontFamily: "Almuni",
-            fill: DISH_COLOR,
-            align: "center",
-            width: WHITE_BOX_WIDTH,
-          });
-          runningY += 20;
-
-          canvasTexts.push({
-            id: `desc-${dish._id}-${dishIdx}`,
-            text: dish.description,
-            x: WHITE_BOX_X,
-            y: runningY,
-            fontSize: 12,
-            fontFamily: "Almuni",
-            fill: DESC_COLOR,
-            align: "center",
-            width: WHITE_BOX_WIDTH,
-          });
-          runningY += 20;
-        });
       });
 
-      setTextsState(canvasTexts);
+      setSentencesState(canvasTexts);
     }
-  }, [existingDesignJson, coupleNames, dishes]);
+  }, [existingDesignJson, coupleNames, sentences]);
 
   const handleAddRectangle = () => {
     if (!rectangle) {
@@ -188,7 +237,7 @@ export default function DesignSection({
   };
 
   const handleUpdate = (id: string, newProps: Partial<TextItem>) => {
-    setTextsState((prev) =>
+    setSentencesState((prev) =>
       prev.map((t) => (t.id === id ? { ...t, ...newProps } : t))
     );
   };
@@ -201,17 +250,17 @@ export default function DesignSection({
     setSaving(true);
     try {
       const pngDataUrl = stageRef.current.toDataURL({ pixelRatio: 2 });
-      const designJson = textsState;
+      const designJson = sentencesState;
 
-      await menuService.updateFinals(userId, {
+      await invitationService.updateFinals(userId, {
         finalPng: pngDataUrl,
         finalCanvasJson: JSON.stringify(designJson),
       });
 
-      alert("Menu saved successfully");
+      alert("Invitation saved successfully");
     } catch (error) {
-      console.error("Failed to save menu:", error);
-      alert("Failed to save menu");
+      console.error("Failed to save invitation:", error);
+      alert("Failed to save invitation");
     } finally {
       setSaving(false);
     }
@@ -221,7 +270,7 @@ export default function DesignSection({
     if (!stageRef.current) return;
     const uri = stageRef.current.toDataURL({ pixelRatio: 2 });
     const link = document.createElement("a");
-    link.download = "menu.png";
+    link.download = "invitation.png";
     link.href = uri;
     document.body.appendChild(link);
     link.click();
@@ -237,7 +286,7 @@ export default function DesignSection({
       format: [STAGE_W, STAGE_H],
     });
     pdf.addImage(pngBase64, "PNG", 0, 0, STAGE_W, STAGE_H);
-    pdf.save("menu.pdf");
+    pdf.save("invitation.pdf");
   }
 
 
@@ -270,19 +319,19 @@ export default function DesignSection({
                 type="range"
                 min={1}
                 max={40}
-                value={textsState.find((t) => t.id === selectedId)?.fontSize ?? 14}
+                value={sentencesState.find((t) => t.id === selectedId)?.fontSize ?? 14}
                 onChange={(e) => {
                   handleUpdate(selectedId, { fontSize: +e.target.value });
                 }}
               />
-              <span>{textsState.find((t) => t.id === selectedId)?.fontSize}px</span>
+              <span>{sentencesState.find((t) => t.id === selectedId)?.fontSize}px</span>
             </div>
 
             <div className="editRow">
               <label>Font family:</label>
               <select
                 value={
-                  textsState.find((t) => t.id === selectedId)?.fontFamily ??
+                  sentencesState.find((t) => t.id === selectedId)?.fontFamily ??
                   AVAILABLE_FONTS[0]
                 }
                 onChange={(e) => {
@@ -301,7 +350,7 @@ export default function DesignSection({
               <label>Color:</label>
               <input
                 type="color"
-                value={textsState.find((t) => t.id === selectedId)?.fill ?? CATEGORY_COLOR}
+                value={sentencesState.find((t) => t.id === selectedId)?.fill ?? CATEGORY_COLOR}
                 onChange={(e) => {
                   handleUpdate(selectedId, { fill: e.target.value });
                 }}
@@ -317,7 +366,7 @@ export default function DesignSection({
           <span
             onClick={handleSave}
           >
-            {saving ? <Icons.LoaderIcon className="spinner" /> : <Icons.CheckIcon className="icon" title="Save Menu"/>}
+            {saving ? <Icons.LoaderIcon className="spinner" /> : <Icons.CheckIcon className="icon" title="Save Invitation"/>}
           </span>
 
           <span
@@ -368,6 +417,7 @@ export default function DesignSection({
                 y={rectangle.y}
                 width={rectangle.width}
                 height={rectangle.height}
+                
                 fill="white"
                 draggable
                 onClick={() => setSelectedId("rectangle")}
@@ -426,7 +476,7 @@ export default function DesignSection({
               />
             )}
 
-            {textsState.map((t) => (
+            {sentencesState.map((t) => (
               <Group key={t.id}>
                 <KonvaText
                   text={t.text}
@@ -436,13 +486,12 @@ export default function DesignSection({
                   fontSize={t.fontSize}
                   fontFamily={t.fontFamily}
                   fill={t.fill}
-                  align={t.align}
                   draggable
                   dragBoundFunc={(pos) => {
                     return {
                       x: Math.min(
                         Math.max(pos.x, WHITE_BOX_X),
-                        WHITE_BOX_X + WHITE_BOX_WIDTH - (t.width || 0)
+                        WHITE_BOX_X + WHITE_BOX_WIDTH 
                       ),
                       y: Math.min(
                         Math.max(pos.y, WHITE_BOX_Y),
@@ -454,7 +503,7 @@ export default function DesignSection({
                     const newX = e.target.x();
                     const newY = e.target.y();
                     setSelectedId(t.id);
-                    setTextsState((prev) =>
+                    setSentencesState((prev) =>
                       prev.map((text) =>
                         text.id === t.id ? { ...text, x: newX, y: newY } : text
                       )

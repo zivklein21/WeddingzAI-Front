@@ -3,12 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import tdlService, { TdlData } from "../../services/tdl-service";
 import vendorService from "../../services/vendor-service";
-import {
-  FiArrowLeft,
-  FiEdit2,
-  FiSave,
-  FiLoader
-} from "react-icons/fi";
+import * as Icons from "../../icons/index";
 import { useAuth } from "../../hooks/useAuth/AuthContext";
 import TodoSection, { Todo as TodoType } from "./ToDoSection";
 import { AddTaskModal, EditTaskModal, TaskData } from "./TaskModal";
@@ -67,10 +62,10 @@ export default function TodoList() {
     }
     try {
       await vendorService.startAIResearchBackground(task, user._id);
-      toast.success("Task Send to AI");
+      toast.success("Task Sent to AI");
     } catch (err) {
       console.error(err);
-      toast.error("Failed to send to AI");
+      toast.error("Failed to sent to AI");
     }
   };
 
@@ -174,7 +169,7 @@ export default function TodoList() {
   if (loading)
     return (
       <p className={styles.loading}>
-        <FiLoader className={styles.spinner} />
+        <Icons.LoaderIcon className="spinner" />
       </p>
     );
   if (error) return <p className={styles.error}>{error}</p>;
@@ -186,22 +181,22 @@ export default function TodoList() {
 
   return (
     <>
-      <div className={styles.tdlPage}>
-        <div className={styles.tdlContainer}>
-          <FiArrowLeft
-            className={styles.backIcon}
+      <div className="pageMain">
+        <div className="pageContainer">
+          <Icons.BackArrowIcon
+            className="backIcon"
             onClick={() => navigate(-1)}
             title="Go Back"
           />
-          <h2 className={styles.tdlHeader}>To Do List</h2>
+          <h2 className="pageHeader">To Do List</h2>
           <div className={styles.headerRow}>
             <div className={styles.wedDetails}>
               <p className={styles.coupleNames}>
-                <strong>💍 Couple Names:{" "}</strong>
+                <strong><Icons.RingIcon className="icon"/> Couple Names:{" "}</strong>
                  {todoList.firstPartner} & {todoList.secondPartner}
               </p>
               <p className={styles.weddingDate}>
-                <strong>📅 Wedding Date:{" "}</strong>
+                <strong><Icons.DateIcon className="icon"/>Wedding Date:{" "}</strong>
                 {isEditingDate ? (
                   <>
                     <input
@@ -211,28 +206,30 @@ export default function TodoList() {
                       disabled={isSavingDate}
                     />
                     {isSavingDate ? (
-                      <span className={styles.savingText}>Saving…</span>
+                      <span><Icons.LoaderIcon className="spinner"/></span>
                     ) : (
-                      <FiSave
-                        className={styles.actionIcon}
+                      <Icons.SaveIcon
+                        className="icon"
                         onClick={handleSaveWeddingDate}
+                        title="Save Wedding Date"
                       />
                     )}
                   </>
                 ) : (
                   <>
                     {todoList.weddingDate}
-                    <FiEdit2
-                      className={styles.actionIcon}
+                    <Icons.EditIocn
+                      className="icon"
                       onClick={() => setIsEditingDate(true)}
+                      title="Edit Wedding Date"
                     />
                   </>
                 )}
               </p>
             </div>
-            <button onClick={() => {
+            <span onClick={() => {
     setAddSectionIdx(0); // or any default section index
-    setAddModalOpen(true);}} className={styles.addBtn} title="Add Task">+</button>
+    setAddModalOpen(true);}} className="icon" ><Icons.AddIcon title="Add Task"/></span>
           </div>
           
 

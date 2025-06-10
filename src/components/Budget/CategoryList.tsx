@@ -1,13 +1,9 @@
 import { useState } from "react";
 import styles from "./Budget.module.css";
 import { useBudget } from "./BudgetContext";
+import * as Icons from "../../icons/index";
+import { toast } from 'react-toastify';
 
-import {
-  FiCheck,
-  FiX,
-  FiEdit2,
-  FiTrash2
-} from 'react-icons/fi';
 
 
 const CategoryList = () => {
@@ -21,6 +17,7 @@ const CategoryList = () => {
     const updated = categories.filter((_, i) => i !== index);
     setCategories(updated);
     saveBudget(updated, totalBudget);
+    toast.success("Category Deleted")
   };
 
   const handleUpdate = (index: number) => {
@@ -32,6 +29,7 @@ const CategoryList = () => {
     setCategories(updated);
     saveBudget(updated, totalBudget);
     setEditIndex(null);
+    toast.success("Category Updated")
   };
 
   return (
@@ -73,8 +71,8 @@ const CategoryList = () => {
                         />
                       </td>
                       <td>
-                        <FiCheck className={styles.actionIcon} onClick={() => handleUpdate(index)}/>
-                        <FiX className={styles.actionIcon} onClick={() => setEditIndex(null)} />
+                        <Icons.CheckIcon className="icon" onClick={() => handleUpdate(index)} title="Save Category"/>
+                        <Icons.CloseIcon className="icon" onClick={() => setEditIndex(null)} title="Cancle Edit"/>
                       </td>
                     </>
                   ) : (
@@ -85,15 +83,16 @@ const CategoryList = () => {
                       <td>
                         <div className={styles.actions}>
                           <span className={styles.amount}>${cat.amount}</span>
-                          <FiEdit2 
+                          <Icons.EditIocn 
                             onClick={() => {
                               setEditIndex(index);
                               setEditedName(cat.name);
                               setEditedAmount(cat.amount.toString());
                             }}
-                            className={styles.actionIcon}
+                            className="icon"
+                            title="Edit Category"
                           />
-                          <FiTrash2 className={styles.actionIcon} onClick={() => handleDelete(index)}/>
+                          <Icons.DeleteIcon className="icon" onClick={() => handleDelete(index)} title="Delete Category"/>
                         </div>
                       </td>
                     </>

@@ -3,13 +3,13 @@
   position: absolute;
   top: 10px;
   left: 10px;
-  font-size: 30px;
+  font-size: 40px;
   display: flex;
   flex-direction: column;
-  size: 48px;
+  size: 55px;
   align-items: center;
   cursor: pointer;
-  color: var(--wedding-black);
+  color: var(--wedding-dark-purple);
   transition: color 0.2s, opacity 0.2s;
 }
 
@@ -115,4 +115,9 @@
 
 .row .formGroup {
   flex: 1;
+}
+
+.buttonRight {
+  display: flex;
+  justify-content: flex-end;
 }
