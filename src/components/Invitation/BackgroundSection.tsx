@@ -2,6 +2,7 @@ import { useState } from "react";
 import styles from "./Invitation.module.css";
 import * as Icons from "../../icons/index";
 import invitationService from "../../services/invitation-service";
+import {toast} from "react-toastify";
 
 interface Props {
   userId: string;
@@ -45,11 +46,12 @@ export default function BackgroundSection({
     try {
       const response = await invitationService.generateBackground(designPrompt);
       const genUrl = response.data.backgroundUrl;
+      toast.info("Generate Background...");
       setGeneratedImageUrl(genUrl);
-      setSelectedImage("generated"); // כבר בחרנו את התמונה המגונרטת
+      setSelectedImage("generated");
     } catch (err) {
       console.error("generateBackground failed:", err);
-      alert("Error generating background");
+      toast.error("Error generating background");
     } finally {
       setIsLoading(false);
     }
@@ -58,7 +60,7 @@ export default function BackgroundSection({
   // כשמשתמש בוחר להמשיך עם תמונה קיימת
   const handleContinueWithExisting = () => {
     if (!existingFullUrl) {
-      alert("No existing background to use");
+      toast.warn("No existing background to use");
       return;
     }
     setParentBackgroundUrl(existingFullUrl);
@@ -69,11 +71,11 @@ export default function BackgroundSection({
   // כשמשתמש בוחר להמשיך עם תמונה חדשה
   const handleContinueWithGenerated = async () => {
     if (!generatedImageUrl) {
-      alert("No generated image to save");
+      toast.warn("No generated image to save");
       return;
     }
     if (!userId || !coupleNames.trim() || !designPrompt.trim() || !date || !venue) {
-      alert("Missing required fields");
+      toast.info("Missing required fields");
       return;
     }
     try {
@@ -90,7 +92,7 @@ export default function BackgroundSection({
       onDone();
     } catch (error) {
       console.error(error);
-      alert("Error creating invitation");
+      toast.error("Error creating invitation");
     }
   };
 

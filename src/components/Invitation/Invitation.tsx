@@ -8,6 +8,7 @@ import DesignSection from "./DesignSection";
 import invitationService, { Sentence } from "../../services/invitation-service";
 
 import * as Icons from "../../icons/index";
+import { ToastContainer } from "react-toastify";
 
 export default function Menu() {
   const [step, setStep] = useState(0);
@@ -85,7 +86,7 @@ export default function Menu() {
             sentences={invitationData.sentences}
             coupleNames={invitationData.coupleNames || coupleNames}
             date={invitationData.date}
-            venue={invitationData.venue4}
+            venue={invitationData.venue}
             ceremonyHour={invitationData.ceremonyHour}
             receptionHour={invitationData.receptionHour}
             existingDesignJson={
@@ -100,6 +101,8 @@ export default function Menu() {
           />
         )}
       </div>
+      <ToastContainer position="bottom-right" />
+
     </div>
   );
 }

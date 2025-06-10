@@ -18,7 +18,7 @@ const Budget: React.FC = () => {
           <AddCategoryForm />
           <CategoryList />
       </div>
-      <ToastContainer position="bottom-right" />
+      <ToastContainer position="bottom-right"/>
     </div>
   );
 };

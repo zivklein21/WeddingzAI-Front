@@ -63,6 +63,7 @@ const Vendors: React.FC = () => {
             />
             </h2>
             
+            
           </div>
 
           <div className={styles.vendorSection}>

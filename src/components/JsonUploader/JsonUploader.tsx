@@ -1,6 +1,7 @@
 import { useState } from "react";
 import styles from "./JsonUploader.module.css";
 import uploadJsonFile from "../../services/file-service";
+import { toast } from "react-toastify";
 
 export default function JsonUploader() {
   const [fileError, setFileError] = useState<string | null>(null);
@@ -31,7 +32,7 @@ export default function JsonUploader() {
 
     try {
       const response = await uploadJsonFile.uploadJsonFile(file);
-      alert(response.data.message);
+      toast.info(response.data.message);
       setFileError(null);
     } catch (error: any) {
       setFileError(error.response?.data?.error || "Upload failed.");

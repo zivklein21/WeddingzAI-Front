@@ -17,7 +17,7 @@ const CategoryList = () => {
     const updated = categories.filter((_, i) => i !== index);
     setCategories(updated);
     saveBudget(updated, totalBudget);
-    toast.success("Category Deleted")
+    toast.success("Category Deleted");
   };
 
   const handleUpdate = (index: number) => {
@@ -29,7 +29,7 @@ const CategoryList = () => {
     setCategories(updated);
     saveBudget(updated, totalBudget);
     setEditIndex(null);
-    toast.success("Category Updated")
+    toast.success("Category Updated");
   };
 
   return (

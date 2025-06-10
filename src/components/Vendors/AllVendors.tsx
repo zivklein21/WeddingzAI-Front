@@ -1,49 +1,61 @@
 import React, { useEffect, useState } from "react";
-import vendorService from "../../services/vendor-service";
+import {fetchAllVendors} from "../../services/vendor-service";
 import { Vendor } from "../../types/Vendor";
 import VendorAccordionGroup from "./AccordionGroup";
 import styles from "./Vendors.module.css";
-import {FiArrowLeft, FiLoader} from 'react-icons/fi';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import * as Icons from "../../icons/index";
 
 
 
-const AllVendors: React.FC = () => {
+export const AllVendors: React.FC = () => {
   const [vendors, setVendors] = useState<Vendor[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-
   useEffect(() => {
-  vendorService.fetchAllVendors()
-    .then(data => {
-      console.log("📦 got vendors:", data);
-      setVendors(data);
-    })
-    .catch(err => {
-      console.error("❌ fetach all failed:", err);
-      if (err?.response) {
-    console.error("RESPONSE DATA:", err.response.data);
-    console.error("RESPONSE STATUS:", err.response.status);
-  }
-    })
-    .finally(() => setLoading(false));
-}, []);
+    fetchAllVendors()
+      .then(data => {
+        console.log("📦 got vendors:", data);
+        setVendors(data);
+      })
+      .catch(err => {
+        console.error("❌ fetch failed:", err);
+        toast.error(err.message);
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) return <p><Icons.LoaderIcon className="spinner"/></p>;
+
 
   return (
-    <div className={styles.vendorPage}>
-      <div className={styles.vendorContainer}>
-        <FiArrowLeft
-          className={styles.backIcon}
-          onClick={() => navigate(-1)}
-          title="Go Back"
-        />
+    <>
+      <div className="pageMain">
+        <div className="pageContainer">
+          <Icons.BackArrowIcon
+            className="backIcon"
+            onClick={() => navigate(-1)}
+            title="Go Back"
+          />
 
-        <h2 className={styles.vendorHeader}>All Vendors</h2>
-        <div className={styles.vendorSection}>
-          {loading ? <FiLoader className={styles.spinner} /> : <VendorAccordionGroup vendors={vendors} isMyVendorsView={false}/>}
+          <div className={styles.headerRow}>
+            <h2 className="pageHeader">Vendors
+            </h2>
+            
+          </div>
+
+          <div className={styles.vendorSection}>
+            {loading ? (
+              <Icons.LoaderIcon className="spinner" />
+            ) : (
+              <VendorAccordionGroup vendors={vendors} isMyVendorsView={false} />
+            )}
+          </div>
         </div>
       </div>
-    </div>
+      <ToastContainer position="bottom-right" />
+    </>
   );
 };
 

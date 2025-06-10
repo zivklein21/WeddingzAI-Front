@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import menuService, { Dish as DishType } from "../../services/menu-service";
 import styles from "./Menu.module.css";
-
+import {toast} from "react-toastify";
 import * as Icons from "../../icons/index";
 
 interface Props {
@@ -37,7 +37,7 @@ export default function DishesSection({ userId, dishes, setDishes, onDone }: Pro
           }
         } catch (err) {
           console.error("Failed to fetch dishes", err);
-          alert("Failed to fetch dishes");
+          toast.error("Failed to fetch dishes");
         } finally {
           setLoading(false);
         }
@@ -83,17 +83,17 @@ export default function DishesSection({ userId, dishes, setDishes, onDone }: Pro
 
   const handleSaveAll = async () => {
     if (!userId) {
-      alert("Missing user ID");
+      toast.info("Missing user ID");
       return;
     }
     setLoading(true);
     try {
       await menuService.updateDishesByUserId(userId, dishes);
-      alert("Dishes saved successfully");
+      toast.success("Dishes saved successfully");
       onDone();
     } catch (err) {
       console.error("Failed to save dishes", err);
-      alert("Failed to save dishes");
+      toast.error("Failed to save dishes");
     } finally {
       setLoading(false);
     }

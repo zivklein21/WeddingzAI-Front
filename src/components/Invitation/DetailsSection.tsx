@@ -4,6 +4,7 @@ import styles from "./Invitation.module.css";
 
 import * as Icons from "../../icons/index";
 import { data } from "react-router-dom";
+import {toast} from "react-toastify";
 
 interface Props {
   userId: string;
@@ -44,7 +45,7 @@ export default function DetailsSection({ userId, sentences, setSentences, onDone
 
         } catch (err) {
           console.error("Failed to fetch sentences", err);
-          alert("Failed to fetch sentences");
+          toast.error("Failed to fetch sentences");
         } finally {
           setLoading(false);
         }
@@ -90,15 +91,15 @@ export default function DetailsSection({ userId, sentences, setSentences, onDone
 
   const handleSaveAll = async () => {
     if (!userId) {
-      alert("Missing user ID");
+      toast.info("Missing user ID");
       return;
     }
     if (!receptionHour || !ceremonyHour) {
-    alert("Please enter both reception and ceremony hours");
+    toast.warn("Please enter both reception and ceremony hours");
     return;
   }
   if (!venue || venue == "TBD" || !date || date == "TBD") {
-    alert("Can't create Invitation without Date Or Venue!")
+    toast.info("Can't create Invitation without Date Or Venue!")
     return;
   }
     setLoading(true);
@@ -106,11 +107,11 @@ export default function DetailsSection({ userId, sentences, setSentences, onDone
       await invitationService.updateTextsByUserId(userId, sentences);
       console.log(ceremonyHour, receptionHour);
       await invitationService.updateHoursByUserId(userId,ceremonyHour, receptionHour)
-      alert("Details saved successfully");
+      toast.success("Details saved successfully");
       onDone();
     } catch (err) {
       console.error("Failed to save Details", err);
-      alert("Failed to save Detaisl");
+      toast.error("Failed to save Detaisl");
     } finally {
       setLoading(false);
     }

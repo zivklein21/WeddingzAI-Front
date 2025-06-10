@@ -491,3 +491,7 @@ html, body {
   color: var(--wedding-black);
 }
 
+
+.right {
+  justify-self: right;
+}

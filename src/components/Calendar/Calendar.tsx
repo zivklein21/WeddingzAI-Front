@@ -15,6 +15,7 @@ import styles from "./Calendar.module.css";
 import EventModal from "./EventModal";
 import { useNavigate } from "react-router-dom";
 import ConfirmDeleteModal from './DeleteModal';
+import {toast} from "react-toastify";
 
 type CalendarEvent = {
   _id: string;
@@ -63,7 +64,7 @@ export default function CalendarPage() {
           setEvents(events);
         }
       })
-      .catch((err) => alert(err.message));
+      .catch((err) => toast.error(err.message));
   }, [USER_ID, weddingDate]);
 
   const handleDateClick = (arg: { dateStr: string }) => {
@@ -97,8 +98,9 @@ export default function CalendarPage() {
         const { request } = createEvent(USER_ID, { title, color, date: modalDate });
         const res = await request;
         setEvents((prev) => [...prev, res.data as CalendarEvent]);
+        toast.success("Event create");
       } catch (err: any) {
-        alert(err.message);
+        toast.error(err.message);
       }
     } else if (modalMode === "edit" && editingEvent) {
       try {
@@ -109,8 +111,9 @@ export default function CalendarPage() {
             e._id === editingEvent._id ? (res.data as CalendarEvent) : e
           )
         );
+        toast.success("Event Edit");
       } catch (err: any) {
-        alert(err.message);
+        toast.error(err.message);
       }
     }
   };
@@ -128,8 +131,9 @@ export default function CalendarPage() {
     const { request } = deleteEvent(USER_ID, editingEvent._id);
     await request;
     setEvents((prev) => prev.filter((e) => e._id !== editingEvent._id));
+    toast.success("Event Delete");
   } catch (err: any) {
-    alert(err.message);
+    toast.error(err.message);
   }
   setEditingEvent(null);
   setModalDate(null);

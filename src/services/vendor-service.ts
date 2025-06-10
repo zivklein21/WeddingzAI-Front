@@ -36,9 +36,17 @@ export const runAIResearch = async (query: string): Promise<{ success: boolean; 
 };
 
 // 2. GET /vendors
+// AFTER (fixed)
 export const fetchAllVendors = async (): Promise<Vendor[]> => {
-    const resp = await apiClient.get<ApiResponse<Vendor[]>>("/vendors");
-    return resp.data.data || [];
+  const resp = await apiClient.get<ApiResponse<Vendor[]>>("/vendors/all");
+  console.log("fetchAllVendors response:", resp.data);
+
+  // Only throw if success === false
+  if (!resp.data.success) {
+    throw new Error(resp.data.message || "Failed to fetch vendors");
+  }
+
+  return resp.data.data || [];
 };
 
 // 3. GET /vendors/:id

@@ -6,6 +6,7 @@ import BackgroundSection from "./BackgroundSection";
 import DishesSection from "./DishesSection";
 import DesignSection from "./DesignSection";
 import menuService, { Dish } from "../../services/menu-service";
+import { ToastContainer } from "react-toastify";
 
 import * as Icons from "../../icons/index";
 
@@ -87,6 +88,7 @@ export default function Menu() {
           />
         )}
       </div>
+      <ToastContainer position="bottom-right" />
     </div>
   );
 }

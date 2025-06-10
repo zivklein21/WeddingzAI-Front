@@ -13,6 +13,7 @@ import styles from "./Invitation.module.css";
 import { jsPDF } from "jspdf";
 import invitationService from "../../services/invitation-service";
 import * as Icons from "../../icons/index";
+import {toast} from "react-toastify";
 
 interface TextItem {
   id: string;
@@ -244,7 +245,7 @@ export default function DesignSection({
 
   async function handleSave() {
     if (!stageRef.current) {
-      alert("Stage not ready");
+      toast.warn("Stage not ready");
       return;
     }
     setSaving(true);
@@ -257,10 +258,10 @@ export default function DesignSection({
         finalCanvasJson: JSON.stringify(designJson),
       });
 
-      alert("Invitation saved successfully");
+      toast.success("Invitation saved successfully");
     } catch (error) {
       console.error("Failed to save invitation:", error);
-      alert("Failed to save invitation");
+      toast.error("Failed to save invitation");
     } finally {
       setSaving(false);
     }
