@@ -116,6 +116,7 @@ const GuestList: React.FC = () => {
       toast.error('Missing partner info');
       return;
     }
+
     const valid = guests
       .filter(g => g.fullName && g.email && g._id && g.rsvpToken)
       .map(g => ({
@@ -124,11 +125,15 @@ const GuestList: React.FC = () => {
         guestId: g._id,
         rsvpToken: g.rsvpToken
       }));
+
     if (!valid.length) {
       toast.error('No guests to invite');
       return;
     }
+
+    const toastId = toast.info('Sending invitations...', { autoClose: false });
     setSending(true);
+
     try {
       await sendInvitationToAllGuests({
         partner1: firstPartner,
@@ -137,10 +142,22 @@ const GuestList: React.FC = () => {
         venue: weddingVenue,
         guests: valid
       });
-      toast.success('Invitations sent');
+
+      toast.update(toastId, {
+        render: 'Invitations sent',
+        type: "success",
+        autoClose: 5000,
+        isLoading: false,
+      });
+
     } catch (err) {
-      console.error('Error sending invites:', err);
-      toast.error('Error sending invites');
+        console.error('Error sending invites:', err);
+        toast.update(toastId, {
+          render: 'Error sending invitations',
+          type: "error",
+          autoClose: 5000,
+          isLoading: false,
+        });
     } finally {
       setSending(false);
     }
