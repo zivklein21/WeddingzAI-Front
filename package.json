@@ -37,6 +37,7 @@
     "react-day-picker": "^9.7.0",
     "react-dom": "^19.0.0",
     "react-draggable": "^4.4.6",
+    "react-helmet": "^6.1.0",
     "react-hook-form": "^7.55.0",
     "react-konva": "^19.0.4",
     "react-router-dom": "^7.4.0",
