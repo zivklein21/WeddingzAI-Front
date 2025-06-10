@@ -92,7 +92,7 @@ export const startAIResearchBackground = async (query: string, userId: string): 
 
 // 8. GET /vendors/mine - fetch AI-filtered vendors based on TDL
 export const fetchRelevantVendors = async (): Promise<Vendor[]> => {
-    const resp = await apiClient.get<ApiResponse<Vendor[]>>("/vendors/mine");
+    const resp = await apiClient.get<ApiResponse<Vendor[]>>("/vendors/relevant");
     return resp.data.data || [];
 };
 
@@ -104,7 +104,7 @@ export const fetchVendorSummary= async(): Promise<VendorSummaryResponse> => {
 
 // 10. GET /vendor/relvant - refetch the user vendor again
 export const refetchRelevantVendors = async (): Promise<Vendor[]> => {
-  const resp = await apiClient.get<{ data: Vendor[] }>("/vendors/relvant");
+  const resp = await apiClient.get<{ data: Vendor[] }>("/vendors/relevant");
   return resp.data.data;
 };
 

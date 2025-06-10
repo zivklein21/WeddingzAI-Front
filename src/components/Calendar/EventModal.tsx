@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { FiCheck, FiTrash2, FiX } from "react-icons/fi";
+import { useState, useEffect } from "react";
 import styles from "./Calendar.module.css";
+import * as Icons from "../../icons/index";
 
 interface Props {
   open: boolean;
@@ -44,9 +44,9 @@ export default function EventModal({
   return (
     <div className={styles.modalBackdrop}>
       <div className={styles.modal}>
-        <button className={styles.closeBtn} onClick={onClose} title="סגור">
-          <FiX size={24} />
-        </button>
+        <span className={styles.closeBtn} onClick={onClose} >
+          <Icons.CloseIcon className="icon" title="Close Event"/>
+        </span>
         <div className={styles.modalField}>
           <label>Event Title:</label>
           <input
@@ -76,24 +76,21 @@ export default function EventModal({
         </div>
 
         <div className={styles.modalButtons}>
-          <button
-            className={styles.saveBtn}
+          <span
+            className="icon"
             onClick={() => title && onSave({ title, color })}
-            title="שמור"
-            type="button"
-            disabled={!title}
+            
           >
-            <FiCheck size={22} />
-          </button>
+            <Icons.SaveIcon title="Save Event"/>
+          </span>
           {mode === "edit" && (
-            <button
-              className={styles.deleteBtn}
+            <span
+              className="icon"
               onClick={onDelete}
-              title="מחק"
-              type="button"
+              
             >
-              <FiTrash2 size={22} />
-            </button>
+              <Icons.DeleteIcon title="Delete Event"/>
+            </span>
           )}
         </div>
       </div>

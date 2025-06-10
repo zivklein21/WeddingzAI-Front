@@ -1,9 +1,10 @@
 // BudgetHeader.tsx
-import React, { useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import styles from "./Budget.module.css";
 import { useBudget } from "./BudgetContext";
-import {FiEdit2, FiSave, FiUpload} from 'react-icons/fi';
 import { exportToCSV } from "../../utils/export-to-csv";
+import * as Icons from "../../icons/index";
+import { toast } from "react-toastify";
 
 
 export default function BudgetHeader() {
@@ -20,6 +21,7 @@ export default function BudgetHeader() {
   const handleSave = async () => {
     await saveBudget(categories, totalBudget);
     setIsEditing(false);
+    toast.success("Budget Updated")
   };
 
   const handleExport = () => {
@@ -33,6 +35,7 @@ export default function BudgetHeader() {
       );
   
       exportToCSV(budgetData, ["name", "amount"], "wedding-budget.csv");
+      toast.success("Budget Exported")
     };
 
   return (
@@ -48,14 +51,14 @@ export default function BudgetHeader() {
                 value={totalBudget}
                 onChange={(e) => setTotalBudget(e.target.value)}
               />
-              <FiSave className={styles.actionIcon} onClick={handleSave}/>
+              <Icons.SaveIcon className="icon" onClick={handleSave} title="Save Budget"/>
             </>
           ) : (
             <>
               <span className={styles.statValue}>
                 ${parseFloat(totalBudget || "0").toLocaleString()}
               </span>
-              <FiEdit2  className={styles.actionIcon} onClick={()=>setIsEditing(true)}/>
+              <Icons.EditIocn  className="icon" onClick={()=>setIsEditing(true)} title="Edit Budget"/>
             </>
           )}
         </div>
@@ -72,7 +75,7 @@ export default function BudgetHeader() {
           </span>
         </div>
         <div className={styles.statItem}>
-          <FiUpload className={styles.actionIcon} onClick={handleExport}/>
+          <Icons.ExportIcon className="icon" onClick={handleExport} title="Export Budget"/>
         </div>
       </div>
     </div>

@@ -20,7 +20,11 @@ const AllVendors: React.FC = () => {
       setVendors(data);
     })
     .catch(err => {
-      console.error("❌ fetchRelevantVendors failed:", err);
+      console.error("❌ fetach all failed:", err);
+      if (err?.response) {
+    console.error("RESPONSE DATA:", err.response.data);
+    console.error("RESPONSE STATUS:", err.response.status);
+  }
     })
     .finally(() => setLoading(false));
 }, []);

@@ -2,10 +2,9 @@
 import React, { useState, useEffect } from 'react';
 import detailsMatterService, { CanceledError, SongSuggestion } from '../../services/details-matter-service';
 import styles from './detailsMatters.module.css';
-import { FiLoader } from "react-icons/fi";
-import { PiMusicNotesPlus } from "react-icons/pi";
 import SongCard from './SongCard';
 import { toast } from 'react-toastify';
+import * as Icons from "../../icons/index";
 
 const Songs: React.FC = () => {
   const [songPrompt, setSongPrompt] = useState('');
@@ -51,17 +50,17 @@ const Songs: React.FC = () => {
           className={styles.promptInput}
         />
         {isLoading
-          ? <FiLoader className={styles.spinner} />
+          ? <Icons.LoaderIcon className="spinner" />
           : (
             <span
               role="button"
               tabIndex={0}
               onClick={handleSongPrompt}
               onKeyPress={e => { if (e.key === 'Enter') handleSongPrompt() }}
-              className={styles.musicIcon}
-              aria-label="Get Song Suggestions"
-            >
-              <PiMusicNotesPlus />
+              className="icon"
+              
+              >
+              <Icons.MusicIcon title='Generate Songs'/>
             </span>
           )
         }
@@ -76,7 +75,6 @@ const Songs: React.FC = () => {
                   key={i}
                   title={song.title}
                   artist={song.artist}
-                  description={song.description}
                   onPlay={() => window.open(song.link || '#', '_blank')}
                 />
               ))}

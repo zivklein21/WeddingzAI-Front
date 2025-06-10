@@ -39,7 +39,7 @@ html, body {
   background: linear-gradient(to bottom right, var(--wedding-pink), var(--wedding-white));
   color: #333;
   scroll-behavior: smooth;
-  overflow-x: hidden;
+  overflow: hidden;
 }
  
  /* HEADERS: black by default, pink on hover */
@@ -151,12 +151,13 @@ hr {
   position: absolute;
   top: 20px;        
   right: 20px;      
-  font-size: 1.5rem;
+  font-size: 40px;
   color: var(--wedding-gray, #888);
   cursor: pointer;
   transition: color 0.2s;
   z-index: 10;     
 }
+
 .backIcon:hover {
   color: var(--wedding-purple, #b291ff);
 }
@@ -177,4 +178,15 @@ hr.divider {
   width: 100%;
   margin: 2.5rem 0 2rem 0;
   background: transparent;
+}
+
+.spinner {
+  font-size: 30px;
+  color: var(--wedding-purple);
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }

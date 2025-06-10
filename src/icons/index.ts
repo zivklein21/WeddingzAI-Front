@@ -18,7 +18,8 @@ import {
     CiGlobe,
     CiTrash,
     CiCalendarDate,
-    CiLocationArrow1
+    CiLocationArrow1,
+    CiPlay1
 } from "react-icons/ci";
 
 import {
@@ -34,7 +35,8 @@ import {
 import { 
     PiMagicWandThin,
     PiShapesThin,
-    PiLeafThin
+    PiLeafThin,
+    PiDeviceRotateThin
 } from "react-icons/pi";
 
 import { SlRefresh } from "react-icons/sl";
@@ -77,7 +79,7 @@ export const BackArrowIcon = IoIosArrowRoundBack;
 // Guests
 export const SendIcon = CiLocationArrow1;
 export const ImportIcon = CiImport;
-export const exportIcon = CiExport;
+export const ExportIcon = CiExport;
 export const FilterIcon = CiFilter;
 export const MaybeIcon = CiCircleQuestion;
 
@@ -98,3 +100,7 @@ export const VeganIcon = PiLeafThin;
 // Details Matter
 export const MusicIcon = CiMusicNote1;
 export const GiftIcon = CiGift;
+export const PlayIcon = CiPlay1;
+
+// Seat
+export const RotateIcon = PiDeviceRotateThin;

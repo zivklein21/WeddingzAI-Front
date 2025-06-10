@@ -3,7 +3,7 @@ import { useDraggable } from "@dnd-kit/core";
 import TableShape from "./Table";
 import styles from "./DraggableTable.module.css";
 import { unassignGuest } from "../../services/guest-service";
-import { FiTrash2 } from "react-icons/fi";
+import * as Icons from "../../icons/index";
 
 export type DraggableTableProps = {
   id: string;
@@ -105,10 +105,10 @@ export default function DraggableTable({
               className={styles.iconClose}
               onClick={() => setShowGuests(false)}
             >
-              ✕
+              <Icons.CloseIcon className="icon" title="Close Table"/>
             </span>
-            
             <h4>Guests for {name}:</h4>
+            
             <ul className={styles.guestList}>
               {guestList.length > 0 ? (
                 guestList.map((guest, index) => (
@@ -119,13 +119,12 @@ export default function DraggableTable({
                       : ""}
                     <span
                       className={styles.iconRemove}
-                      title="Remove guest"
                       onMouseDown={(e) => {
                         e.stopPropagation();
                         handleRemoveGuest(guest._id);
                       }}
                     >
-                      <FiTrash2/>
+                      <Icons.DeleteIcon className="icon" title="Remove Guest"/>
                     </span>
                   </li>
                 ))

@@ -3,10 +3,9 @@ import vendorService from "../../services/vendor-service";
 import { Vendor } from "../../types/Vendor";
 import VendorAccordionGroup from "./AccordionGroup";
 import styles from "./Vendors.module.css";
-import { FiArrowLeft, FiLoader } from "react-icons/fi";
-import { TfiReload } from "react-icons/tfi";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
+import * as Icons from "../../icons/index";
 
 
 const Vendors: React.FC = () => {
@@ -21,6 +20,7 @@ const Vendors: React.FC = () => {
       setVendors(data);
     } catch (err) {
       toast.error("Failed to load vendors");
+      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -29,11 +29,12 @@ const Vendors: React.FC = () => {
   const reloadVendors = async () => {
     setLoading(true);
     try {
-      const data = await vendorService.refetchRelevantVendors(); // `/vendors/relvant`
+      const data = await vendorService.refetchRelevantVendors(); 
       setVendors(data);
       toast.success("Vendors reloaded");
     } catch (err) {
       toast.error("Failed to reload vendors");
+      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -45,18 +46,18 @@ const Vendors: React.FC = () => {
 
   return (
     <>
-      <div className={styles.vendorPage}>
-        <div className={styles.vendorContainer}>
-          <FiArrowLeft
-            className={styles.backIcon}
+      <div className="pageMain">
+        <div className="pageContainer">
+          <Icons.BackArrowIcon
+            className="backIcon"
             onClick={() => navigate(-1)}
             title="Go Back"
           />
 
           <div className={styles.headerRow}>
-            <h2 className={styles.vendorHeader}>My Vendors
-              <TfiReload
-              className={styles.reload}
+            <h2 className="pageHeader">My Vendors
+              <Icons.RefreshIcon
+              className="icon"
               onClick={reloadVendors}
               title="Reload Relevant Vendors"
             />
@@ -66,7 +67,7 @@ const Vendors: React.FC = () => {
 
           <div className={styles.vendorSection}>
             {loading ? (
-              <FiLoader className={styles.spinner} />
+              <Icons.LoaderIcon className="spinner" />
             ) : (
               <VendorAccordionGroup vendors={vendors} isMyVendorsView={true} />
             )}

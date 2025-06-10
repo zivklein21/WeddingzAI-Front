@@ -4,6 +4,7 @@ import styles from './GuestList.module.css';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
+import * as Icons from "../../icons/index";
 
 import {
   fetchMyGuests,
@@ -14,20 +15,6 @@ import {
   Guest,
 } from '../../services/guest-service';
 
-import {
-  FiSend,
-  FiDownload,
-  FiUpload,
-  FiBarChart2,
-  FiCheckCircle,
-  FiXCircle,
-  FiHelpCircle,
-  FiEdit2,
-  FiTrash2,
-  FiSave,
-  FiX,
-  FiArrowLeft
-} from 'react-icons/fi';
 
 import { ConfirmGuestDeleteModal } from './DeleteGuestModal';
 
@@ -262,12 +249,12 @@ const GuestList: React.FC = () => {
   };
 
   return (
-    <div className={styles.guestPage}>
-      <div className={styles.guestContainer}>
-        <FiArrowLeft className={styles.backIcon} onClick={() => navigate(-1)} title="Go Back" />
-        <h2 className={styles.guestHeader}>Guest List</h2>
+    <div className="pageMain">
+      <div className="pageContainer">
+        <Icons.BackArrowIcon className="backIcon  " onClick={() => navigate(-1)} title="Go Back" />
+        <h2 className="pageHeader">Guest List</h2>
 
-        <form className={styles.guestForm} onSubmit={handleAddGuest}>
+        <form className={styles.guestForm}>
           <input
             name="fullName"
             value={form.fullName}
@@ -299,21 +286,21 @@ const GuestList: React.FC = () => {
             onChange={handleInputChange}
             placeholder="# Guests"
           />
-          <button type="submit">+ Add Guest</button>
+          <span onClick={handleAddGuest} className='icon' title='Add Guest'><Icons.AddIcon/></span>
         </form>
 
         <div className={styles.toolbar}>
           <div className={styles.actionsContainer}>
             <div className={styles.iconAction} onClick={() => !sending && handleSendEmails()} style={{ opacity: sending ? 0.5 : 1 }}>
-              <FiSend className={styles.actionIcon} />
+              <Icons.SendIcon className="icon" title="Send Invites"/>
               <span className={styles.iconLabel}>Send Invites</span>
             </div>
             <div className={styles.iconAction} onClick={() => fileInputRef.current?.click()}>
-              <FiDownload className={styles.actionIcon} />
+              <Icons.ImportIcon className="icon" title='Import Guest List' />
               <span className={styles.iconLabel}>Import Excel</span>
             </div>
             <div className={styles.iconAction} onClick={handleExportExcel}>
-              <FiUpload className={styles.actionIcon} />
+              <Icons.ExportIcon className="icon" title='Export Guest List'/>
               <span className={styles.iconLabel}>Export Excel</span>
             </div>
             <input type="file" ref={fileInputRef} accept=".xlsx,.xls" onChange={handleExcelUpload} style={{ display: 'none' }} />
@@ -321,12 +308,12 @@ const GuestList: React.FC = () => {
 
           <div className={styles.actionsContainer}>
             {['all', 'yes', 'no', 'maybe'].map((key, index) => {
-              const Icon = [FiBarChart2, FiCheckCircle, FiXCircle, FiHelpCircle][index];
+              const Icon = [Icons.FilterIcon, Icons.CheckIcon, Icons.CloseIcon, Icons.MaybeIcon][index];
               const label = ['Total', 'Yes', 'No', 'Maybe'][index];
               const count = [guestStats.total, guestStats.yes, guestStats.no, guestStats.maybe][index];
               return (
                 <div key={key} className={`${styles.iconAction} ${filter === key ? styles.activeFilter : ''}`} onClick={() => setFilter(key as 'all' | 'yes' | 'no' | 'maybe')}>
-                  <Icon className={styles.actionIcon} />
+                  <Icon className="icon" />
                   <span className={styles.iconLabel}>{label}: {count}</span>
                 </div>
               );
@@ -335,7 +322,7 @@ const GuestList: React.FC = () => {
         </div>
 
         {loading ? (
-          <div className={styles.emptyGuestList}>Loading…</div>
+          <div className={styles.emptyGuestList}><Icons.LoaderIcon className='spinner'/></div>
         ) : displayed.length === 0 ? (
           <div className={styles.emptyGuestList}>{filter === 'all' ? 'No guests' : 'No ' + filter + ' responses'}</div>
         ) : (
@@ -367,8 +354,8 @@ const GuestList: React.FC = () => {
                       </td>
                       <td><input type="number" min={1} className={styles.tableInput} value={editingGuests[g._id]?.numberOfGuests ?? g.numberOfGuests ?? 1} onChange={e => handleEditChange(g._id, 'numberOfGuests', e.target.value)} /></td>
                       <td>
-                        <FiSave className={styles.actionIcon} onClick={() => handleSave(g)} />
-                        <FiX className={styles.actionIcon} onClick={() => setEditingGuestId(null)} />
+                        <Icons.SaveIcon className="icon" onClick={() => handleSave(g)} title='Save Guest'/>
+                        <Icons.CloseIcon className="icon" onClick={() => setEditingGuestId(null)} title='Canccle Edit'/>
                       </td>
                     </tr>
                   ) : (
@@ -379,8 +366,8 @@ const GuestList: React.FC = () => {
                       <td className={styles[`status_${g.rsvp}`]}>{g.rsvp}</td>
                       <td>{g.numberOfGuests ?? 1}</td>
                       <td>
-                        <FiEdit2 className={styles.actionIcon} onClick={() => setEditingGuestId(g._id)} />
-                        <FiTrash2 className={styles.actionIcon} onClick={() => handleDelete(g)} />
+                        <Icons.EditIocn className="icon" onClick={() => setEditingGuestId(g._id)} title='Edit Guest'/>
+                        <Icons.DeleteIcon className="icon" onClick={() => handleDelete(g)} title='Delete Guest'/>
                       </td>
                     </tr>
                   )

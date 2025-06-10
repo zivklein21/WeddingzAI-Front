@@ -12,7 +12,7 @@ import { fetchMyGuests } from "../../services/guest-service";
 import { Guest } from "../../types/guest";
 
 import styles from "./Seating.module.css";
-import { FiArrowLeft } from "react-icons/fi";
+import * as Icons from "../../icons/index";
 
 import { useNavigate } from 'react-router-dom';
 
@@ -118,10 +118,10 @@ export default function Seating() {
   };
 
   return (
-    <div className={styles.seatPage}>
-      <div className={styles.seatContainer}>
-        <FiArrowLeft className={styles.backIcon} onClick={() => navigate(-1)} title="Go Back" />
-        <h2 className={styles.seatHeader}>Seating Chart</h2>
+    <div className="pageMain">
+      <div className="pageContainer">
+        <Icons.BackArrowIcon className="backIcon" onClick={() => navigate(-1)} title="Go Back" />
+        <h2 className="pageHeader">Seating Chart</h2>
         <div className={styles.contentGrid}>
           <div className={styles.sidebar}>
             <UnassignedGuestList

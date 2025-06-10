@@ -1,7 +1,6 @@
 import React from 'react'
-import { IoPlayOutline } from "react-icons/io5";
 import styles from './detailsMatters.module.css'
-
+import * as Icons from "../../icons/index";
 interface SongCardProps {
   title: string
   artist: string
@@ -17,8 +16,8 @@ const SongCard: React.FC<SongCardProps> = ({ title, artist, onPlay }) => (
       <div>
         <div className={styles.artist}>{artist}</div>
       </div>
-      <div className={styles.playButton} onClick={onPlay}>
-        <IoPlayOutline />
+      <div className="icon" onClick={onPlay}>
+        <Icons.PlayIcon title='Play The Song'/>
       </div>
     </div>
   </div>

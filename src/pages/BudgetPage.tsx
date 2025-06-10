@@ -1,6 +1,6 @@
 import {BudgetProvider} from "../components/Budget/BudgetContext";
 import { NavBar } from "../components/NavBar/NavBar";
-import BudgetContent from "../components/Budget/BudgetContent";
+import Budget from "../components/Budget/Budget";
 
 const BudgetPage = () => {
 
@@ -8,7 +8,7 @@ const BudgetPage = () => {
     <>
       <NavBar title=""/>
       <BudgetProvider>
-        <BudgetContent />
+        <Budget />
       </BudgetProvider>
     </>
   );

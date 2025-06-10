@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../../hooks/useAuth/AuthContext";
 import { useNavigate } from "react-router-dom";
-import styles from "./Menu.module.css";
 import MenuFlowStepper from "./MenuFlowStepper";
 import BackgroundSection from "./BackgroundSection";
 import DishesSection from "./DishesSection";
 import DesignSection from "./DesignSection";
 import menuService, { Dish } from "../../services/menu-service";
-import { FiArrowLeft } from "react-icons/fi";
+
+import * as Icons from "../../icons/index";
 
 export default function Menu() {
   const [step, setStep] = useState(0);
@@ -16,7 +16,6 @@ export default function Menu() {
     designPrompt: "",
     backgroundUrl: "",
     dishes: [] as Dish[],
-    finalCanvasJson: undefined as string | undefined,
   });
 
   const user = useAuth();
@@ -41,11 +40,11 @@ export default function Menu() {
   const coupleNames = `${user.user?.firstPartner ?? ""} & ${user.user?.secondPartner ?? ""}`;
 
   return (
-    <div className={styles.menuPage}>
-      <div className={styles.menuContainer}>
+    <div className="pageMain">
+      <div className="pageContainer">
         
-        <FiArrowLeft className={styles.backIcon} onClick={() => navigate(-1)} title="Go Back" />
-        <h2 className={styles.menuHeader}>Menu</h2>
+        <Icons.BackArrowIcon className="backIcon" onClick={() => navigate(-1)} title="Go Back" />
+        <h2 className="pageHeader">Menu</h2>
 
         <MenuFlowStepper step={step} />
 
@@ -79,7 +78,7 @@ export default function Menu() {
             existingDesignJson={
               (() => {
                 try {
-                  return menuData.finalCanvasJson ? JSON.parse(menuData.finalCanvasJson) : undefined;
+                  return undefined;
                 } catch {
                   return undefined;
                 }

@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import menuService, { Dish as DishType } from "../../services/menu-service";
-import { IoCheckmarkOutline } from "react-icons/io5";
 import styles from "./Menu.module.css";
 
-import { CiCircleRemove, CiSaveDown2, CiEdit, CiTrash, CiCirclePlus} from "react-icons/ci";
+import * as Icons from "../../icons/index";
 
 interface Props {
   userId: string;
@@ -144,10 +143,10 @@ export default function DishesSection({ userId, dishes, setDishes, onDone }: Pro
               setForm((f) => ({ ...f, isVegetarian: e.target.checked }))
             }
           />
-          Vegetarian
+          <Icons.VeganIcon className="icon"/>
         </label>
-        <span className={styles.icon} onClick={handleAdd}>
-          <CiCirclePlus />
+        <span className="icon" onClick={handleAdd}>
+          <Icons.AddIcon />
         </span>
       </form>
 
@@ -232,20 +231,20 @@ export default function DishesSection({ userId, dishes, setDishes, onDone }: Pro
                   <td>
                     {editingIndex === i ? (
                       <>
-                        <span onClick={saveEdit} className={styles.icon} title="Save" style={{ marginRight: 6 }}>
-                          <CiSaveDown2 />
+                        <span onClick={saveEdit} className="icon"  style={{ marginRight: 6 }}>
+                          <Icons.SaveIcon title="Save Dish"/>
                         </span>
-                        <span onClick={cancelEdit} className={styles.icon} title="Cancel">
-                          <CiCircleRemove />
+                        <span onClick={cancelEdit} className="icon" >
+                          <Icons.CloseIcon title="Cancel Edit"/>
                         </span>
                       </>
                     ) : (
                       <>
-                        <span onClick={() => startEdit(i)} className={styles.icon} title="Edit" style={{ marginRight: 6 }}>
-                          <CiEdit />
+                        <span onClick={() => startEdit(i)} className="icon" style={{ marginRight: 6 }}>
+                          <Icons.EditIocn title="Edit Dish"/>
                         </span>
-                        <span onClick={() => handleRemove(i)} className={styles.icon} title="Delete">
-                          <CiTrash />
+                        <span onClick={() => handleRemove(i)} className="icon" >
+                          <Icons.DeleteIcon title="Delete Dish"/>
                         </span>
                       </>
                     )}
@@ -259,19 +258,18 @@ export default function DishesSection({ userId, dishes, setDishes, onDone }: Pro
 
       <span
         onClick={handleSaveAll}
-        title="Save All"
         style={{
           cursor: loading ? "not-allowed" : "pointer",
           opacity: loading ? 0.5 : 1,
           fontSize: 28,
           marginTop: 10,
         }}
-        className={styles.icon}
+        className={styles.buttonRight}
       >
-        <IoCheckmarkOutline />
+        <Icons.CheckIcon title="Save Dishes" className="icon"/>
       </span>
 
-      {loading && <div>Saving...</div>}
+      {loading && <div className={styles.buttonRight}><Icons.LoaderIcon className="spinner"/></div>}
     </div>
   );
 }

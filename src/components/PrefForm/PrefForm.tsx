@@ -5,6 +5,7 @@ import tdlService from "../../services/tdl-service";
 import authService from "../../services/auth-service";
 import styles from "./PrefForm.module.css";
 import { useAuth } from "../../hooks/useAuth/AuthContext";
+import * as Icons from "../../icons/index";
 
 const formSchema = z.object({
   firstPartner: z.string(),
@@ -123,7 +124,7 @@ export default function PrefForm() {
         <h2>Let's Plan Your Wedding 🎉</h2>
         <p>Please answer the following questions to help us create your personalized wedding to-do list.</p>
 
-        <form onSubmit={handleSubmit}>
+        <form>
           {currentStep === 1 && (
             <>
               <div className={styles.formGroup}>
@@ -144,13 +145,13 @@ export default function PrefForm() {
 
               <div className={styles.buttonRow}>
                 {currentStep > 1 && (
-                  <button type="button" onClick={handlePreviousStep}>
-                    Back
-                  </button>
+                  <span onClick={handlePreviousStep} className="icon">
+                    <Icons.BackArrowIcon/>
+                  </span>
                 )}
-                <button type="button" onClick={handleNextStep}>
-                  Next
-                </button>
+                <span onClick={handleNextStep} className="icon">
+                  <Icons.FrontArrowIcon/>
+                </span>
               </div>
             </>
           )}
@@ -212,19 +213,19 @@ export default function PrefForm() {
 
               <div className={styles.buttonRow}>
                 {currentStep > 1 && (
-                  <button type="button" onClick={handlePreviousStep}>
-                    Back
-                  </button>
+                  <span onClick={handlePreviousStep} className="icon">
+                    <Icons.BackArrowIcon/>
+                  </span>
                 )}
-                <button type="button" onClick={handleNextStep}>
-                  Next
-                </button>
+                  <span onClick={handleNextStep} className="icon">
+                    <Icons.FrontArrowIcon/>
+                  </span>
               </div>
             </>
           )}
 
           {currentStep === 3 && (
-            <>
+            <div className={styles.scrollableFormSection}>
               <div className={styles.formGroup}>
                 <label>How many guests are you expecting?</label>
                 <select
@@ -350,14 +351,14 @@ export default function PrefForm() {
               {submitError && <p className={styles.error}>{submitError}</p>}
 
               <div className={styles.buttonRow}>
-                <button type="button" onClick={handlePreviousStep}>
-                  Back
-                </button>
-                <button type="submit" disabled={loading}>
-                  {loading ? "Planning…" : "Submit"}
-                </button>
+                <span onClick={handlePreviousStep} className="icon">
+                  <Icons.BackArrowIcon/>
+                </span>
+                <span onClick={handleSubmit} className="icon">
+                  {loading ? <Icons.LoaderIcon className="spinner"/> : <Icons.SendIcon/>}
+                </span>
               </div>
-            </>
+            </div>
           )}
         </form>
       </div>

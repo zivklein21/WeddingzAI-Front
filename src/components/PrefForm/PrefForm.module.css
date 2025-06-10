@@ -2,7 +2,6 @@
 
 /* in PrefForm.module.css */
 
-
 .wrapper {
   display: flex;
   justify-content: center;
@@ -98,8 +97,7 @@
   margin-top: 1rem;
 }
 
-/* When only one button is present, push it to the right */
-.buttonRow > button:only-child {
+.buttonRow > span:only-child {
   margin-left: auto;
 }
 
@@ -133,6 +131,7 @@
   font-size: 1rem;
   background-color: #fff;
   transition: border-color 0.3s ease;
+  resize: none;
 }
 
 .formGroup textarea:focus {
@@ -163,4 +162,13 @@
 .partnersLabel {
   font-weight: 300;
   font-family: 'Rubik', sans-serif;
+}
+
+.scrollableFormSection {
+  max-width: 1000px;
+  height: calc(100vh - 250px); 
+  overflow-y: auto;
+  padding-right: 4px;  
+  overflow-x: hidden;
+  scrollbar-width: none;
 }

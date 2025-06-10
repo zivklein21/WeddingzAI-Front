@@ -3,6 +3,7 @@ import React from 'react'
 import Modal from 'react-modal'
 import styles from "./TodoList.module.css";
 import tdlService from '../../services/tdl-service';
+import * as Icons from "../../icons/index";
 
 interface Props {
   isOpen: boolean
@@ -37,8 +38,8 @@ return(
     <p>Are you sure you want to delete:</p>
     <blockquote>{taskText}</blockquote>
     <div className={styles.buttons}>
-      <button onClick={onCancel} className={styles.cancleBtn}>Cancel</button>
-      <button onClick={handleConfirm} className={styles.cancleBtn}>Delete</button>
+      <span onClick={onCancel} className="icon"><Icons.CloseIcon title='Close Task'/></span>
+      <span onClick={handleConfirm} className="icon"><Icons.DeleteIcon title='Delete Task'/></span>
     </div>
   </Modal>
 )};
