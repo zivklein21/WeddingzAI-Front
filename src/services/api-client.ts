@@ -16,12 +16,12 @@ const apiClient = axios.create({
   headers: { "Content-Type": "application/json" },
 });
 
-
 // Set Up processQueue to avoid race conditions
 let isRefreshing = false;
 let failedQueue: any[] = [];
 
 const processQueue = (error: any, token: string | null = null) => {
+  console.log("[API] Processing queue", { error, token });
   failedQueue.forEach((prom) => {
     if (error) {
       prom.reject(error);
@@ -32,7 +32,6 @@ const processQueue = (error: any, token: string | null = null) => {
   failedQueue = [];
 };
 
-
 // Attach access token to every request
 apiClient.interceptors.request.use(
   (config) => {
@@ -41,11 +40,13 @@ apiClient.interceptors.request.use(
     if (accessToken) {
       config.headers = config.headers || {};
       config.headers.Authorization = `Bearer ${accessToken}`;
+      console.log("[API] Attached access token to request");
     }
 
     return config;
   },
   (error) => {
+    console.log("[API] Request error", error);
     return Promise.reject(error);
   }
 );
@@ -61,13 +62,16 @@ apiClient.interceptors.response.use(
       error.response.status === 401 &&
       !originalRequest._retry
     ) {
+      console.warn("[API] 401 received. Attempting to refresh token...");
       originalRequest._retry = true;
 
       if (isRefreshing) {
+        console.log("[API] Token refresh already in progress. Queuing request.");
         return new Promise((resolve, reject) => {
           failedQueue.push({
             resolve: () => {
               const latestAccessToken = Cookies.get("accessToken");
+              console.log("[API] Resuming queued request with new token");
               resolve(
                 apiClient({
                   ...originalRequest,
@@ -78,12 +82,13 @@ apiClient.interceptors.response.use(
                 })
               );
             },
-            reject: reject,
+            reject,
           });
         });
       }
 
       isRefreshing = true;
+      console.log("[API] Refreshing token now...");
 
       try {
         const refreshResponse = await axios.post(
@@ -93,6 +98,11 @@ apiClient.interceptors.response.use(
 
         const newAccessToken = refreshResponse?.data?.accessToken;
         const newRefreshToken = refreshResponse?.data?.refreshToken;
+
+        console.log("[API] Token refreshed successfully", {
+          newAccessToken,
+          newRefreshToken,
+        });
 
         Cookies.set("accessToken", newAccessToken, {
           secure: true,
@@ -108,6 +118,8 @@ apiClient.interceptors.response.use(
         originalRequest.headers.Authorization = "Bearer " + newAccessToken;
         return apiClient(originalRequest);
       } catch (refreshError) {
+        console.error("[API] Token refresh failed", refreshError);
+
         processQueue(refreshError, null);
 
         Cookies.remove("accessToken");
@@ -117,6 +129,7 @@ apiClient.interceptors.response.use(
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;
+        console.log("[API] Token refresh cycle complete");
       }
     }
 

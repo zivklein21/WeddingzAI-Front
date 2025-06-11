@@ -121,7 +121,7 @@ const resetPassword = (newPassword: string) => {
 const getUserPremiumStatus = () => {
     const abortController = new AbortController();
     const request = apiClient.get<{
-        is_premium: boolean;
+        isPremium: boolean;
         message: string;
     }>("/auth/prem", {
         signal: abortController.signal,
