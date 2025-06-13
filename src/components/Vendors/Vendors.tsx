@@ -16,7 +16,7 @@ const Vendors: React.FC = () => {
   const loadVendors = async () => {
     setLoading(true);
     try {
-      const data = await vendorService.fetchRelevantVendors(); // `/vendors/mine`
+      const data = await vendorService.fetchUseervendors(); // `/vendors/mine`
       setVendors(data);
     } catch (err) {
       toast.error("Failed to load vendors");

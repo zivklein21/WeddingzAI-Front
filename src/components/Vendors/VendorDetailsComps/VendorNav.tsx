@@ -94,7 +94,18 @@ const VendorNav: React.FC<Props> = ({ vendor, onNavClick, onUnbook }) => {
       vendor.min_guests ||
       vendor.price_include ||
       vendor.seasons ||
-      vendor.end_time
+      vendor.end_time ||
+      vendor.weekend ||
+      vendor.serv_location ||
+      vendor.shoot_type ||
+      vendor.check_in ||
+      vendor.check_out ||
+      vendor.max_vendors ||
+      vendor.location_facilities ||
+      vendor.close_venues ||
+      vendor.size_range ||
+      vendor.accessorise ||
+      vendor.buy_options
     ),
     photos:   Array.isArray(vendor.eventImages) && vendor.eventImages.length > 0,
     faqs:     Array.isArray(vendor.faqs)        && vendor.faqs.length > 0,
