@@ -36,17 +36,32 @@ export const runAIResearch = async (query: string): Promise<{ success: boolean; 
 };
 
 // 2. GET /vendors
-// AFTER (fixed)
 export const fetchAllVendors = async (): Promise<Vendor[]> => {
-  const resp = await apiClient.get<ApiResponse<Vendor[]>>("/vendors/all");
+  const resp = await apiClient.get<{ data: Vendor[]; message?: string }>("/vendors/all");
+
   console.log("fetchAllVendors response:", resp.data);
 
-  // Only throw if success === false
-  if (!resp.data.success) {
-    throw new Error(resp.data.message || "Failed to fetch vendors");
+  // SAFE CHECK - if data is array, return it
+  if (Array.isArray(resp.data.data)) {
+    return resp.data.data;
   }
 
-  return resp.data.data || [];
+  // fallback
+  return [];
+};
+
+export const fetchUseervendors = async (): Promise<Vendor[]> => {
+  const resp = await apiClient.get<{ data: Vendor[]; message?: string }>("/vendors/mine");
+
+  console.log("fetchUserVendors response:", resp.data);
+
+  // SAFE CHECK - if data is array, return it
+  if (Array.isArray(resp.data.data)) {
+    return resp.data.data;
+  }
+
+  // fallback
+  return [];
 };
 
 // 3. GET /vendors/:id
@@ -138,6 +153,7 @@ export const fetchBookedVendors = async (): Promise<Vendor[]> => {
   return resp.data.data || [];
 };
 
+
 export default {
   runAIResearch,
   fetchAllVendors,
@@ -151,5 +167,6 @@ export default {
   refetchRelevantVendors,
   toggleBookedVendor,
   cancelBookedVendor,
-  fetchBookedVendors
+  fetchBookedVendors,
+  fetchUseervendors
 };
