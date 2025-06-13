@@ -43,6 +43,7 @@
       padding: 20px;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
       position: relative;
+      align-items: center;
   }
   
   .card:hover {

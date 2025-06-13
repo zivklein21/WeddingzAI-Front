@@ -44,7 +44,7 @@ export default function DishesSection({ userId, dishes, setDishes, onDone }: Pro
       };
       fetchDishes();
     }
-  }, [userId]);
+  }, [userId, dishes.length, setDishes]);
 
   const handleAdd = (e: React.FormEvent) => {
     e.preventDefault();

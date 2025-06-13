@@ -4,22 +4,52 @@ export { CanceledError };
 
 const API_BASE = "/calendar";
 
-export const getEvents = (userId: string) => {
-  const request = apiClient.get(`${API_BASE}/${userId}/events`);
-  return { request, abort: () => {} };
+type CalendarEventData = {
+  title: string;
+  date: string;
+  description?: string;
+  color?: string;
 };
 
-export const createEvent = (userId: string, eventData: any) => {
-  const request = apiClient.post(`${API_BASE}/${userId}/events`, eventData);
-  return { request, abort: () => {} };
+type CalendarEvent = {
+  _id: string;
+  title: string;
+  date: string;
+  color?: string;
 };
 
-export const updateEvent = (userId: string, eventId: string, eventData: any) => {
-  const request = apiClient.put(`${API_BASE}/${userId}/events/${eventId}`, eventData);
-  return { request, abort: () => {} };
+export const getEvents = async (userId: string) => {
+  try {
+    return await apiClient.get<CalendarEvent[]>(`${API_BASE}/${userId}/events`);
+  } catch (error) {
+    console.error("[CalendarService.getEvents] Error:", error);
+    throw error;
+  }
 };
 
-export const deleteEvent = (userId: string, eventId: string) => {
-  const request = apiClient.delete(`${API_BASE}/${userId}/events/${eventId}`);
-  return { request, abort: () => {} };
+export const createEvent = async (userId: string, eventData: CalendarEventData) => {
+  try {
+    return await apiClient.post(`${API_BASE}/${userId}/events`, eventData);
+  } catch (error) {
+    console.error("[CalendarService.createEvent] Error:", error);
+    throw error;
+  }
+};
+
+export const updateEvent = async (userId: string, eventId: string, eventData: CalendarEventData) => {
+  try {
+    return await apiClient.put(`${API_BASE}/${userId}/events/${eventId}`, eventData);
+  } catch (error) {
+    console.error("[CalendarService.updateEvent] Error:", error);
+    throw error;
+  }
+};
+
+export const deleteEvent = async (userId: string, eventId: string) => {
+  try {
+    return await apiClient.delete(`${API_BASE}/${userId}/events/${eventId}`);
+  } catch (error) {
+    console.error("[CalendarService.deleteEvent] Error:", error);
+    throw error;
+  }
 };

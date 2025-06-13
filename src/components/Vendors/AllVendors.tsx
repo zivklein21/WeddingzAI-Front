@@ -16,7 +16,6 @@ export const AllVendors: React.FC = () => {
   useEffect(() => {
     fetchAllVendors()
       .then(data => {
-        console.log("📦 got vendors:", data);
         setVendors(data);
       })
       .catch(err => {

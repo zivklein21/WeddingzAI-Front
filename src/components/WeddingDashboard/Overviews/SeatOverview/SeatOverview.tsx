@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { getMyTables } from "../../../../services/seating-service";
 import { fetchMyGuests } from "../../../../services/guest-service";
 import { Guest } from "../../../../types/guest";
 import styles from "./SeatOverview.module.css";
+import * as Icons from "../../../../icons/index.ts";
 
 // נניח שטיפוס TableType מכיל at least את השדות _id, name, capacity
 type TableType = {
@@ -15,10 +16,14 @@ export default function SeatOverview() {
   const [tables, setTables] = useState<TableType[]>([]);
   const [guests, setGuests] = useState<Guest[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true);
+        setError(null);
+
         const tablesData = await getMyTables();
         setTables(tablesData || []);
 
@@ -26,6 +31,7 @@ export default function SeatOverview() {
         setGuests(guestsData || []);
       } catch (err) {
         console.error("Error fetching tables or guests:", err);
+        setError("Failed to load seating overview.");
       } finally {
         setLoading(false);
       }
@@ -34,12 +40,15 @@ export default function SeatOverview() {
   }, []);
 
   if (loading) {
-    return <div className={styles.loader}>Loading overview…</div>;
+    return <div className={styles.loader}><Icons.LoaderIcon className="spinner" /></div>;
+  }
+
+  if (error) {
+    return <div className={styles.error}><Icons.ErrorIcon className="errorIcon"/></div>;
   }
 
   const tablesCount = tables.length;
   const totalSeats = tables.reduce((sum, table) => sum + table.capacity, 0);
-
 
   const assignedGuests = guests.filter((g) => !!g.tableId);
 
@@ -51,6 +60,7 @@ export default function SeatOverview() {
   const unassignedSeats = Math.max(totalSeats - seatsUsed, 0);
 
   const unassignedGuestsCount = guests.filter((g) => !g.tableId).length;
+
   type Status = "green" | "yellow" | "red";
 
   const tableStatuses: Status[] = tables.map((table) => {
@@ -62,7 +72,7 @@ export default function SeatOverview() {
       return "red";
     }
     if (usedAtThisTable >= table.capacity) {
-      return "green"; 
+      return "green";
     }
     return "yellow";
   });
@@ -90,7 +100,6 @@ export default function SeatOverview() {
         </div>
       </div>
 
-      {/* אם יש שולחנות – מציגים את העיגולים */}
       {tablesCount > 0 && (
         <div className={styles.circleGrid}>
           {tables.map((table, idx) => {

@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 import { getBudget } from '../../../../services/budget-service';
 import styles from './BudgetOverview.module.css';
+import * as Icons from "../../../../icons/index";
 
 interface Budget {
   totalBudget: number;
@@ -20,8 +21,8 @@ export default function BudgetOverview() {
     return abort;
   }, []);
 
-  if (error) return <div className={styles.card}>Error: {error}</div>;
-  if (!budget) return <div className={styles.card}>Loading…</div>;
+  if (error) return <div className={styles.card}><Icons.ErrorIcon className='errorIcon'/></div>;
+  if (!budget) return <div className={styles.card}><Icons.LoaderIcon className='spinner'/></div>;
 
   const spent = budget.categories.reduce((sum, c) => sum + c.amount, 0);
   const remaining = budget.totalBudget - spent;

@@ -31,10 +31,12 @@ export const fetchAllVendors = async (): Promise<{ success: boolean; data?: Vend
   try {
     const resp = await apiClient.get<{ data: Vendor[]; message?: string }>("/vendors/all");
     return { success: true, data: Array.isArray(resp.data.data) ? resp.data.data : [] };
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const error = err as { response?: { data?: { error?: string } }, message?: string };
+
     return {
       success: false,
-      error: err.response?.data?.error || err.message || "Network error",
+      error: error.response?.data?.error || error.message || "Network error",
     };
   }
 };
@@ -44,10 +46,11 @@ export const fetchUseervendors = async (): Promise<{ success: boolean; data?: Ve
   try {
     const resp = await apiClient.get<{ data: Vendor[]; message?: string }>("/vendors/mine");
     return { success: true, data: Array.isArray(resp.data.data) ? resp.data.data : [] };
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const error = err as { response?: { data?: { error?: string } }, message?: string };
     return {
       success: false,
-      error: err.response?.data?.error || err.message || "Network error",
+      error: error.response?.data?.error || error.message || "Network error",
     };
   }
 };
@@ -60,10 +63,11 @@ export const fetchVendorById = async (id: string): Promise<{ success: boolean; d
       throw new Error("Vendor not found");
     }
     return { success: true, data: resp.data.data };
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const error = err as { response?: { data?: { error?: string } }, message?: string };
     return {
       success: false,
-      error: err.response?.data?.error || err.message || "Network error",
+      error: error.response?.data?.error || error.message || "Network error",
     };
   }
 };
@@ -73,10 +77,11 @@ export const fetchVendorsByType = async (type: string): Promise<{ success: boole
   try {
     const resp = await apiClient.get<ApiResponse<Vendor[]>>(`/vendors/type/${type}`);
     return { success: true, data: resp.data.data || [] };
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const error = err as { response?: { data?: { error?: string } }, message?: string };
     return {
       success: false,
-      error: err.response?.data?.error || err.message || "Network error",
+      error: error.response?.data?.error || error.message || "Network error",
     };
   }
 };
@@ -94,10 +99,11 @@ export const searchVendors = async (query?: string, type?: string): Promise<{ su
 
     const resp = await apiClient.get<ApiResponse<Vendor[]>>(url);
     return { success: true, data: resp.data.data || [] };
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const error = err as { response?: { data?: { error?: string } }, message?: string };
     return {
       success: false,
-      error: err.response?.data?.error || err.message || "Network error",
+      error: error.response?.data?.error || error.message || "Network error",
     };
   }
 };
@@ -110,17 +116,17 @@ export const startAIResearchBackground = async (query: string, userId: string): 
       { query, userId }
     );
     return resp.data;
-  } catch (err: any) {
-    if (err.response && err.response.data) {
+  } catch (err: unknown) {
+    const error = err as { response?: { data?: { error?: string } }, message?: string };
+    if (error.response && error.response.data) {
         return {
           success: false,
-          error: err.response.data.error || "Unexpected error",
-          errorCode: err.response.data.errorCode || undefined  
+          error: error.response.data.error || "Unexpected error",
         };
       } else {
       return {
         success: false,
-        error: err.message || "Network error",
+        error: error.message || "Network error",
       };
     }
   }
@@ -131,10 +137,11 @@ export const fetchRelevantVendors = async (): Promise<{ success: boolean; data?:
   try {
     const resp = await apiClient.get<ApiResponse<Vendor[]>>("/vendors/relevant");
     return { success: true, data: resp.data.data || [] };
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const error = err as { response?: { data?: { error?: string } }, message?: string };
     return {
       success: false,
-      error: err.response?.data?.error || err.message || "Network error",
+      error: error.response?.data?.error || error.message || "Network error",
     };
   }
 };
@@ -144,10 +151,11 @@ export const fetchVendorSummary = async (): Promise<{ success: boolean; data?: V
   try {
     const resp = await apiClient.get<{ total: number; counts: Record<string, number> }>("/vendors/summary");
     return { success: true, data: resp.data };
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const error = err as { response?: { data?: { error?: string } }, message?: string };
     return {
       success: false,
-      error: err.response?.data?.error || err.message || "Network error",
+      error: error.response?.data?.error || error.message || "Network error",
     };
   }
 };
@@ -160,10 +168,11 @@ export const toggleBookedVendor = async (vendorId: string): Promise<{ success: b
       { vendorId }
     );
     return { success: true, data: resp.data };
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const error = err as { response?: { data?: { error?: string } }, message?: string };
     return {
       success: false,
-      error: err.response?.data?.error || err.message || "Network error",
+      error: error.response?.data?.error || error.message || "Network error",
     };
   }
 };
@@ -173,10 +182,11 @@ export const cancelBookedVendor = async (vendorId: string): Promise<{ success: b
   try {
     await apiClient.patch("/vendors/cancel", { vendorId });
     return { success: true };
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const error = err as { response?: { data?: { error?: string } }, message?: string };
     return {
       success: false,
-      error: err.response?.data?.error || err.message || "Network error",
+      error: error.response?.data?.error || error.message || "Network error",
     };
   }
 };
@@ -186,10 +196,11 @@ export const fetchBookedVendors = async (): Promise<{ success: boolean; data?: V
   try {
     const resp = await apiClient.get<ApiResponse<Vendor[]>>("/vendors/booked");
     return { success: true, data: resp.data.data || [] };
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const error = err as { response?: { data?: { error?: string } }, message?: string };
     return {
       success: false,
-      error: err.response?.data?.error || err.message || "Network error",
+      error: error.response?.data?.error || error.message || "Network error",
     };
   }
 };

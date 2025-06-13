@@ -139,7 +139,7 @@ const PersonalDetails: React.FC = () => {
 
     } catch (error: any) {
       toast.error("An error occurred while updating password.");
-      console.log(error.response?.data?.message || "An error occurred while updating password.");
+      console.error(error.response?.data?.message || "An error occurred while updating password.");
       return;
     }
   }

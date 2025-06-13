@@ -16,6 +16,7 @@ import EventModal from "./EventModal";
 import { useNavigate } from "react-router-dom";
 import ConfirmDeleteModal from './DeleteModal';
 import {toast} from "react-toastify";
+import { EventClickArg } from '@fullcalendar/core';
 
 type CalendarEvent = {
   _id: string;
@@ -43,29 +44,32 @@ export default function CalendarPage() {
   const [modalDate, setModalDate] = useState<string | null>(null);
   const [editingEvent, setEditingEvent] = useState<CalendarEvent | null>(null);
 
-  useEffect(() => {
-    if (!USER_ID || !weddingDate) return;
-    const { request } = getEvents(USER_ID);
-    request
-      .then((res) => {
-        const events = res.data as CalendarEvent[];
-        const hasWedding = events.some(
-          (ev) => ev.date.startsWith(weddingDate) && ev.title === WEDDING_EVENT_TITLE
-        );
-        if (!hasWedding) {
-          createEvent(USER_ID, {
-            title: WEDDING_EVENT_TITLE,
-            date: weddingDate,
-            color: WEDDING_EVENT_COLOR,
-          }).request.then((addRes) => {
+useEffect(() => {
+  if (!USER_ID || !weddingDate) return;
+
+  getEvents(USER_ID)
+    .then((res) => {
+      const events = res.data as CalendarEvent[];
+      const hasWedding = events.some(
+        (ev) => ev.date.startsWith(weddingDate) && ev.title === WEDDING_EVENT_TITLE
+      );
+
+      if (!hasWedding) {
+        createEvent(USER_ID, {
+          title: WEDDING_EVENT_TITLE,
+          date: weddingDate,
+          color: WEDDING_EVENT_COLOR,
+        })
+          .then((addRes) => {
             setEvents([...events, addRes.data as CalendarEvent]);
-          });
-        } else {
-          setEvents(events);
-        }
-      })
-      .catch((err) => toast.error(err.message));
-  }, [USER_ID, weddingDate]);
+          })
+          .catch((err) => toast.error(err.message));
+      } else {
+        setEvents(events);
+      }
+    })
+    .catch((err) => toast.error(err.message));
+}, [USER_ID, weddingDate]);
 
   const handleDateClick = (arg: { dateStr: string }) => {
     setModalDate(arg.dateStr);
@@ -74,14 +78,18 @@ export default function CalendarPage() {
     setModalOpen(true);
   };
 
-  const handleEventClick = (arg: { event: any }) => {
-    const eventObj = events.find((e) => e._id === arg.event.id);
-    if (!eventObj) return;
-    setEditingEvent(eventObj);
-    setModalDate(eventObj.date);
-    setModalMode("edit");
-    setModalOpen(true);
-  };
+  const handleEventClick = (arg: EventClickArg) => {
+  const calendarEvent = arg.event;
+
+  const customId = calendarEvent.extendedProps._id;
+
+  setEditingEvent({
+    _id: customId,
+    date: calendarEvent.startStr,
+    title: calendarEvent.title,
+    color: calendarEvent.backgroundColor,
+  });
+};
 
   const handleSaveEvent = async ({
     title,
@@ -92,28 +100,33 @@ export default function CalendarPage() {
   }) => {
     setModalOpen(false);
     if (!USER_ID || !modalDate) return;
-
     if (modalMode === "create") {
       try {
-        const { request } = createEvent(USER_ID, { title, color, date: modalDate });
-        const res = await request;
+        const res = await createEvent(USER_ID, { title, color, date: modalDate });;
         setEvents((prev) => [...prev, res.data as CalendarEvent]);
         toast.success("Event create");
-      } catch (err: any) {
-        toast.error(err.message);
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          toast.error(err.message);
+        } else {
+          toast.error("An unknown error occurred");
+        }
       }
     } else if (modalMode === "edit" && editingEvent) {
       try {
-        const { request } = updateEvent(USER_ID, editingEvent._id, { title, color });
-        const res = await request;
+        const res = await updateEvent(USER_ID, editingEvent._id, { title, color, date: editingEvent.date });
         setEvents((prev) =>
           prev.map((e) =>
             e._id === editingEvent._id ? (res.data as CalendarEvent) : e
           )
         );
         toast.success("Event Edit");
-      } catch (err: any) {
-        toast.error(err.message);
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          toast.error(err.message);
+        } else {
+          toast.error("An unknown error occurred");
+        }
       }
     }
   };
@@ -128,12 +141,15 @@ export default function CalendarPage() {
   setModalOpen(false);
   if (!USER_ID || !editingEvent) return;
   try {
-    const { request } = deleteEvent(USER_ID, editingEvent._id);
-    await request;
+    await deleteEvent(USER_ID, editingEvent._id);
     setEvents((prev) => prev.filter((e) => e._id !== editingEvent._id));
     toast.success("Event Delete");
-  } catch (err: any) {
-    toast.error(err.message);
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      toast.error(err.message);
+    } else {
+      toast.error("An unknown error occurred");
+    }
   }
   setEditingEvent(null);
   setModalDate(null);
