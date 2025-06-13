@@ -309,8 +309,8 @@ const GuestList: React.FC = () => {
         <div className={styles.toolbar}>
           <div className={styles.actionsContainer}>
             <div className={styles.iconAction} onClick={() => !sending && handleSendEmails()} style={{ opacity: sending ? 0.5 : 1 }}>
-              <Icons.SendIcon className="icon" title="Send Invites"/>
-              <span className={styles.iconLabel}>Send Invites</span>
+              <Icons.SendIcon className="icon" title="Send RSVP"/>
+              <span className={styles.iconLabel}>Send RSVP</span>
             </div>
             <div className={styles.iconAction} onClick={() => fileInputRef.current?.click()}>
               <Icons.ImportIcon className="icon" title='Import Guest List' />
