@@ -29,7 +29,7 @@ const Vendors: React.FC = () => {
   const reloadVendors = async () => {
     setLoading(true);
     try {
-      const data = await vendorService.refetchRelevantVendors(); 
+      const data = await vendorService.fetchRelevantVendors(); 
       setVendors(data);
       toast.success("Vendors reloaded");
     } catch (err) {
