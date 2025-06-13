@@ -33,7 +33,6 @@ export default function Menu() {
 
     invitationService.getInvitationByUserId(userId)
       .then(res => {
-        console.log("Invitation data from server:", res.data);
         setInvitationData(res.data);
       })
       .catch(err => {

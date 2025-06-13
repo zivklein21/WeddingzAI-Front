@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   Stage,
   Layer,
@@ -8,6 +8,7 @@ import {
   Text as KonvaText,
   Group,
 } from "react-konva";
+import Konva from "konva";
 import useImage from "use-image";
 import styles from "./Invitation.module.css";
 import { jsPDF } from "jspdf";
@@ -84,18 +85,18 @@ export default function DesignSection({
   } | null>(null);
   const [saving, setSaving] = useState(false);
 
-  const stageRef = useRef<any>(null);
-  const rectRef = useRef<any>(null);
-  const trRef = useRef<any>(null);
+  const stageRef = useRef<Konva.Stage| null>(null);
+  const rectRef = useRef<Konva.Rect | null>(null);
+  const trRef = useRef<Konva.Transformer | null>(null);
 
   // Sync transformer to selected rectangle
   useEffect(() => {
     if (selectedId === "rectangle" && rectRef.current && trRef.current) {
       trRef.current.nodes([rectRef.current]);
-      trRef.current.getLayer().batchDraw();
+      trRef.current.getLayer()?.batchDraw();
     } else if (trRef.current) {
       trRef.current.nodes([]);
-      trRef.current.getLayer().batchDraw();
+      trRef.current.getLayer()?.batchDraw();
     }
   }, [selectedId]);
 
@@ -223,7 +224,7 @@ export default function DesignSection({
 
       setSentencesState(canvasTexts);
     }
-  }, [existingDesignJson, coupleNames, sentences]);
+  }, [existingDesignJson, coupleNames, sentences, ceremonyHour, date, receptionHour, venue]);
 
   const handleAddRectangle = () => {
     if (!rectangle) {
@@ -435,7 +436,7 @@ export default function DesignSection({
                   );
                   setRectangle({ ...rectangle, x: newX, y: newY });
                 }}
-                onTransformEnd={(e) => {
+                onTransformEnd={() => {
                   const node = rectRef.current;
                   if (node) {
                     const scaleX = node.scaleX();

@@ -1,30 +1,30 @@
 // src/components/Vendors/VendorDetailsComps/VendorNav.tsx
 import React, { useState, useEffect } from 'react';
 import styles from '../vendors.module.css';
-import { Vendor } from '../../../types/Vendor';
-import { BsBookmarkHeart } from "react-icons/bs";
 import vendorService from "../../../services/vendor-service";
 import { useAuth } from "../../../hooks/useAuth/AuthContext";
 import { toast } from "react-toastify";
-
+import * as Icons from "../../../icons/index";
+import {User} from "../../../types/user";
+import { Vendor } from '../../../types/Vendor';
 interface Props {
   vendor: Vendor;
   onNavClick: (id: string) => void;
   onUnbook?: (id: string) => void;
 }
 
+export type BookedVendor = {
+  vendorId: string;
+  vendorType: string;
+};
+
 const VendorNav: React.FC<Props> = ({ vendor, onNavClick, onUnbook }) => {
   const { user, updateUserSession } = useAuth();
   const [booked, setBooked] = useState(false);
 
-  // סימון ראשוני על־פי רשימת bookedVendors ב-user context
   useEffect(() => {
-    const bookedList = (user as any)?.bookedVendors || [];
-    const match = bookedList.find((v: any) =>
-      typeof v === 'string'
-        ? v === vendor._id
-        : v.vendorId === vendor._id
-    );
+    const bookedList = ((user as { bookedVendors?: { vendorId: string; vendorType: string }[] })?.bookedVendors) || [];
+    const match = bookedList.find((v) => v.vendorId === vendor._id);
     setBooked(!!match);
   }, [user, vendor._id]);
 
@@ -37,18 +37,17 @@ const VendorNav: React.FC<Props> = ({ vendor, onNavClick, onUnbook }) => {
       }
 
       // TYPE_ALREADY_BOOKED
-      if (res.message === "TYPE_ALREADY_BOOKED") {
-        toast.warn(`You already booked a vendor of type "${res.vendorType}"`);
-        return;
+      if (res.data?.message === "TYPE_ALREADY_BOOKED") {
+        toast.warn(`You already booked a vendor of type "${res.data?.vendorType}"`);
       }
 
       // added === true → Book
-      if (res.added === true) {
+      if (res.data?.added === true) {
         setBooked(true);
         toast.success(`Vendor "${vendor.name}" booked`);
 
         // ➔ עדכון user context: הוספת ID
-        const oldList = (user as any).bookedVendors || [];
+        const oldList = (user as User).bookedVendors || [];
         updateUserSession({
           ...user,
           bookedVendors: [...oldList, vendor._id],
@@ -57,15 +56,14 @@ const VendorNav: React.FC<Props> = ({ vendor, onNavClick, onUnbook }) => {
       }
 
       // added === false → Unbook
-      if (res.added === false) {
+      if (res.data?.added === false) {
         setBooked(false);
         toast.warn(`Vendor "${vendor.name}" unbooked`);
 
-        // ➔ עדכון user context: הסרת ID
-        const oldList2 = (user as any).bookedVendors || [];
-        const newList = oldList2.filter((x: any) =>
-          typeof x === "string" ? x !== vendor._id : x.vendorId !== vendor._id
-        );
+        const oldList2 = (user as User).bookedVendors as BookedVendor[] || [];
+
+        const newList = oldList2.filter((x) => x.vendorId !== vendor._id);
+
         updateUserSession({
           ...user,
           bookedVendors: newList,
@@ -74,9 +72,10 @@ const VendorNav: React.FC<Props> = ({ vendor, onNavClick, onUnbook }) => {
         // אם קיים callback להסרת הכרטיס בדף הפרופיל
         onUnbook?.(vendor._id);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { error?: string } }, message?: string };
       console.error("❌ Failed to toggle booking", err);
-      const msg = err?.response?.data?.message || err.message || "Unexpected error";
+      const msg = error?.response?.data?.error || error.message || "Unexpected error";
       toast.error(msg);
     }
   };
@@ -122,8 +121,8 @@ const VendorNav: React.FC<Props> = ({ vendor, onNavClick, onUnbook }) => {
       {has.reviews && <button onClick={() => onNavClick('reviews')}>Bride’s Words</button>}
       {has.contact && <button onClick={() => onNavClick('contact')}>Contact</button>}
 
-      <BsBookmarkHeart
-        className={`${styles.bookmarkIcon} ${booked ? styles.booked : styles.unbooked}`}
+      <Icons.BookIcon
+        className={`icon ${booked ? 'ai-sent' : 'icon'}`}
         onClick={toggleBooked}
         title={booked ? "Unbookmark Vendor" : "Bookmark Vendor"}
       />

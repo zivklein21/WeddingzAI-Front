@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import guestService, { Guest } from "../../../../services/guest-service";
 import styles from "./GuestListOverview.module.css";
+import * as Icons from "../../../../icons/index";
 
 export default function GuestListOverview() {
   const [guestSummary, setGuestSummary] = useState({
@@ -10,8 +11,13 @@ export default function GuestListOverview() {
     maybe: 0,
     totalInvited: 0,
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    setLoading(true);
+    setError(null);
+
     guestService
       .fetchMyGuests()
       .then((guests: Guest[]) => {
@@ -26,8 +32,20 @@ export default function GuestListOverview() {
       })
       .catch((err) => {
         console.error("Could not load guests:", err);
+        setError("Failed to load guest list");
+      })
+      .finally(() => {
+        setLoading(false);
       });
   }, []);
+
+  if (loading) {
+    return <div className={styles.summaryContainer}><Icons.LoaderIcon className="spinner"/></div>;
+  }
+
+  if (error) {
+    return <div className={styles.summaryContainer}><Icons.ErrorIcon className="errorIcon"/></div>;
+  }
 
   return (
     <div>

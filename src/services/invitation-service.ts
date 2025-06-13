@@ -29,29 +29,65 @@ interface CreateInvitationPayload {
 
 const invitationService = {
   // 1. Generate invitation background image with AI (returns {backgroundUrl})
-  generateBackground: (prompt: string) =>
-    apiClient.post<{ backgroundUrl: string }>("/invitation/background", { prompt }),
+  generateBackground: async (prompt: string) => {
+    try {
+      const res = await apiClient.post<{ backgroundUrl: string }>("/invitation/background", { prompt });
+      return res;
+    } catch (error) {
+      console.error("[invitationService.generateBackground] Error:", error);
+      throw error;
+    }
+  },
 
   // 2. Create Invitation with background
-  createInvitationWithBackground: (payload: CreateInvitationPayload) => {
-    return apiClient.post<Invitation>("/invitation/create-invitation", payload);
+  createInvitationWithBackground: async (payload: CreateInvitationPayload) => {
+    try {
+      const res = await apiClient.post<Invitation>("/invitation/create-invitation", payload);
+      return res;
+    } catch (error) {
+      console.error("[invitationService.createInvitationWithBackground] Error:", error);
+      throw error;
+    }
   },
 
-  getInvitationByUserId: (userId: string) => {
-    return apiClient.get<Invitation>(`/invitation/${userId}`);
+  getInvitationByUserId: async (userId: string) => {
+    try {
+      const res = await apiClient.get<Invitation>(`/invitation/${userId}`);
+      return res;
+    } catch (error) {
+      console.error("[invitationService.getInvitationByUserId] Error:", error);
+      throw error;
+    }
   },
 
-  updateTextsByUserId: (userId: string, sentences: Sentence[]) => {
-    return apiClient.put<Invitation>(`/invitation/${userId}/sentences`, { sentences });
+  updateTextsByUserId: async (userId: string, sentences: Sentence[]) => {
+    try {
+      const res = await apiClient.put<Invitation>(`/invitation/${userId}/sentences`, { sentences });
+      return res;
+    } catch (error) {
+      console.error("[invitationService.updateTextsByUserId] Error:", error);
+      throw error;
+    }
   },
 
-  updateHoursByUserId: (userId: string, ceremonyHour: string, receptionHour: string) => {
-    return apiClient.put<Invitation>(`/invitation/${userId}/hours`, { ceremonyHour, receptionHour });
+  updateHoursByUserId: async (userId: string, ceremonyHour: string, receptionHour: string) => {
+    try {
+      const res = await apiClient.put<Invitation>(`/invitation/${userId}/hours`, { ceremonyHour, receptionHour });
+      return res;
+    } catch (error) {
+      console.error("[invitationService.updateHoursByUserId] Error:", error);
+      throw error;
+    }
   },
 
-  updateFinals: (userId: string, finals: {finalPng: string, finalCanvasJson: string}) => {
-    console.log(userId);
-    return apiClient.put<Invitation>(`/invitation/${userId}/finals`, {finals});
+  updateFinals: async (userId: string, finals: {finalPng: string; finalCanvasJson: string}) => {
+    try {
+      const res = await apiClient.put<Invitation>(`/invitation/${userId}/finals`, { finals });
+      return res;
+    } catch (error) {
+      console.error("[invitationService.updateFinals] Error:", error);
+      throw error;
+    }
   }
 };
 

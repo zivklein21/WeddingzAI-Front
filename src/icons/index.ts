@@ -19,7 +19,8 @@ import {
     CiTrash,
     CiCalendarDate,
     CiLocationArrow1,
-    CiPlay1
+    CiPlay1,
+    CiImageOff
 } from "react-icons/ci";
 
 import {
@@ -55,6 +56,10 @@ import {
     GiBigDiamondRing,
  } from "react-icons/gi";
 
+import { MdOutlineRunningWithErrors } from "react-icons/md";
+
+import { TbNotificationOff } from "react-icons/tb";
+
 
 // For all
 export const SaveIcon = CiSaveDown2;
@@ -64,6 +69,9 @@ export const AddIcon = CiCirclePlus;
 export const CloseIcon = CiCircleRemove;
 export const CheckIcon = CiCircleCheck;
 export const LoaderIcon = FiLoader;
+export const ErrorIcon = MdOutlineRunningWithErrors;
+export const NoImgIcon = CiImageOff;
+export const NoOffersIcon = TbNotificationOff;
 
 // Vendors
 export const BookIcon = CiBookmarkPlus;

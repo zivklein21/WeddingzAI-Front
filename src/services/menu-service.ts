@@ -27,27 +27,57 @@ interface CreateMenuPayload {
 
 const menuService = {
   // 1. Generate menu background image with AI (returns {backgroundUrl})
-  generateBackground: (prompt: string) =>
-    apiClient.post<{ backgroundUrl: string }>("/menu/background", { prompt }),
+  generateBackground: async (prompt: string) => {
+    try {
+      const res = await apiClient.post<{ backgroundUrl: string }>("/menu/background", { prompt });
+      return res;
+    } catch (error) {
+      console.error("[menuService.generateBackground] Error:", error);
+      throw error;
+    }
+  },
 
   // 2. Create menu with background
-  createMenuWithBackground: (payload: CreateMenuPayload) => {
-    return apiClient.post<Menu>("/menu/create-menu", payload);
+  createMenuWithBackground: async (payload: CreateMenuPayload) => {
+    try {
+      const res = await apiClient.post<Menu>("/menu/create-menu", payload);
+      return res;
+    } catch (error) {
+      console.error("[menuService.createMenuWithBackground] Error:", error);
+      throw error;
+    }
   },
 
   // לקבלת תפריט לפי userId
-  getMenuByUserId: (userId: string) => {
-    return apiClient.get<Menu>(`/menu/${userId}`);
+  getMenuByUserId: async (userId: string) => {
+    try {
+      const res = await apiClient.get<Menu>(`/menu/${userId}`);
+      return res;
+    } catch (error) {
+      console.error("[menuService.getMenuByUserId] Error:", error);
+      throw error;
+    }
   },
 
-// לעדכן מנות לפי userId
-  updateDishesByUserId: (userId: string, dishes: Dish[]) => {
-    return apiClient.put<Menu>(`/menu/${userId}/dishes`, { dishes });
+  // לעדכן מנות לפי userId
+  updateDishesByUserId: async (userId: string, dishes: Dish[]) => {
+    try {
+      const res = await apiClient.put<Menu>(`/menu/${userId}/dishes`, { dishes });
+      return res;
+    } catch (error) {
+      console.error("[menuService.updateDishesByUserId] Error:", error);
+      throw error;
+    }
   },
 
-  updateFinals: (userId: string, finals: {finalPng: string, finalCanvasJson: string}) => {
-    console.log(userId);
-    return apiClient.put<Menu>(`/menu/${userId}/finals`, {finals});
+  updateFinals: async (userId: string, finals: {finalPng: string, finalCanvasJson: string}) => {
+    try {
+      const res = await apiClient.put<Menu>(`/menu/${userId}/finals`, { finals });
+      return res;
+    } catch (error) {
+      console.error("[menuService.updateFinals] Error:", error);
+      throw error;
+    }
   }
 };
 

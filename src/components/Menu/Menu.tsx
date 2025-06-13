@@ -29,7 +29,6 @@ export default function Menu() {
 
     menuService.getMenuByUserId(userId)
       .then(res => {
-        console.log("Menu data from server:", res.data);
         setMenuData(res.data);
       })
       .catch(err => {

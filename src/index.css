@@ -21,6 +21,7 @@
   --font-rubik: 'Rubik', sans-serif;
   --wedding-pink-06: rgba(249, 230, 240, 0.6);
   --wedding-dark-purple: #8a57a7e1;
+  --wedding-red: red;
 }
 
 
@@ -174,6 +175,12 @@ hr {
 
 .icon:hover {
   color: var(--wedding-pink);
+}
+
+.errorIcon {
+  font-size: 1.5rem;
+  color: var(--wedding-red);
+  cursor: pointer;
 }
 
 hr.divider {

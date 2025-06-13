@@ -1,5 +1,5 @@
 // src/components/TodoList/TodoList.tsx
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import tdlService, { TdlData } from "../../services/tdl-service";
 import vendorService from "../../services/vendor-service";
@@ -47,8 +47,9 @@ export default function TodoList() {
         const init: Record<number, boolean> = {};
         list.sections.forEach((_, i) => (init[i] = true));
         setOpenSections(init);
-      } catch (err: any) {
-        setError(err.message || "Could not load your to-do list.");
+      } catch (err: unknown) {
+        const error = err as { response?: { data?: { error?: string } }, message?: string };
+        setError(error.message || "Could not load your to-do list.");
       } finally {
         setLoading(false);
       }
@@ -257,7 +258,6 @@ const handleAIButtonClick = async (task: string) => {
                       text: section.todos[i].task,
                       dueDate: section.todos[i].dueDate,
                       priority: section.todos[i].priority,
-                      aiSent: section.todos[i].aiSent
                     }
                   })
                 }

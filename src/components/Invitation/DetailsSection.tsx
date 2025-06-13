@@ -3,7 +3,6 @@ import invitationService, { Sentence as SentenceType } from "../../services/invi
 import styles from "./Invitation.module.css";
 
 import * as Icons from "../../icons/index";
-import { data } from "react-router-dom";
 import {toast} from "react-toastify";
 
 interface Props {
@@ -52,7 +51,7 @@ export default function DetailsSection({ userId, sentences, setSentences, onDone
       };
       fetchTexst();
     }
-  }, [userId]);
+  }, [userId, sentences.length, setSentences]);
 
   const handleAdd = (e: React.FormEvent) => {
     e.preventDefault();
@@ -105,7 +104,6 @@ export default function DetailsSection({ userId, sentences, setSentences, onDone
     setLoading(true);
     try {
       await invitationService.updateTextsByUserId(userId, sentences);
-      console.log(ceremonyHour, receptionHour);
       await invitationService.updateHoursByUserId(userId,ceremonyHour, receptionHour)
       toast.success("Details saved successfully");
       onDone();
