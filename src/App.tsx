@@ -19,7 +19,7 @@ import InvitationPage from "./pages/InvitationPage";
 import CalendarPage from "./pages/CalendarPage";
 import MenuPage from "./pages/MenuPage";
 import { useEffect } from "react";
-import faviconSvg from "../src/assets/favicon.svg";
+import faviconSvg from "../src/assets/favicon.ico";
 
 
 export default function App() {
@@ -27,14 +27,12 @@ export default function App() {
      useEffect(() => {
     document.title = "WeddingzAI";
 
-    // מציאת / יצירת תגית <link rel="icon">
-    let link: HTMLLinkElement | null = document.querySelector("link[rel*='icon']");
+     let link: HTMLLinkElement | null = document.querySelector("link[rel*='icon']");
     if (!link) {
       link = document.createElement("link");
       link.rel = "icon";
       document.head.appendChild(link);
     }
-    // הגדרת type ל־SVG ו-href לייבוא
     link.type = "image/svg+xml";
     link.href = faviconSvg;
   }, []);
