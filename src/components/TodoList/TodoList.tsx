@@ -55,19 +55,30 @@ export default function TodoList() {
     })();
   }, [navigate]);
 
-  const handleAIButtonClick = async (task: string) => {
-    if (!user?._id) {
-      toast.error("User ID is missing. Please log in again.");
+const handleAIButtonClick = async (task: string) => {
+  if (!user?._id) {
+    toast.error("User ID is missing. Please log in again.");
+    return;
+  }
+  try {
+    const result = await vendorService.startAIResearchBackground(task, user._id);
+
+    if (!result.success) {
+      // אם ה-errorCode הוא NO_VENDOR_TYPE_FOUND — תציג למשתמש הודעה מתאימה
+      if (result.errorCode === "NO_VENDOR_TYPE_FOUND") {
+        toast.error("Cannot send this task to AI");
+      } else {
+        toast.error(result.error || "Failed to send task to AI.");
+      }
       return;
     }
-    try {
-      await vendorService.startAIResearchBackground(task, user._id);
-      toast.success("Task Sent to AI");
-    } catch (err) {
-      console.error(err);
-      toast.error("Failed to sent to AI");
-    }
-  };
+
+    toast.success("Task sent to AI!");
+  } catch (err) {
+    console.error(err);
+    toast.error("Failed to send task to AI (network error).");
+  }
+};
 
   const toggleSection = (idx: number) =>
     setOpenSections((prev) => ({ ...prev, [idx]: !prev[idx] }));
