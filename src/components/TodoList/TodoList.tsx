@@ -64,7 +64,6 @@ const handleAIButtonClick = async (task: string) => {
     const result = await vendorService.startAIResearchBackground(task, user._id);
 
     if (!result.success) {
-      // אם ה-errorCode הוא NO_VENDOR_TYPE_FOUND — תציג למשתמש הודעה מתאימה
       if (result.errorCode === "NO_VENDOR_TYPE_FOUND") {
         toast.error("Cannot send this task to AI");
       } else {
@@ -96,7 +95,6 @@ const handleAIButtonClick = async (task: string) => {
       setWeddingDateInput(fresh.weddingDate);
       setIsEditingDate(false);
       toast.success("Wedding date updated");
-      window.location.reload();
     } catch (err) {
       console.error(err);
       toast.error("Failed to update wedding date");
@@ -112,7 +110,6 @@ const handleAIButtonClick = async (task: string) => {
       const fresh = await tdlService.fetchMyTdl();
       setTodoList(fresh);
       toast.success("Task added");
-      window.location.reload();
     } catch (err) {
       console.error(err);
       toast.error("Failed to add task");
@@ -135,7 +132,6 @@ const handleAIButtonClick = async (task: string) => {
       const fresh = await tdlService.fetchMyTdl();
       setTodoList(fresh);
       toast.success("Task updated");
-      window.location.reload();
     } catch (err) {
       console.error(err);
       toast.error("Failed to update task");
@@ -153,7 +149,6 @@ const handleAIButtonClick = async (task: string) => {
       const fresh = await tdlService.fetchMyTdl();
       setTodoList(fresh);
       toast.success("Task deleted");
-      window.location.reload();
     } catch (err) {
       console.error(err);
       toast.error("Failed to delete task");

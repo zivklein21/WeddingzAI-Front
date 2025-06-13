@@ -115,7 +115,7 @@ export const startAIResearchBackground = async (query: string, userId: string): 
         return {
           success: false,
           error: err.response.data.error || "Unexpected error",
-          errorCode: err.response.data.errorCode || undefined    // <== נוסיף את זה
+          errorCode: err.response.data.errorCode || undefined  
         };
       } else {
       return {

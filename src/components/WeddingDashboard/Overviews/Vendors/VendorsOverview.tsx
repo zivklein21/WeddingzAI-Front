@@ -14,8 +14,8 @@ const VendorOverview: React.FC = () => {
   useEffect(() => {
     fetchVendorSummary()
       .then((data) => {
-        setTotal(data.total);
-        setCounts(data.counts);
+        setTotal(data.data?.total);
+        setCounts(data.data?.counts);
         console.log(data);
       })
       .finally(() => setLoading(false));

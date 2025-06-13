@@ -41,7 +41,10 @@ const TodoItem: React.FC<Props> = ({ todo, onEdit, onRunAI, onDelete, onToggleDo
             style={aiSent ? { color: "green", cursor: "not-allowed" } : undefined}
             
           >
-            <Icons.AiIcon className="icon" title={aiSent ? "Already processed" : "Run AI"} />
+            <Icons.AiIcon
+              className={`icon ${todo.aiSent ? 'ai-sent' : ''}`}
+              title={todo.aiSent ? 'Task already sent to AI' : 'Run AI'}
+            />
           </span>
 
           <span onClick={onDelete} aria-label="Delete">

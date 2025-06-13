@@ -168,6 +168,10 @@ hr {
   cursor: pointer;
 }
 
+.icon.ai-sent {
+  color: var(--wedding-green);
+}
+
 .icon:hover {
   color: var(--wedding-pink);
 }
