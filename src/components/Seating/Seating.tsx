@@ -1,4 +1,4 @@
-// src/components/Seating/SeatingPage.tsx
+// src/components/Seating/Seating.tsx
 
 import { useState, useEffect } from "react";
 import { DndContext, DragEndEvent } from "@dnd-kit/core";
@@ -14,7 +14,7 @@ import { Guest } from "../../types/guest";
 import styles from "./Seating.module.css";
 import * as Icons from "../../icons/index";
 
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 export type Table = {
   _id: string;
@@ -120,18 +120,22 @@ export default function Seating() {
   return (
     <div className="pageMain">
       <div className="pageContainer">
-        <Icons.BackArrowIcon className="backIcon" onClick={() => navigate(-1)} title="Go Back" />
+        <Icons.BackArrowIcon
+          className="backIcon"
+          onClick={() => navigate(-1)}
+          title="Go Back"
+        />
         <h2 className="pageHeader">Seating Chart</h2>
         <div className={styles.contentGrid}>
           <div className={styles.sidebar}>
             <UnassignedGuestList
-            guests={unassignedGuests}
-            refreshGuests={refreshUnassignedGuests}
-            refreshTables={refreshTables}
-            updateLocalTableGuests={updateLocalTableGuests}
-          />
+              guests={unassignedGuests}
+              refreshGuests={refreshUnassignedGuests}
+              refreshTables={refreshTables}
+              updateLocalTableGuests={updateLocalTableGuests}
+            />
           </div>
-          
+
           <div className={styles.canvas}>
             <DndContext onDragEnd={handleDragEnd}>
               {tables.map((table) => (
@@ -145,6 +149,14 @@ export default function Seating() {
                   y={table.position.y}
                   guests={table.guests}
                   onGuestRemoved={refreshUnassignedGuests}
+                  onTableDeleted={(deletedId) => {
+                    // Remove the deleted table
+                    setTables((prev) =>
+                      prev.filter((t) => t._id !== deletedId)
+                    );
+                    // Refresh the unassigned guests list from server
+                    refreshUnassignedGuests();
+                  }}
                 />
               ))}
             </DndContext>
@@ -156,7 +168,7 @@ export default function Seating() {
             />
           </div>
         </div>
-      {/* <ToastContainer position="bottom-right"/> */}
+        {/* <ToastContainer position="bottom-right"/> */}
       </div>
     </div>
   );

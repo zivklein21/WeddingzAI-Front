@@ -1,3 +1,16 @@
+.iconTableDelete {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  cursor: pointer;
+  color: var(--wedding-purple);
+  transition: color 0.2s, opacity 0.2s;
+}
+
+.iconTableDelete:hover {
+  color: var(--wedding-pink);
+}
+
 .guestPopup {
   position: absolute;
   top: calc(100% + 4px);
@@ -22,9 +35,9 @@
   padding: 4px 0;
   border-bottom: 1px solid #ececec;
   display: flex;
-  align-items: center;          /* vertically center text + icon */
+  align-items: center; /* vertically center text + icon */
   justify-content: space-between; /* push name left, icon right */
-  padding: 0.5rem 1rem;          /* vertical + horizontal padding */
+  padding: 0.5rem 1rem; /* vertical + horizontal padding */
   border-bottom: 1px solid #e0e0e0;
 }
 
