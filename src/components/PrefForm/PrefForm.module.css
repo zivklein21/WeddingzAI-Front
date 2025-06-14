@@ -16,6 +16,23 @@
   overflow-y: auto !important;
 }
 
+.formGroup{
+  margin-bottom: 1.5rem;
+}
+
+.formGroup input[type="date"],
+.formGroup select,
+.formGroup input[type="text"] {
+  width: 100%;
+  padding: 0.6rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  background-color: #fff;
+  box-sizing: border-box;
+  appearance: none; /* remove default dropdown icon in Safari */
+}
+
 .formGroup input {
   width: 100%;
   padding: 0.6rem;
@@ -52,10 +69,6 @@
   margin-bottom: 2rem;
   text-align: center;
   color: #555;
-}
-
-.formGroup {
-  margin-bottom: 1.5rem;
 }
 
 .formGroup label {
