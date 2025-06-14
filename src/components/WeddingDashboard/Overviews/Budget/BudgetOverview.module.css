@@ -6,8 +6,8 @@
 
 .chart {
   display: grid;
-  width: 120px;
-  height: 120px;
+  width: 50%;
+  height: 50%;
 }
 
 .chart > * {
