@@ -50,14 +50,18 @@ const menuService = {
 
   // לקבלת תפריט לפי userId
   getMenuByUserId: async (userId: string) => {
-    try {
-      const res = await apiClient.get<Menu>(`/menu/${userId}`);
-      return res;
-    } catch (error) {
-      console.error("[menuService.getMenuByUserId] Error:", error);
-      throw error;
+  try {
+    const res = await apiClient.get(`/menu/${userId}`);
+    return res.data;
+  } catch (err: g) {
+    if (err.response?.status === 404) {
+      console.info("[MenuService] No menu found for user.");
+      return null;
     }
-  },
+    console.error("[MenuService.getMenuByUserId] Error:", err);
+    return null;
+  }
+},
 
   // לעדכן מנות לפי userId
   updateDishesByUserId: async (userId: string, dishes: Dish[]) => {

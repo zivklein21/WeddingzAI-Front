@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
 
 .main {
-    padding-top: 90px;
+    padding-top: 7%;
     height: 100vh;
     overflow: hidden;
     display: flex;
@@ -24,13 +24,12 @@
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     grid-auto-rows: 1fr;
-    gap: 20px;
-    width: 100%;
-    max-width: 1300px;
-    height: calc(100vh - 90px);
+    gap: 1.5%;
+    width: 90%;
+    max-width: 100%;
+    height: 85vh;
     margin: 0 auto;
-    padding: 10px;
-    padding-bottom: 30px;
+    padding: 1% 1% 1% 1%;  
     box-sizing: border-box;
 
   }
@@ -38,8 +37,8 @@
   .card {
       background-color: white;
       overflow: hidden;
-      border-radius: 10px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      border-radius: 0.75rem;
+      box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.1);
       padding: 20px;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
       position: relative;

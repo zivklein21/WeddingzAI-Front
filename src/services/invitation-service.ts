@@ -56,7 +56,6 @@ const invitationService = {
       return res;
     } catch (error) {
       console.error("[invitationService.getInvitationByUserId] Error:", error);
-      throw error;
     }
   },
 
