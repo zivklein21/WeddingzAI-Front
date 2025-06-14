@@ -53,14 +53,17 @@ const menuService = {
   try {
     const res = await apiClient.get(`/menu/${userId}`);
     return res.data;
-  } catch (err: g) {
-    if (err.response?.status === 404) {
-      console.info("[MenuService] No menu found for user.");
-      return null;
-    }
-    console.error("[MenuService.getMenuByUserId] Error:", err);
+  } catch (err: unknown) {
+  const error = err as { response?: { status?: number } };
+
+  if (error.response?.status === 404) {
+    console.info("[MenuService] No menu found for user.");
     return null;
   }
+
+  console.error("[MenuService.getMenuByUserId] Error:", err);
+  return null;
+}
 },
 
   // לעדכן מנות לפי userId

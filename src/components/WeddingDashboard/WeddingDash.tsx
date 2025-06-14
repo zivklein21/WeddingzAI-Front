@@ -39,8 +39,8 @@ export default function WeddingDashboard() {
           Seating Chart
           <hr className={styles.divider} />
           <SeatOverview/>
-          <Link to="/calendar">
-            <div className={styles.manageLink}>Manage Calendar</div>
+          <Link to="/seating">
+            <div className={styles.manageLink}>Manage Seating</div>
           </Link>
         </div>
 
