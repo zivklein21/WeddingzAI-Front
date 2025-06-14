@@ -1,8 +1,9 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useDraggable } from "@dnd-kit/core";
 import TableShape from "./Table";
 import styles from "./DraggableTable.module.css";
 import { unassignGuest } from "../../services/guest-service";
+import { deleteTable } from "../../services/seating-service";
 import * as Icons from "../../icons/index";
 
 export type DraggableTableProps = {
@@ -14,6 +15,14 @@ export type DraggableTableProps = {
   y: number;
   guests?: { _id?: string; fullName: string; numberOfGuests?: number }[];
   onGuestRemoved?: () => void; // optional callback for refreshing unassigned guests
+  onTableDeleted?: (
+    id: string,
+    returnedGuests: {
+      _id?: string;
+      fullName: string;
+      numberOfGuests?: number;
+    }[]
+  ) => void; // optional callback for table deletion
 };
 
 export default function DraggableTable({
@@ -25,12 +34,16 @@ export default function DraggableTable({
   y,
   guests = [],
   onGuestRemoved,
+  onTableDeleted,
 }: DraggableTableProps) {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id,
   });
   const [showGuests, setShowGuests] = useState(false);
   const [guestList, setGuestList] = useState(guests);
+  useEffect(() => {
+    setGuestList(guests);
+  }, [guests]);
   const pointerDownPos = useRef<{ x: number; y: number } | null>(null);
   const didDrag = useRef(false);
   const DRAG_THRESHOLD = 5; // pixels
@@ -72,16 +85,27 @@ export default function DraggableTable({
     }
   };
 
-  // Remove guest handler: uses API to unassign guest, then updates local state and calls optional callback
+  // Remove guest handler: uses API to unassign guest, update local state, then calls optional callback
   const handleRemoveGuest = async (guestId?: string) => {
     try {
       if (guestId) {
         await unassignGuest(guestId);
+        // Update local guestList immediately
         setGuestList((prev) => prev.filter((g) => g._id !== guestId));
         if (onGuestRemoved) onGuestRemoved();
       }
     } catch (error) {
       console.error("Failed to remove guest:", error);
+    }
+  };
+
+  const handleDeleteTable = async () => {
+    try {
+      await deleteTable(id);
+      if (onTableDeleted) onTableDeleted(id, guests);
+      setShowGuests(false);
+    } catch (error) {
+      console.error("Failed to delete table:", error);
     }
   };
 
@@ -100,39 +124,56 @@ export default function DraggableTable({
           guests={guestList}
         />
         {showGuests && (
-          <div className={styles.guestPopup}>
+          <>
             <span
-              className={styles.iconClose}
-              onClick={() => setShowGuests(false)}
+              className={styles.iconTableDelete}
+              onPointerDown={(e) => e.stopPropagation()}
+              onPointerUp={(e) => e.stopPropagation()}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleDeleteTable();
+              }}
             >
-              <Icons.CloseIcon className="icon" title="Close Table"/>
+              <Icons.DeleteIcon className="icon" title="Delete Table" />
             </span>
-            <h4>Guests for {name}:</h4>
-            
-            <ul className={styles.guestList}>
-              {guestList.length > 0 ? (
-                guestList.map((guest, index) => (
-                  <li key={guest._id ?? index}>
-                    <span style={{ fontWeight: "bold" }}>{guest.fullName}</span>
-                    {guest.numberOfGuests && guest.numberOfGuests >= 1
-                      ? ` ${guest.numberOfGuests}`
-                      : ""}
-                    <span
-                      className={styles.iconRemove}
-                      onMouseDown={(e) => {
-                        e.stopPropagation();
-                        handleRemoveGuest(guest._id);
-                      }}
-                    >
-                      <Icons.DeleteIcon className="icon" title="Remove Guest"/>
-                    </span>
-                  </li>
-                ))
-              ) : (
-                <li>No guests found</li>
-              )}
-            </ul>
-          </div>
+            <div className={styles.guestPopup}>
+              <span
+                className={styles.iconClose}
+                onClick={() => setShowGuests(false)}
+              >
+                <Icons.CloseIcon className="icon" title="Close Table" />
+              </span>
+              <h4>Guests for {name}:</h4>
+              <ul className={styles.guestList}>
+                {guestList.length > 0 ? (
+                  guestList.map((guest, index) => (
+                    <li key={guest._id ?? index}>
+                      <span style={{ fontWeight: "bold" }}>
+                        {guest.fullName}
+                      </span>
+                      {guest.numberOfGuests && guest.numberOfGuests >= 1
+                        ? ` ${guest.numberOfGuests}`
+                        : ""}
+                      <span
+                        className={styles.iconRemove}
+                        onMouseDown={(e) => {
+                          e.stopPropagation();
+                          handleRemoveGuest(guest._id);
+                        }}
+                      >
+                        <Icons.DeleteIcon
+                          className="icon"
+                          title="Remove Guest"
+                        />
+                      </span>
+                    </li>
+                  ))
+                ) : (
+                  <li>No guests found</li>
+                )}
+              </ul>
+            </div>
+          </>
         )}
       </div>
     </div>

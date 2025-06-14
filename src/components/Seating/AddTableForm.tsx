@@ -10,7 +10,7 @@ export default function AddTableForm({ onTableCreated }: Props) {
   const [showForm, setShowForm] = useState(false);
   const [name, setName] = useState("");
   const [capacity, setCapacity] = useState(8);
-  const [shape, setShape] = useState<"round" | "rectangle">("round");
+  const [shape, setShape] = useState<"round" | "rectangle" | "square">("round");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,10 +45,10 @@ export default function AddTableForm({ onTableCreated }: Props) {
                 className={styles.iconClose}
                 onClick={() => setShowForm(false)}
               >
-                <Icons.CloseIcon className="icon"/>
+                <Icons.CloseIcon className="icon" />
               </span>
             </div>
-            <form  className={styles.form}>
+            <form className={styles.form}>
               <div className={styles.formGroup}>
                 <label htmlFor="tableName" className={styles.label}>
                   Table Name
@@ -77,6 +77,7 @@ export default function AddTableForm({ onTableCreated }: Props) {
                   >
                     <option value="round">Round</option>
                     <option value="rectangle">Rectangle</option>
+                    <option value="square">square</option>
                   </select>
                 </div>
                 <div className={styles.formGroup}>
@@ -97,7 +98,7 @@ export default function AddTableForm({ onTableCreated }: Props) {
               </div>
 
               <span className={styles.buttonRight} onClick={handleSubmit}>
-                <Icons.SaveIcon className="icon"/>
+                <Icons.SaveIcon className="icon" />
               </span>
             </form>
           </div>

@@ -24,7 +24,7 @@ export const deleteTable = async (id: string) => {
 
 export const createTable = async (tableData: {
   name: string;
-  shape: "round" | "rectangle";
+  shape: "round" | "rectangle" | "square";
   capacity: number;
   position: { x: number; y: number };
 }) => {
