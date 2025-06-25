@@ -16,17 +16,22 @@ const apiClient = axios.create({
   headers: { "Content-Type": "application/json" },
 });
 
+interface FailedQueueItem {
+  resolve: (token?: string | null) => void;
+  reject: (error: unknown) => void;
+}
+
 // Set Up processQueue to avoid race conditions
 let isRefreshing = false;
-let failedQueue: any[] = [];
+let failedQueue: FailedQueueItem[] = [];
 
-const processQueue = (error: any, token: string | null = null) => {
+const processQueue = (error: unknown, token: string | null = null): void => {
   console.log("[API] Processing queue", { error, token });
-  failedQueue.forEach((prom) => {
+  failedQueue.forEach(({ resolve, reject }) => {
     if (error) {
-      prom.reject(error);
+      reject(error);
     } else {
-      prom.resolve(token);
+      resolve(token);
     }
   });
   failedQueue = [];
@@ -91,7 +96,12 @@ apiClient.interceptors.response.use(
       console.log("[API] Refreshing token now...");
 
       try {
-        const refreshResponse = await axios.post(
+        interface RefreshResponse {
+          accessToken: string;
+          refreshToken: string;
+        }
+
+        const refreshResponse = await axios.post<RefreshResponse>(
           backend_url + "/auth/refresh",
           { refreshToken: Cookies.get("refreshToken") }
         );
